@@ -1,0 +1,18 @@
+[
+  {
+    "key": "shift+escape",
+    "command": "-editor.action.accessibleView"
+  },
+  {
+    "key": "shift+escape",
+    "command": "-workbench.action.terminal.focusAccessibleBuffer"
+  },
+  {
+    "key": "escape",
+    "command": "-workbench.action.closeAccessibleView"
+  },
+  {
+    "key": "ctrl+alt+i",
+    "command": "-editor.action.accessibleView"
+  }
+]
