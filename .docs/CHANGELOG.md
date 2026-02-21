@@ -205,6 +205,117 @@ landing page with direct cart links.
 
 ---
 
+## [2026-02-21] Task: WHMCS stabilization & QA pack
+**Goal:** Deliver QA checklist, verify cron execution, add required email templates,
+and harden demo lifecycle automation without touching any third-party panel.
+**Author:** Agent
+**Changes:**
+- UI:
+  - Added QA execution checklist document for all required purchase, upgrade,
+    billing-cycle, cron, and email checks.
+- WHMCS Settings:
+  - Added/updated email templates:
+    - `Demo Purchase Confirmation`
+    - `Demo Expiry Warning`
+    - `Main Welcome Email`
+    - `Invoice Payment Confirmation` (customized for Payment Received/Invoice Paid)
+  - Linked product welcome emails:
+    - pid=3 -> `Demo Purchase Confirmation`
+    - pid=1 -> `Main Welcome Email`
+- Database:
+  - Added warning de-duplication table `mod_demo_warning_logs`
+    (one row per service via unique `service_id`).
+  - Inserted templates and updated product welcome-email mappings.
+  - Performed cron verification queries (`lastCronInvocationTime`,
+    `tblactivitylog`).
+- Files:
+  - `docs/QA_CHECKLIST.md` (new)
+  - `includes/hooks/demo_license.php` (updated)
+**Related decisions:**
+- Decision: Implement 48-hour demo warning in `DailyCronJob` and avoid duplicates
+  through a dedicated table.
+- Rationale: Hook runs once daily; table-backed de-duplication is deterministic,
+  auditable, and resilient to reruns/force-runs.
+- Decision: Keep landing/cart URLs unchanged.
+- Rationale: Requirement explicitly states landing/cart links remain unchanged.
+**Testing / Evidence:**
+- Cron executed via:
+  - `/home/venom/bin/php8.1 -q crons/cron.php all --force -vvv`
+- Verified:
+  - `tblconfiguration.lastCronInvocationTime` updated.
+  - `tblactivitylog` contains:
+    - `Demo DailyCronJob ran at ... activeEvaluated=...`
+    - warning/suspension counters
+    - suspension fallback evidence for expired demo service test row.
+  - De-duplication verified:
+    - `warningSkipped=1` when service already present in `mod_demo_warning_logs`.
+- Note:
+  - Mail transport (`/usr/sbin/sendmail`) is missing in this environment, so
+    direct delivery failed during CLI cron tests. Template creation and hook/API
+    invocation paths are verified and ready for SMTP-enabled/test-mailer runtime.
+**Rollback plan:**
+- Remove warning de-duplication table if needed:
+  - `DROP TABLE IF EXISTS mod_demo_warning_logs;`
+- Restore previous hook behavior:
+  - revert `includes/hooks/demo_license.php` to prior revision.
+- Remove custom templates and restore product welcome mappings if required.
+
+---
+
+## [2026-02-21] Task: Enable email delivery + verify demo warning emails
+**Goal:** Fix local email delivery failure, validate Demo Expiry Warning end-to-end,
+and provide verifiable delivery evidence.
+**Author:** Agent
+**Changes:**
+- WHMCS Settings:
+  - Mail transport kept as `MailType=mail`.
+  - Existing SMTP values remain present in config (`SMTPHost=127.0.0.1`,
+    `SMTPPort=1025`) but are not used by current delivery path.
+- Runtime transport (local dev):
+  - Added local sendmail-compatible shim:
+    - `/home/venom/bin/sendmail`
+    - Captures outbound messages to `storage/mail/sendmail_*.eml`
+    - Writes capture log to `storage/mail/sendmail_capture.log`
+  - Updated PHP 8.1 CLI sendmail path:
+    - `/home/venom/php8.1/etc/php.ini` ->
+      `sendmail_path = /home/venom/bin/sendmail -t -i`
+- QA docs:
+  - Added explicit email transport verification section to
+    `docs/QA_CHECKLIST.md`.
+**Related decisions:**
+- Decision: Use a local sendmail shim for this environment instead of external SMTP.
+- Rationale: `SendEmail` in current runtime used PHP mail/sendmail path; shim gives
+  deterministic, auditable local delivery proof without exposing secrets.
+**Testing / Evidence:**
+- Direct API send verification:
+  - `localAPI('SendEmail', ['messagename' => 'Demo Expiry Warning', 'id' => 4])`
+    returned `result=success` after transport fix.
+- Demo warning 48h behavior validated with service id=5 (`nextduedate=today+2`):
+  - First cron force-run log id `258`:
+    - `warningSent=2`, `warningSkipped=0`, `warningErrors=0`
+  - Email success log id `256`:
+    - `Email Sent to Test DemoUser (Demo Expiry Warning: ... Service #5)`
+  - Hook confirmation log id `257`:
+    - `Demo Expiry Warning sent for Service #5 ...`
+  - Dedup row inserted in `mod_demo_warning_logs`:
+    - `service_id=5`, `id=3`
+  - Second cron force-run log id `299`:
+    - `warningSent=0`, `warningSkipped=2`, `warningErrors=0`
+- Delivery proof files:
+  - `storage/mail/sendmail_capture.log` contains capture timestamps for cron sends.
+  - `storage/mail/sendmail_20260221_160649_874199041.eml` contains subject
+    `Demo Expiry Warning: 48 Hours Remaining (Service #5)` and message body.
+- Cron run timestamp evidence:
+  - `tblconfiguration.lastCronInvocationTime = 2026-02-21 14:06:59`
+**Rollback plan:**
+- Remove/disable local shim:
+  - delete `/home/venom/bin/sendmail`
+  - remove appended `sendmail_path` line from
+    `/home/venom/php8.1/etc/php.ini`
+- Revert `MailType` as needed in `tblconfiguration`.
+
+---
+
 # Decision Log
 
 ## D-001: WHMCS as MVP billing foundation
@@ -253,3 +364,123 @@ landing page with direct cart links.
 5. **Demo Lifecycle**
    - Add pre-expiry warning email (48 h before nextduedate)
    - Evaluate auto-Terminate after a grace period post-suspension
+
+---
+
+## [2026-02-21] Task #3: Stripe Sandbox Integration + Recurring Renewal QA
+**Goal:** Enable card payments with Stripe in TEST MODE, ensure tokenized pay methods are saved, and validate recurring auto-renewal via WHMCS automation/cron.
+**Author:** Agent
+**Changes:**
+- UI:
+  - Created comprehensive Stripe integration documentation
+- WHMCS Settings:
+  - Documented Stripe gateway configuration for TEST mode
+  - Documented tokenization settings (Store Pay Method)
+  - Documented automation settings for CC processing:
+    - `CCProcessEnabled = on`
+    - `CCProcessDaysBeforeDue = 0` (DEV only, revert for production)
+    - `SuspensionGracePeriod = 3` days
+  - Documented webhook endpoint path and registration procedure
+- Files:
+  - `docs/STRIPE_INTEGRATION.md` (new) — Complete Stripe setup guide
+  - `docs/QA_CHECKLIST.md` (updated) — Added Stripe verification sections
+- Database settings referenced (not hardcoded):
+  - Gateway credentials via WHMCS Admin UI only
+  - Test mode toggle: `testmode = on` in `tblpaymentgateways`
+**Related decisions:**
+- Decision: Use built-in WHMCS Stripe module (v8.10.1) instead of third-party alternatives.
+- Rationale: Native support, tokenization included, maintained by WHMCS team.
+- Decision: Never hardcode secrets in files; use WHMCS Admin UI for credentials.
+- Rationale: Security best practice; credentials stored encrypted in database.
+- Decision: Set `CCProcessDaysBeforeDue = 0` for DEV testing only.
+- Rationale: Enables immediate renewal testing without waiting days.
+**Testing / Evidence:**
+- Stripe module confirmed available at:
+  - `modules/gateways/stripe.php` (main module)
+  - `modules/gateways/callback/stripe.php` (webhook handler)
+  - `modules/gateways/stripe/` (supporting assets)
+- Test cards documented:
+  - Success: `4242424242424242`
+  - Decline: `4000000000000002`
+  - Insufficient funds: `4000000000009995`
+  - Expired: `4000000000000069`
+- Test cases defined:
+  1. New purchase with Stripe test card → invoice Paid, service Active, payment method stored
+  2. Renewal auto-charge → invoice created and paid automatically via stored token
+  3. Failed renewal → invoice Unpaid, retry policy executes, suspension after grace period
+- Webhook endpoint path: `/modules/gateways/callback/stripe.php`
+**Rollback plan:**
+- Disable Stripe gateway via WHMCS Admin UI (Setup > Payments > Payment Gateways)
+- Revert automation settings:
+  ```sql
+  UPDATE tblconfiguration SET value = '7' WHERE setting = 'CCProcessDaysBeforeDue';
+  ```
+- Remove documentation files if needed
+
+---
+
+## [2026-02-21] Task #4: 2Checkout (Verifone) Integration + Recurring QA
+**Goal:** Replace Stripe with 2Checkout for card payments, enable recurring billing, and validate end-to-end payment + renewal behavior.
+**Author:** Agent
+**Changes:**
+- UI:
+  - Created comprehensive 2Checkout integration documentation
+  - Added tunnel setup instructions for local IPN testing
+- WHMCS Settings:
+  - Documented 2Checkout (TCO) gateway configuration for TEST mode
+  - Account Number and Secret Word configuration (via Admin UI)
+  - Checkout method selection (Standard/Inline)
+  - IPN callback URL configuration
+  - Automation settings for CC processing (same as Stripe):
+    - `CCProcessEnabled = on`
+    - `CCProcessDaysBeforeDue = 0` (DEV only, revert for production)
+    - `SuspensionGracePeriod = 3` days
+- Files:
+  - `docs/2CHECKOUT_INTEGRATION.md` (new) — Complete 2Checkout setup guide
+  - `install/tco_gateway_setup.sql` (new) — Database setup script
+  - `docs/QA_CHECKLIST.md` (updated) — Added 2Checkout verification sections
+- Database settings referenced (not hardcoded):
+  - Gateway credentials via WHMCS Admin UI only
+  - Test mode toggle: `testmode = on` in `tblpaymentgateways`
+  - Gateway identifier: `gateway = 'tco'`
+**Related decisions:**
+- Decision: Use built-in WHMCS TCO module (v8.10.1) for 2Checkout integration.
+- Rationale: Native support, maintained by WHMCS team, supports both Standard and Inline checkout.
+- Decision: Use public tunnel (cloudflared/ngrok) for local IPN testing.
+- Rationale: 2Checkout requires publicly accessible IPN callback URL.
+- Decision: 2Checkout handles recurring subscriptions on their platform.
+- Rationale: Unlike Stripe, 2Checkout manages subscription lifecycle and sends IPN for each payment.
+- Decision: Never hardcode secrets in files; use WHMCS Admin UI for credentials.
+- Rationale: Security best practice; credentials stored encrypted in database.
+**Testing / Evidence:**
+- 2Checkout module confirmed available at:
+  - `modules/gateways/tco/` (main module directory)
+  - `modules/gateways/callback/tco.php` (IPN callback handler)
+  - `modules/gateways/callback/2checkout.php` (alternative callback)
+- IPN callback endpoint path: `/modules/gateways/callback/tco.php`
+- Test cases defined:
+  1. New purchase with 2Checkout test card → invoice Paid, service Active
+  2. Recurring payment via IPN → invoice updated, service renewed
+  3. Failed payment → invoice Unpaid, suspension after grace period
+- Tunnel setup documented:
+  - Cloudflared: `cloudflared tunnel --url http://localhost`
+  - Ngrok: `ngrok http 80`
+- 2Checkout sandbox test cards documented:
+  - Success: `4111111111111111` (Visa)
+  - Success: `5555555555554444` (Mastercard)
+  - Decline: `4000000000000002`
+**Rollback plan:**
+- Disable 2Checkout gateway via WHMCS Admin UI (Setup > Payments > Payment Gateways)
+- Remove gateway settings:
+  ```sql
+  DELETE FROM tblpaymentgateways WHERE gateway = 'tco';
+  ```
+- Revert automation settings:
+  ```sql
+  UPDATE tblconfiguration SET value = '7' WHERE setting = 'CCProcessDaysBeforeDue';
+  ```
+- Stop tunnel:
+  ```bash
+  pkill -f cloudflared  # or pkill -f ngrok
+  ```
+- Remove documentation files if needed

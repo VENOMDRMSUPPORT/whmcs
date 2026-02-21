@@ -14,7 +14,7 @@
     <div class="container">
         <a href="#" class="back-to-top"><i class="fas fa-chevron-up"></i></a>
         
-        {* VENOM DRM - Footer Navigation Links *}
+        {* Footer Navigation Links *}
         <div class="footer-links" style="margin-bottom: 1rem;">
             <a href="/terms-of-service.php" style="color: #7a849a; margin: 0 0.75rem;">Terms of Service</a>
             <a href="/privacy-policy.php" style="color: #7a849a; margin: 0 0.75rem;">Privacy Policy</a>
