@@ -316,6 +316,76 @@ and provide verifiable delivery evidence.
 
 ---
 
+## [2026-02-21] Fix Pack: Activate SaaS Portal UX + Correct Homepage + Product-Specific Copy
+**Goal:** (1) Make the public root URL serve the product landing page instead of the WHMCS portal.
+(2) Activate the custom SaaS client home template (Licenses/Tickets/Invoices/KB only, no Network Status or Downloads).
+(3) Tighten landing page copy to describe streaming infrastructure management software explicitly.
+(4) Add a UI Gate section to the QA checklist and record this fix pack in the changelog.
+**Author:** Agent
+**Changes:**
+- UI:
+  - `landing.php` — updated hero headline to "Streaming Infrastructure Management Software"; added
+    "What You Receive" section (4 tiles: Portal URL, License Key, Username & Password, Load Balancer);
+    strengthened "Software Only / No Content" language throughout; no IPTV references present.
+  - `templates/six/clientareahome.tpl` — replaced default WHMCS home body with a delegation include
+    to `clientareahome-venom.tpl` wrapped in `{if false}` to suppress original output; the custom
+    SaaS template (Licenses, Tickets, Invoices, Knowledgebase) is now the active client home.
+  - `.htaccess` — added redirect block above the WHMCS-managed section: `GET /` and `GET /index.php`
+    return HTTP 302 to `/landing.php`; WHMCS client area at `/clientarea.php` is unaffected.
+  - `docs/QA_CHECKLIST.md` — added "UI Gate" section with 3 sub-sections (Public Homepage, Logged-in
+    Client Home, Store Page) and a verification URL table.
+- WHMCS Settings: none changed.
+- Database: none changed.
+- Files changed:
+  - `.htaccess` (modified — contains Apache fallback block + nginx note)
+  - `landing.php` (modified)
+  - `templates/six/clientareahome.tpl` (modified — delegation include)
+  - `templates/twenty-one/clientareahome.tpl` (modified — delegation include; active theme)
+  - `templates/twenty-one/clientareahome-venom.tpl` (new — SaaS portal home, twenty-one CSS classes)
+  - `includes/hooks/venom_homepage_redirect.php` (new — guest homepage redirect hook)
+  - `docs/QA_CHECKLIST.md` (modified)
+  - `.docs/CHANGELOG.md` (this entry)
+**Related decisions:**
+- Decision: Redirect `/` via `.htaccess` rather than replacing `index.php`.
+- Rationale: `index.php` is ionCube-encoded (WHMCS core); modifying it is not possible and would
+  break on WHMCS updates. A pre-rule in `.htaccess` is the correct, upgrade-safe mechanism.
+- Decision: Delegate `clientareahome.tpl` to `clientareahome-venom.tpl` via include + `{if false}`.
+- Rationale: WHMCS always loads `clientareahome.tpl` by name; wrapping with include + suppression
+  keeps the custom template in `clientareahome-venom.tpl` as the single source of truth and survives
+  template refreshes without losing the override.
+**Testing / Evidence:**
+- Verify with:
+  ```bash
+  curl -I http://venom-drm.test/
+  # Expected: HTTP/1.1 302 Found, Location: /landing.php
+  curl -I http://venom-drm.test/index.php
+  # Expected: HTTP/1.1 302 Found, Location: /landing.php
+  curl -s http://venom-drm.test/landing.php | grep -i "Streaming Infrastructure"
+  # Expected: match on hero headline
+  ```
+- See "UI Gate — Fix Pack" section in `docs/QA_CHECKLIST.md` for full browser-level checklist.
+**Rollback plan:**
+- Revert `.htaccess` homepage redirect:
+  ```bash
+  git checkout HEAD -- .htaccess
+  ```
+- Revert `clientareahome.tpl` delegation (both themes):
+  ```bash
+  git checkout HEAD -- templates/six/clientareahome.tpl
+  git checkout HEAD -- templates/twenty-one/clientareahome.tpl
+  rm templates/twenty-one/clientareahome-venom.tpl
+  ```
+- Remove guest homepage redirect hook:
+  ```bash
+  rm includes/hooks/venom_homepage_redirect.php
+  ```
+- Revert landing page copy changes:
+  ```bash
+  git checkout HEAD -- landing.php
+  ```
+
+---
+
 # Decision Log
 
 ## D-001: WHMCS as MVP billing foundation
@@ -480,7 +550,93 @@ and provide verifiable delivery evidence.
   UPDATE tblconfiguration SET value = '7' WHERE setting = 'CCProcessDaysBeforeDue';
   ```
 - Stop tunnel:
-  ```bash
-  pkill -f cloudflared  # or pkill -f ngrok
-  ```
+   ```bash
+   pkill -f cloudflared  # or pkill -f ngrok
+   ```
 - Remove documentation files if needed
+
+---
+
+## [2026-02-21] Task #5: Full WHMCS Rebrand (SaaS Licensing) + De-Hosting Cleanup + UX Polish
+**Goal:** Transform the default WHMCS experience from "web hosting portal" into a clean SaaS licensing portal for streaming server management software (software-only, no content).
+**Author:** Agent
+**Changes:**
+- UI:
+  - Updated company branding to "VENOM Solutions" throughout client area
+  - Replaced hosting-related terminology with license-focused language
+  - Simplified navigation to show only: Home, Pricing, Knowledgebase, Support, Client Area
+  - Removed/hid: Domains, Affiliates, Network Status, Downloads menus
+  - Renamed "Services" to "Licenses" in navigation and client area
+  - Added footer legal links + "Software Only · No Content Included" disclaimer
+  - Created custom client area home with SaaS portal widgets
+  - Updated landing page with trust content blocks and consistent dark theme
+- WHMCS Settings:
+  - Language overrides for branding (Services→Licenses, hosting→license terminology)
+  - Navigation hooks to remove unwanted menu items
+  - Client area home template override for SaaS-focused portal
+- Files:
+  - `lang/overrides/english.php` (new) — Language overrides for branding
+  - `includes/hooks/venom_navigation.php` (new) — Navigation menu customization hook
+  - `terms-of-service.php` (new) — Terms of Service page
+  - `privacy-policy.php` (new) — Privacy Policy page
+  - `refund-policy.php` (new) — Refund Policy page
+  - `acceptable-use.php` (new) — Acceptable Use / Anti-Abuse Policy page
+  - `templates/six/terms-of-service.tpl` (new) — ToS template
+  - `templates/six/privacy-policy.tpl` (new) — Privacy template
+  - `templates/six/refund-policy.tpl` (new) — Refund template
+  - `templates/six/acceptable-use.tpl` (new) — AUP template
+  - `templates/six/clientareahome-venom.tpl` (new) — Custom client home template
+  - `templates/six/footer.tpl` (modified) — Added legal links + disclaimer
+  - `landing.php` (modified) — Trust content blocks + legal footer + theme alignment
+  - `docs/QA_CHECKLIST.md` (updated) — Added Task #5 verification sections
+**Related decisions:**
+- Decision: Use WHMCS language overrides instead of modifying core language files.
+- Rationale: Preserves changes across WHMCS updates; follows best practices.
+- Decision: Use hooks for navigation customization instead of template edits.
+- Rationale: More maintainable; survives template updates; cleaner separation.
+- Decision: Create legal pages as WHMCS ClientArea pages instead of static HTML.
+- Rationale: Consistent theming; uses WHMCS template system; maintains navigation.
+- Decision: Client area home uses custom template with only essential widgets.
+- Rationale: Simplifies SaaS portal experience; removes hosting-focused clutter.
+**Testing / Evidence:**
+- Verification checklist added to `docs/QA_CHECKLIST.md` covering:
+  - Branding + Global UI checks
+  - Order flow simplification checks
+  - Legal/trust page accessibility
+  - Client area home customization
+  - Landing page integration
+- All files created use WHMCS APIs and template system (no core hacks)
+- CTA links verified:
+  - Start Demo: `/cart.php?a=add&pid=3`
+  - Buy Main License: `/cart.php?a=add&pid=1`
+**Rollback plan:**
+- Remove language overrides:
+  ```bash
+  rm lang/overrides/english.php
+  ```
+- Remove navigation hook:
+  ```bash
+  rm includes/hooks/venom_navigation.php
+  ```
+- Remove legal pages:
+  ```bash
+  rm terms-of-service.php privacy-policy.php refund-policy.php acceptable-use.php
+  rm templates/six/terms-of-service.tpl templates/six/privacy-policy.tpl
+  rm templates/six/refund-policy.tpl templates/six/acceptable-use.tpl
+  ```
+- Restore footer template:
+  ```bash
+  git checkout HEAD -- templates/six/footer.tpl
+  ```
+- Restore landing page:
+  ```bash
+  git checkout HEAD -- landing.php
+  ```
+- Remove custom client home template:
+  ```bash
+  rm templates/six/clientareahome-venom.tpl
+  ```
+- Revert QA checklist changes:
+  ```bash
+  git checkout HEAD -- docs/QA_CHECKLIST.md
+  ```

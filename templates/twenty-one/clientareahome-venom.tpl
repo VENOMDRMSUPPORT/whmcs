@@ -1,15 +1,15 @@
-{*
- * VENOM Solutions — SaaS Licensing Portal
- * This file delegates to the custom portal home template.
- * Edit clientareahome-venom.tpl to change the client area home layout.
- *}
-{include file="$template/clientareahome-venom.tpl"}
-{* ── original default content below is intentionally suppressed ── *}
-{if false}
 {include file="$template/includes/flashmessage.tpl"}
+
+{*
+ * VENOM Solutions — SaaS Licensing Portal Home (twenty-one theme)
+ * Shows only: Licenses, Support Tickets, Invoices, Knowledgebase
+ * No Network Status, Downloads, Domains, or Affiliates tiles.
+ *}
 
 <div class="tiles mb-4">
     <div class="row no-gutters">
+
+        {* Licenses Tile *}
         <div class="col-6 col-xl-3">
             <a href="clientarea.php?action=services" class="tile">
                 <i class="fas fa-cube"></i>
@@ -18,34 +18,8 @@
                 <div class="highlight bg-color-blue"></div>
             </a>
         </div>
-        {if $clientsstats.numdomains || $registerdomainenabled || $transferdomainenabled}
-            <div class="col-6 col-xl-3">
-                <a href="clientarea.php?action=domains" class="tile">
-                    <i class="fas fa-globe"></i>
-                    <div class="stat">{$clientsstats.numactivedomains}</div>
-                    <div class="title">{lang key='navdomains'}</div>
-                    <div class="highlight bg-color-green"></div>
-                </a>
-            </div>
-        {elseif $condlinks.affiliates && $clientsstats.isAffiliate}
-            <div class="col-6 col-xl-3">
-                <a href="affiliates.php" class="tile">
-                    <i class="fas fa-shopping-cart"></i>
-                    <div class="stat">{$clientsstats.numaffiliatesignups}</div>
-                    <div class="title">{lang key='affiliatessignups'}</div>
-                    <div class="highlight bg-color-green"></div>
-                </a>
-            </div>
-        {else}
-            <div class="col-6 col-xl-3">
-                <a href="clientarea.php?action=quotes" class="tile">
-                    <i class="far fa-file-alt"></i>
-                    <div class="stat">{$clientsstats.numquotes}</div>
-                    <div class="title">{lang key='quotes'}</div>
-                    <div class="highlight bg-color-green"></div>
-                </a>
-            </div>
-        {/if}
+
+        {* Support Tickets Tile *}
         <div class="col-6 col-xl-3">
             <a href="supporttickets.php" class="tile">
                 <i class="fas fa-comments"></i>
@@ -54,6 +28,8 @@
                 <div class="highlight bg-color-red"></div>
             </a>
         </div>
+
+        {* Invoices Tile *}
         <div class="col-6 col-xl-3">
             <a href="clientarea.php?action=invoices" class="tile">
                 <i class="fas fa-credit-card"></i>
@@ -62,6 +38,17 @@
                 <div class="highlight bg-color-gold"></div>
             </a>
         </div>
+
+        {* Knowledgebase Tile *}
+        <div class="col-6 col-xl-3">
+            <a href="knowledgebase.php" class="tile">
+                <i class="fas fa-book"></i>
+                <div class="stat"><i class="fas fa-search"></i></div>
+                <div class="title">{lang key='knowledgebasetitle'}</div>
+                <div class="highlight bg-color-green"></div>
+            </a>
+        </div>
+
     </div>
 </div>
 
@@ -74,6 +61,7 @@
 <div class="client-home-cards">
     <div class="row">
         <div class="col-12">
+
             {function name=outputHomePanels}
                 <div menuItemName="{$item->getName()}" class="card card-accent-{$item->getExtra('color')}{if $item->getClass()} {$item->getClass()}{/if}"{if $item->getAttribute('id')} id="{$item->getAttribute('id')}"{/if}>
                     <div class="card-header">
@@ -135,7 +123,10 @@
 
             {foreach $panels as $item}
                 {if $item@iteration is odd}
-                    {outputHomePanels}
+                    {* Filter out domain-related panels *}
+                    {if $item->getName() != 'Domains Expiring Soon' && $item->getName() != 'Domain Renewals'}
+                        {outputHomePanels}
+                    {/if}
                 {/if}
             {/foreach}
 
@@ -144,11 +135,13 @@
 
             {foreach $panels as $item}
                 {if $item@iteration is even}
-                    {outputHomePanels}
+                    {* Filter out domain-related panels *}
+                    {if $item->getName() != 'Domains Expiring Soon' && $item->getName() != 'Domain Renewals'}
+                        {outputHomePanels}
+                    {/if}
                 {/if}
             {/foreach}
 
         </div>
     </div>
 </div>
-{/if}

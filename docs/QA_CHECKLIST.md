@@ -2,6 +2,95 @@
 
 Scope: WHMCS only. No third-party panel changes.
 
+---
+
+## UI Gate — Fix Pack (2026-02-21)
+
+Verify all items below pass before considering the UI Fix Pack merged to production.
+
+### A. Public Homepage
+- [ ] `GET /` returns HTTP 302 redirect to `/landing.php`
+- [ ] `GET /index.php` returns HTTP 302 redirect to `/landing.php`
+- [ ] `/landing.php` loads without PHP errors
+- [ ] Hero headline reads "Streaming Infrastructure Management Software"
+- [ ] "What You Receive" section is visible with 4 tiles: Portal URL, License Key, Username & Password, Load Balancer
+- [ ] "No content included" disclaimer is visible in the "What You Receive" section
+- [ ] CTA "Start 7-Day Demo — $50" links to `/cart.php?a=add&pid=3`
+- [ ] CTA "Buy Main License — $100/mo" links to `/cart.php?a=add&pid=1`
+- [ ] Pricing cards show: Demo $50 one-time / Main $100/mo with billing cycle table
+- [ ] FAQ contains at least 6 entries including "Software Only / No Content" and portal availability
+- [ ] Footer links: Terms of Service, Privacy Policy, Refund Policy, Acceptable Use
+- [ ] No mention of IPTV anywhere on the page
+
+### B. Logged-in Client Home
+- [ ] `GET /clientarea.php` (logged in) renders without errors
+- [ ] Client home shows exactly 4 tiles: Licenses, Support Tickets, Invoices, Knowledgebase
+- [ ] No "Network Status" tile visible
+- [ ] No "Downloads" tile visible
+- [ ] No "Domains" tile visible
+- [ ] KB search bar is present below the tiles
+
+### C. Store Page
+- [ ] `GET /cart.php?gid=1` or `/cart.php` shows the Licenses product group
+- [ ] Only 2 products visible: Demo License (pid=3) and Main Server License (pid=1)
+- [ ] No domain registration or transfer options present
+
+### Verification URLs
+| Page | URL | Expected |
+|------|-----|----------|
+| Guest homepage | `http://venom-drm.test/` | Redirects to `/landing.php` |
+| Landing page | `http://venom-drm.test/landing.php` | Product landing, dark theme |
+| Client area | `http://venom-drm.test/clientarea.php` | WHMCS client area (login or home) |
+| Store | `http://venom-drm.test/cart.php?gid=1` | Licenses product group |
+
+---
+
+## Task #5 — WHMCS De-Hosting Cleanup Verification
+
+### Branding + Global UI
+- [ ] Company name displays as "VENOM Solutions" throughout client area
+- [ ] Navigation shows only: Home, Pricing (Store), Knowledgebase, Support, Client Area
+- [ ] Domains menu is hidden/removed
+- [ ] Affiliates menu is hidden/removed
+- [ ] Network Status menu is hidden/removed
+- [ ] Downloads menu is hidden/removed
+- [ ] "Services" renamed to "Licenses" in navigation
+- [ ] Footer includes links to: Terms, Privacy, Refund Policy, Acceptable Use
+- [ ] Footer includes "Software Only · No Content Included" disclaimer
+
+### Order Flow Simplification
+- [ ] Store shows only "Licenses" product group
+- [ ] Only 2 products visible: Demo License (pid=3) and Main License (pid=1)
+- [ ] No domain registration/transfer options appear during checkout
+- [ ] Product descriptions are accurate:
+  - Main: $100/mo includes 1 free Load Balancer; additional LBs $10/mo each
+  - Demo: $50 one-time, valid 7 days, upgrade available
+
+### Legal/Trust Pages
+- [ ] /terms-of-service.php loads and displays Terms of Service
+- [ ] /privacy-policy.php loads and displays Privacy Policy
+- [ ] /refund-policy.php loads and displays Refund Policy
+- [ ] /acceptable-use.php loads and displays Acceptable Use Policy
+- [ ] All legal pages use consistent WHMCS template styling
+- [ ] Footer links to all legal pages work correctly
+
+### Client Area Home (Portal)
+- [ ] Portal home shows only: Licenses, Support Tickets, Invoices, Knowledgebase tiles
+- [ ] Domain-related widgets are removed
+- [ ] "My Services" displays as "My Licenses"
+- [ ] No Network Status or Downloads widgets appear
+
+### Landing Page Integration
+- [ ] /landing.php loads correctly
+- [ ] Landing page has consistent dark theme with WHMCS
+- [ ] CTA "Start Demo" links to /cart.php?a=add&pid=3
+- [ ] CTA "Buy Main License" links to /cart.php?a=add&pid=1
+- [ ] Trust content blocks are present (Software Only, Abuse Policy, Independent Portal)
+- [ ] Footer includes legal page links
+- [ ] Footer includes software-only disclaimer
+
+---
+
 ## Functional Checklist
 
 - [ ] Demo purchase (`pid=3`) sets `nextduedate = activation/regdate + 7 days`
