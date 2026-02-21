@@ -1,0 +1,101 @@
+# ==============================================================
+# WHMCS Production .gitignore
+# ==============================================================
+
+
+# --------------------------------------------------------------
+# Sensitive Configuration
+# Keep configuration.sample.php as a reference template
+# --------------------------------------------------------------
+configuration.php
+
+
+# --------------------------------------------------------------
+# Compiled Templates Cache (auto-generated at runtime)
+# Keep the directory structure with its protection files
+# --------------------------------------------------------------
+templates_c/*
+!templates_c/.htaccess
+!templates_c/index.php
+
+
+# --------------------------------------------------------------
+# User Uploaded & Runtime Content
+# --------------------------------------------------------------
+attachments/*
+!attachments/.htaccess
+!attachments/index.php
+
+downloads/*
+!downloads/.htaccess
+!downloads/index.php
+
+
+# --------------------------------------------------------------
+# WHMCS Logs & Storage
+# --------------------------------------------------------------
+/storage/
+/resources/logs/
+/resources/sessions/
+*.log
+activity.log
+gateway.log
+module.log
+
+
+# --------------------------------------------------------------
+# OS Generated Files
+# --------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+
+# --------------------------------------------------------------
+# IDE & Editor Files
+# --------------------------------------------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.editorconfig
+
+
+# --------------------------------------------------------------
+# Development & AI Tools
+# --------------------------------------------------------------
+.claude/
+.kilocode/
+.env
+.env.local
+.env.*.local
+
+
+# --------------------------------------------------------------
+# Node.js (if used for asset building)
+# --------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+
+# --------------------------------------------------------------
+# Archive & Backup Files
+# --------------------------------------------------------------
+*.zip
+*.tar.gz
+*.rar
+*.bak
+*.backup
+*.sql.gz
