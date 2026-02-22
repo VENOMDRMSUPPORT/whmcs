@@ -3,7 +3,7 @@
 <link href="{assetPath file='all.min.css'}?v={$versionHash}" rel="stylesheet">
 <link href="{assetPath file='theme.min.css'}?v={$versionHash}" rel="stylesheet">
 <link href="{$WEB_ROOT}/assets/css/fontawesome-all.min.css" rel="stylesheet">
-<link href="{$WEB_ROOT}/templates/twenty-one/css/custom.css?v=5" rel="stylesheet">
+<link href="{$WEB_ROOT}/templates/twenty-one/css/custom.css?v=7" rel="stylesheet">
 {assetExists file="custom.css"}
 <link href="{$__assetPath__}" rel="stylesheet">
 {/assetExists}

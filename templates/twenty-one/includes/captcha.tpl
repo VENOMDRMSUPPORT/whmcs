@@ -7,18 +7,16 @@
         {if $captcha == "recaptcha"}
             <div id="google-recaptcha-domainchecker" class="form-group recaptcha-container mx-auto"></div>
         {elseif !in_array($captcha, ['invisible', 'recaptcha'])}
-            <div class="col-md-8 mx-auto mb-3 mb-sm-0">
-                <div id="default-captcha-domainchecker" class="{if $filename == 'domainchecker'}input-group input-group-box {/if}text-center row pb-3">
-                    <p>{lang key="captchaverify"}</p>
-
-                    <div class="col-6 captchaimage">
-                        <img id="inputCaptchaImage" data-src="{$systemurl}includes/verifyimage.php" src="{$systemurl}includes/verifyimage.php" align="middle" />
-                    </div>
-
-                    <div class="col-6">
-                        <input id="inputCaptcha" type="text" name="code" maxlength="6" class="form-control {if $filename == 'register'}float-left{/if}"
-                               data-toggle="tooltip" data-placement="right" data-trigger="manual" title="{lang key='orderForm.required'}"/>
-                    </div>
+            <div id="default-captcha-domainchecker" class="{if $filename == 'domainchecker'}input-group input-group-box {/if}venom-captcha-row">
+                <div class="venom-captcha-img-box captchaimage">
+                    <img id="inputCaptchaImage" data-src="{$systemurl}includes/verifyimage.php" src="{$systemurl}includes/verifyimage.php" />
+                </div>
+                <div class="venom-captcha-input-box">
+                    <input id="inputCaptcha" type="text" name="code" maxlength="6"
+                           class="form-control {if $filename == 'register'}float-left{/if}"
+                           placeholder="_ _ _ _ _ _"
+                           autocomplete="off"
+                           data-toggle="tooltip" data-placement="right" data-trigger="manual" title="{lang key='orderForm.required'}"/>
                 </div>
             </div>
         {/if}

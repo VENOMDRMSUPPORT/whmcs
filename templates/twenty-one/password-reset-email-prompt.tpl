@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    {if $captcha->isEnabled()}
+    {if $captcha->isEnabled() && $captcha->isEnabledForForm('passwordReset')}
         <div class="venom-captcha-wrap">
             <div class="venom-captcha-block">
                 {include file="$template/includes/captcha.tpl" captchaForm='passwordReset' nocache}

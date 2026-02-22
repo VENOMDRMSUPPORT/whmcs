@@ -98,7 +98,7 @@
                     </div>
 
                     {* CAPTCHA (if enabled) *}
-                    {if $captcha->isEnabled()}
+                    {if $captcha->isEnabled() && $captcha->isEnabledForForm('clientLogin')}
                         <div class="venom-captcha-wrap">
                             <div class="venom-captcha-block">
                                 {include file="$template/includes/captcha.tpl" captchaForm='clientLogin' nocache}

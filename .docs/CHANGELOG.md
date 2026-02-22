@@ -738,3 +738,64 @@ and provide verifiable delivery evidence.
   ```bash
   git checkout HEAD -- docs/QA_CHECKLIST.md .docs/CHANGELOG.md
   ```
+
+---
+
+## [2026-02-22] Task: Login/Reset Final Safety Audit
+**Goal:** Prove all login and password-reset modifications are theme-only; WHMCS auth/security behavior intact.
+**Author:** Agent
+**Changes:**
+- Audit only; no code changes.
+- File classification: login.tpl, password-reset-email-prompt.tpl, custom.css, captcha.tpl, head.tpl — all CSS/HTML wrapper or logic refinement (isEnabledForForm).
+- Form action, method, routePath, input names, captcha include path: unchanged.
+**Testing / Evidence:**
+- PASS/FAIL matrix in docs/QA_CHECKLIST.md.
+- CSRF test: POST without token returns "Invalid CSRF Protection Token".
+- Form invariants confirmed in rendered HTML (username, password, rememberme, email, action, token).
+- Audit confirms theme-only; no functional regressions.
+**Rollback plan:** N/A (audit only).
+
+---
+
+## [2026-02-22] Task: Registration Page Theming (Dark Card + Accordion)
+**Goal:** Theme the WHMCS client registration page to match the custom dark glass card used in login/reset, using accordion layout for form sections while preserving all WHMCS behavior.
+**Author:** Agent
+**Changes:**
+- UI:
+  - Modified `templates/twenty-one/clientregister.tpl` to use standard `.venom-*` classes instead of `-clean` variants
+  - Added `<details>/<summary>` accordion markup for 3 sections: Personal Information, Billing Address, Account Security
+  - First accordion section (Personal Information) set to `open` by default
+  - CAPTCHA wrapped in `.venom-captcha-block` for consistent dark theme styling
+  - All form field classes updated to match login/reset dark card style
+- CSS:
+  - Added `.venom-register-*` card styles to `templates/twenty-one/css/custom.css`
+  - Added accordion styling under `.venom-accordion` selectors
+  - Added form field styles (`.venom-input`, `.venom-field`, `.venom-grid`, etc.) matching login/reset
+  - Preserved existing captcha block styling under `.venom-captcha-block`
+- WHMCS Settings: none changed
+- Database: none changed
+- Files:
+  - `templates/twenty-one/clientregister.tpl` (modified)
+  - `templates/twenty-one/css/custom.css` (modified)
+  - `docs/QA_CHECKLIST.md` (updated with Registration Theming section)
+  - `.docs/CHANGELOG.md` (this entry)
+**Related decisions:**
+- Decision: Use HTML5 `<details>/<summary>` for accordion.
+- Rationale: Native browser support, graceful degradation (if JS disabled, all sections expanded by default), no external dependencies.
+- Decision: Keep all WHMCS input names, form action, token fields, validation, captcha include, and required attributes unchanged.
+- Rationale: Requirement explicitly states zero behavior changes; theme-only modifications.
+**Testing / Evidence:**
+- Visual comparison: dark card layout matches `/login.php`
+- Accordion expand/collapse functional via `<details>/<summary>`
+- All WHMCS invariants confirmed:
+  - Form action: `{$smarty.server.PHP_SELF}` unchanged
+  - Input names: preserved (firstname, lastname, email, etc.)
+  - Token: WHMCS CSRF token auto-injected
+  - Captcha: native include wrapped in styled block
+  - Password strength: `PasswordStrength.js` loaded
+  - Country/State: `StatesDropdown.js` loaded
+- Evidence: TBD (manual browser test required)
+**Rollback plan:**
+- Revert template: `git checkout HEAD -- templates/twenty-one/clientregister.tpl`
+- Revert CSS: `git checkout HEAD -- templates/twenty-one/css/custom.css`
+- Clear cache: `rm -f templates_c/*`

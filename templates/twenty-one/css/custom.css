@@ -196,7 +196,7 @@
 
 /* ── Prevent scrollbars on html/body ── */
 html:has(body .venom-auth-page) {
-  overflow: hidden;
+  overflow: auto;
   height: 100%;
 }
 
@@ -210,19 +210,17 @@ body:has(.venom-auth-page) #footer {
 
 body:has(.venom-auth-page) {
   background: #020205;
-  height: 100vh;
-  height: 100dvh;
   min-height: 100vh;
   min-height: 100dvh;
-  overflow: hidden;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 body:has(.venom-auth-page) #main-body {
   padding: 0 !important;
   margin: 0 !important;
   min-height: 0 !important;
-  overflow: hidden !important;
+  overflow: auto !important;
 }
 
 body:has(.venom-auth-page) #main-body>.container,
@@ -685,100 +683,128 @@ body:has(.venom-auth-page) #main-body>.container>.row>.primary-content {
 
 .venom-captcha-block {
   width: 100%;
-  padding: 0.5rem 0;
+  padding: 0;
 }
 
+/* Strip Bootstrap outer wrapper (text-center row) */
 .venom-captcha-block>.text-center {
-  width: 100%;
+  display: contents !important;
 }
 
-.venom-captcha-block #default-captcha-domainchecker {
+/* Two-box row container */
+.venom-captcha-row {
   display: flex !important;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  justify-content: center;
-  gap: 0;
-  margin: 0;
-  padding: 0;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  gap: 0.625rem !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+}
+
+/* ── Left box: CAPTCHA image ── */
+.venom-captcha-img-box {
+  position: relative;
+  flex: 0 0 55%;
+  height: 44px;
   border-radius: 0.75rem;
-  border: 1px solid rgba(6, 182, 212, 0.4);
   overflow: hidden;
-  background: rgba(15, 20, 40, 0.4);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.venom-captcha-block #default-captcha-domainchecker p {
-  display: none !important;
+.venom-captcha-img-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  padding: 1px;
+  background: linear-gradient(135deg, #06b6d4 0%, #818cf8 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.6;
+  z-index: 1;
 }
 
-.venom-captcha-block .col-md-8 {
+.venom-captcha-img-box img,
+.venom-captcha-img-box #inputCaptchaImage {
   width: 100%;
-  max-width: 100%;
-  padding: 0;
-}
-
-.venom-captcha-block .captchaimage {
-  flex: 0 0 130px;
-  max-width: 130px;
-  padding: 0;
-  background: #fff;
-  border-right: 1px solid rgba(6, 182, 212, 0.4);
-}
-
-.venom-captcha-block .captchaimage img,
-.venom-captcha-block #inputCaptchaImage {
+  height: 100%;
+  object-fit: fill;
   display: block;
-  width: 100%;
-  height: 48px;
-  object-fit: contain;
   border: none;
-  border-radius: 0;
   background: transparent;
+  padding: 3px 5px;
+  position: relative;
+  z-index: 0;
 }
 
-.venom-captcha-block .col-6:last-child {
-  flex: 1;
-  min-width: 0;
-  padding: 0;
+/* ── Right box: text input ── */
+.venom-captcha-input-box {
+  flex: 0 0 calc(45% - 0.625rem);
+  position: relative;
+  display: block;
 }
 
+.venom-captcha-input-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  padding: 1px;
+  background: linear-gradient(135deg, #06b6d4 0%, #818cf8 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.7;
+  z-index: 1;
+}
+
+/* Input field */
 .venom-captcha-block #inputCaptcha {
-  width: 100%;
-  height: 48px;
-  min-height: auto;
-  padding: 0 1rem;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  color: #fff;
-  font-size: 1.125rem;
-  font-weight: 500;
-  text-align: center;
-  letter-spacing: 3px;
-  outline: none;
-  box-shadow: none;
-  transition: all 0.3s ease;
+  width: 100% !important;
+  height: 44px !important;
+  padding: 0 0.5rem !important;
+  background: rgba(30, 41, 59, 0.5) !important;
+  border: none !important;
+  border-radius: 0.75rem !important;
+  font-size: 1.05rem !important;
+  color: #f0f4f8 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: background 0.2s ease !important;
+  position: relative !important;
+  z-index: 1 !important;
+  text-align: center !important;
+  letter-spacing: 5px !important;
+  line-height: 44px !important;
+  font-family: 'Courier New', monospace !important;
+  font-weight: 700 !important;
 }
 
 .venom-captcha-block #inputCaptcha:focus {
-  background: rgba(6, 182, 212, 0.15);
+  background: rgba(30, 41, 59, 0.75) !important;
+}
+
+.venom-captcha-block #inputCaptcha::placeholder {
+  color: #4a5a6a;
+  letter-spacing: 3px;
+  font-size: 0.75rem;
+  font-weight: 400;
 }
 
 .venom-captcha-block .recaptcha-container {
   margin: 0 auto;
-}
-
-@media (max-width: 480px) {
-  .venom-captcha-block #default-captcha-domainchecker {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .venom-captcha-block .captchaimage,
-  .venom-captcha-block .col-6:last-child {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
 }
 
 /* ── Card footer ── */
@@ -842,4 +868,584 @@ body:has(.venom-auth-page) #main-body>.container>.row>.primary-content {
   .venom-glass-card {
     padding: 1.5rem 1.25rem;
   }
+}
+
+/* =============================================================================
+   REGISTRATION PAGE EXTENSIONS
+   Matches the login/reset dark glass card style.
+   ============================================================================= */
+
+/* Main layout wrapper overrides for Registration specifically, although venom-auth-page shares them */
+.venom-register-motion {
+  max-width: 600px;
+  /* Slightly wider for 2-column forms */
+}
+
+.venom-register-card {
+  padding: 2.5rem 2rem;
+}
+
+/* Accordion Form Layout */
+.venom-form-wrap {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.venom-accordion {
+  background: rgba(15, 20, 40, 0.4);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.venom-accordion:hover {
+  border-color: rgba(6, 182, 212, 0.4);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.05);
+}
+
+.venom-accordion[open] {
+  background: rgba(15, 20, 40, 0.6);
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.1);
+}
+
+.venom-accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  color: #f0f4f8;
+  list-style: none;
+  /* Hide default triangle */
+}
+
+/* Hide default marker in WebKit */
+.venom-accordion-header::-webkit-details-marker {
+  display: none;
+}
+
+.venom-accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+}
+
+.venom-accordion-icon {
+  color: #06b6d4;
+  font-size: 1.1rem;
+  width: 1.25rem;
+  text-align: center;
+}
+
+.venom-accordion-arrow {
+  color: #8899aa;
+  transition: transform 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.venom-accordion[open] .venom-accordion-arrow {
+  transform: rotate(180deg);
+  color: #06b6d4;
+}
+
+.venom-accordion-body {
+  padding: 0 1.25rem 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  animation: venom-accordion-fadein 0.3s ease;
+}
+
+@keyframes venom-accordion-fadein {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Form Layout Grid */
+.venom-field-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.venom-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Full width fields */
+.venom-field.col-full {
+  grid-column: 1 / -1;
+}
+
+/* For Custom Fields (radio/checkbox wrappers) */
+.venom-custom-field-control {
+  color: #c8d8e8;
+  font-size: 0.875rem;
+}
+
+.venom-custom-field-control input[type="text"],
+.venom-custom-field-control input[type="password"],
+.venom-custom-field-control select,
+.venom-custom-field-control textarea {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  color: #f0f4f8;
+  outline: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.venom-custom-field-control input:focus,
+.venom-custom-field-control select:focus,
+.venom-custom-field-control textarea:focus {
+  background: rgba(30, 41, 59, 0.7);
+  border-color: rgba(6, 182, 212, 0.4);
+}
+
+.venom-field-help-text {
+  display: block;
+  font-size: 0.75rem;
+  color: #8899aa;
+  margin-top: 0.25rem;
+}
+
+/* Select overrides */
+select.venom-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238899aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+select.venom-select option {
+  background-color: #0b1120;
+  color: #f0f4f8;
+}
+
+/* Password Meter Layout */
+.venom-pw-meter-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.venom-btn-outline {
+  padding: 0.625rem 1.25rem;
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 0.5rem;
+  color: #06b6d4;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.venom-btn-outline:hover {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: #06b6d4;
+  color: #fff;
+}
+
+.venom-pw-meter {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-top: 0;
+}
+
+.venom-pw-label {
+  font-size: 0.75rem;
+  color: #8899aa;
+  margin: 0;
+  text-align: right;
+}
+
+.venom-progress {
+  height: 6px;
+  background: rgba(30, 41, 59, 0.6);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Others */
+.venom-marketing-optin,
+.venom-tos-wrap {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.15);
+  border-radius: 0.75rem;
+}
+
+.venom-marketing-optin .venom-checkbox-label,
+.venom-tos-wrap .venom-checkbox-label {
+  align-items: flex-start;
+}
+
+.venom-marketing-optin .venom-checkbox-input,
+.venom-tos-wrap .venom-checkbox-input {
+  margin-top: 0.125rem;
+}
+
+.venom-link {
+  color: #06b6d4;
+  text-decoration: none;
+}
+
+.venom-link:hover {
+  text-decoration: underline;
+}
+
+.venom-form-actions {
+  margin-top: 1.5rem;
+}
+
+/* Responsive Grid */
+@media (max-width: 640px) {
+  .venom-field-group {
+    grid-template-columns: 1fr;
+  }
+
+  .venom-pw-meter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .venom-btn-outline {
+    width: 100%;
+  }
+
+  .venom-pw-label {
+    text-align: center;
+  }
+}
+
+/* =============================================================================
+   REGISTRATION PAGE - ACCORDION LAYOUT
+   Matches the login/reset dark glass card style.
+   ============================================================================= */
+
+/* Registration page specific overrides */
+.venom-register-center {
+  padding: 2rem 1rem;
+}
+
+.venom-register-motion {
+  width: 100%;
+  max-width: 700px;
+  animation: venom-login-fadein 0.5s ease forwards;
+}
+
+.venom-register-card {
+  padding: 2rem 1.75rem;
+}
+
+/* Form wrap */
+.venom-form-wrap {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+/* Grid layout for form fields */
+.venom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.venom-grid .venom-field.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Responsive grid */
+@media (max-width: 540px) {
+  .venom-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .venom-register-card {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+/* Section styling within accordion */
+.venom-section {
+  padding: 0;
+}
+
+/* Input fields */
+.venom-input {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  color: #f0f4f8;
+  outline: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.venom-input:focus {
+  background: rgba(30, 41, 59, 0.7);
+  border-color: rgba(6, 182, 212, 0.4);
+}
+
+.venom-input::placeholder {
+  color: #4a5a6a;
+}
+
+/* Input with gradient border wrapper */
+.venom-input-wrap {
+  position: relative;
+}
+
+.venom-input-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  padding: 1px;
+  background: linear-gradient(135deg, #06b6d4 0%, #818cf8 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.venom-input-wrap .venom-input {
+  position: relative;
+  z-index: 2;
+}
+
+/* Password toggle */
+.venom-pw-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #8899aa;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.venom-pw-toggle:hover {
+  color: #06b6d4;
+}
+
+/* Select styling */
+.venom-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238899aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.venom-select option {
+  background-color: #0b1120;
+  color: #f0f4f8;
+}
+
+/* Field labels */
+.venom-field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #c8d8e8;
+  margin-bottom: 0.5rem;
+}
+
+.venom-field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.venom-field-header label {
+  margin-bottom: 0;
+}
+
+.venom-link {
+  color: #06b6d4;
+  text-decoration: none;
+  font-size: 0.8125rem;
+  transition: opacity 0.2s;
+}
+
+.venom-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* Password strength meter */
+.venom-pw-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.venom-pw-meter .progress {
+  height: 6px;
+  background: rgba(30, 41, 59, 0.6);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.venom-pw-meter .progress-bar {
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* Alert styling */
+.venom-alert {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: rgba(6, 182, 212, 0.1);
+  color: #c8d8e8;
+  font-size: 0.8125rem;
+  margin-bottom: 1rem;
+}
+
+/* Custom field controls */
+.venom-custom-field-control {
+  color: #c8d8e8;
+  font-size: 0.875rem;
+}
+
+.venom-custom-field-control input[type="text"],
+.venom-custom-field-control input[type="password"],
+.venom-custom-field-control select,
+.venom-custom-field-control textarea {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  color: #f0f4f8;
+  outline: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.venom-custom-field-control input:focus,
+.venom-custom-field-control select:focus,
+.venom-custom-field-control textarea:focus {
+  background: rgba(30, 41, 59, 0.7);
+  border-color: rgba(6, 182, 212, 0.4);
+}
+
+.venom-field-help {
+  display: block;
+  font-size: 0.75rem;
+  color: #8899aa;
+  margin-top: 0.25rem;
+}
+
+/* Checkbox styling */
+.venom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  border-radius: 0.25rem;
+  background: rgba(30, 41, 59, 0.5);
+  display: grid;
+  place-content: center;
+  margin: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.venom-checkbox::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em #06b6d4;
+  background-color: #06b6d4;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.venom-checkbox:checked {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: #06b6d4;
+}
+
+.venom-checkbox:checked::before {
+  transform: scale(1);
+}
+
+/* Opt-in / Terms sections */
+.venom-optin {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: rgba(6, 182, 212, 0.05);
+  border: 1px solid rgba(6, 182, 212, 0.15);
+  border-radius: 0.75rem;
+}
+
+.venom-optin .venom-checkbox-label {
+  align-items: flex-start;
+}
+
+.venom-optin .venom-checkbox {
+  margin-top: 0.125rem;
+}
+
+/* Text colors */
+.venom-text-muted {
+  color: #8899aa;
+}
+
+.venom-text-bright {
+  color: #f0f4f8;
+}
+
+/* Form actions */
+.venom-form-actions {
+  margin-top: 1.5rem;
+}
+
+/* Card footer */
+.venom-card-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
 }
