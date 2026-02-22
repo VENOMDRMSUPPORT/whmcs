@@ -14,6 +14,10 @@ $loggedIn = !empty($_SESSION['uid']) && (int) $_SESSION['uid'] > 0;
 $authHref = '/clientarea.php';
 $authLabel = $loggedIn ? 'Client Area' : 'Sign In';
 $authClass = $loggedIn ? 'btn btn-primary nav-btn' : 'btn btn-outline nav-btn';
+$demoPid = 3;
+$mainPid = 1;
+$demoCtaHref = '/cart.php?a=add&pid=' . $demoPid;
+$mainCtaHref = '/cart.php?a=add&pid=' . $mainPid;
 ?>
 <!DOCTYPE html>
 <html lang="en" class="dark">
@@ -100,11 +104,11 @@ $authClass = $loggedIn ? 'btn btn-primary nav-btn' : 'btn btn-outline nav-btn';
           <strong>portal URL</strong>, <strong>license key</strong>, and <strong>login credentials</strong> to start managing your servers.
         </p>
         <div class="hero-ctas fade-in delay-300">
-          <a href="/cart.php?a=add&pid=1" class="btn btn-primary btn-lg hero-cta-primary">
+          <a href="<?php echo htmlspecialchars($mainCtaHref); ?>" class="btn btn-primary btn-lg hero-cta-primary">
             Purchase Main License
             <i data-lucide="arrow-right" width="20" height="20"></i>
           </a>
-          <a href="/cart.php?a=add&pid=3" class="btn btn-ghost btn-lg hero-cta-secondary">
+          <a href="<?php echo htmlspecialchars($demoCtaHref); ?>" class="btn btn-ghost btn-lg hero-cta-secondary">
             <i data-lucide="play" width="20" height="20"></i>
             Start 7‑Day Demo — $50
           </a>
@@ -226,7 +230,7 @@ $authClass = $loggedIn ? 'btn btn-primary nav-btn' : 'btn btn-outline nav-btn';
                 <span class="pricing-feature-text">Upgrade anytime</span>
               </li>
             </ul>
-            <a href="/cart.php?a=add&pid=3" class="btn btn-outline pricing-btn">Start Demo</a>
+            <a href="<?php echo htmlspecialchars($demoCtaHref); ?>" class="btn btn-outline pricing-btn">Start Demo</a>
           </div>
           <div class="pricing-card glass-card-hover popular gradient-border fade-in delay-100">
             <div class="pricing-badge">
@@ -253,7 +257,7 @@ $authClass = $loggedIn ? 'btn btn-primary nav-btn' : 'btn btn-outline nav-btn';
                 <span class="pricing-feature-text">Monthly / Quarterly / Semi‑Annual / Annual billing</span>
               </li>
             </ul>
-            <a href="/cart.php?a=add&pid=1" class="btn btn-primary pricing-btn">Purchase Main License</a>
+            <a href="<?php echo htmlspecialchars($mainCtaHref); ?>" class="btn btn-primary pricing-btn">Purchase Main License</a>
           </div>
           <div class="pricing-card glass-card-hover fade-in delay-200">
             <h3 class="pricing-name">Enterprise</h3>
@@ -350,8 +354,8 @@ $authClass = $loggedIn ? 'btn btn-primary nav-btn' : 'btn btn-outline nav-btn';
           </div>
         </div>
         <div class="licensing-cta fade-in delay-400">
-          <a href="/cart.php?a=add&pid=3" class="btn btn-outline btn-lg">Start 7‑Day Demo</a>
-          <a href="/cart.php?a=add&pid=1" class="btn btn-primary btn-lg">Purchase Main License</a>
+          <a href="<?php echo htmlspecialchars($demoCtaHref); ?>" class="btn btn-outline btn-lg">Start 7‑Day Demo</a>
+          <a href="<?php echo htmlspecialchars($mainCtaHref); ?>" class="btn btn-primary btn-lg">Purchase Main License</a>
         </div>
       </div>
     </section>

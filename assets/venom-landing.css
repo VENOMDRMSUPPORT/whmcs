@@ -2139,6 +2139,19 @@
     .hero-content { min-width: 0; }
     .btn { max-width: 100%; }
 
+    body.landing a:focus-visible,
+    body.landing button:focus-visible {
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.35) !important;
+      border-radius: 0.5rem;
+    }
+
+    @media (max-width: 380px) {
+      .hero-ctas {
+        gap: 0.625rem;
+      }
+    }
+
     /* Screenshot-friendly: pause animations to prevent ghosting/duplication */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
