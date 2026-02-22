@@ -207,3 +207,43 @@ Verify all items below pass before considering the UI Fix Pack merged to product
 - [ ] 2Checkout payment activity log IDs captured for test transactions
 - [ ] Tunnel URL documented and IPN callback evidence captured
 - [ ] TCO gateway transaction records from `tblaccounts` captured
+
+---
+
+## Login/Reset Regression Re-Audit (2026-02-22)
+
+### Scope
+- [x] `templates/twenty-one/login.tpl` has `rememberme` checkbox inside POST form
+- [x] `templates/twenty-one/login.tpl` uses native captcha include with login form mapping
+- [x] `templates/twenty-one/password-reset-email-prompt.tpl` uses native captcha include with reset form mapping
+
+### Post-Fix Audit Table
+| Check | Result | Evidence |
+|---|---|---|
+| Remember Me present and posted as `rememberme` | PASS | Source: `templates/twenty-one/login.tpl` + rendered HTML grep (shows `name="rememberme"`) |
+| Login captcha visible when enabled | PASS | Screenshot: `audit/login-captcha-visible.png`; rendered HTML includes `#default-captcha-domainchecker` |
+| Reset captcha visible when enabled | PASS | Screenshot: `audit/reset-captcha-visible.png`; rendered HTML includes `#default-captcha-domainchecker` |
+| Successful login redirect chain | PASS | `POST /index.php?rp=/login` -> `302 Location: clientarea.php`; follow-up `GET /clientarea.php` -> `200` |
+| Successful login Activity Log ID | FAIL (not emitted in this environment) | No new `tblactivitylog` row created by successful login flow |
+| Captcha failure validation event log ID | FAIL (not emitted in this environment) | Captcha mismatch validated on contact flow UI; no `tblactivitylog` row emitted for captcha mismatch |
+
+### Evidence IDs / Artifacts
+- Activity log (mail failure during reset request): IDs `421`, `422`, `423`, `424`
+- Login success transport evidence: `/tmp/venom_test_headers.txt` and `/tmp/venom_login_resp_headers.txt`
+- Captcha mismatch UI evidence: `/tmp/contact_resp.html` contains: `The characters you entered didn't match the image shown. Please try again.`
+
+### CAPTCHA UI Cleanup (2026-02-22)
+- [x] Login captcha wrapped in scoped block container (`.venom-captcha-block`) while keeping native include.
+- [x] Reset captcha wrapped in scoped block container (`.venom-captcha-block`) while keeping native include.
+- [x] Scoped CSS overrides added only under `.venom-captcha-block` (no global captcha override).
+- [x] Desktop layout normalized to aligned two-column captcha row (image + input).
+- [x] Mobile layout stacks captcha image/input under 480px.
+- [x] Form invariants preserved:
+  - Login action/method unchanged (`POST` to `/index.php?rp=/login`)
+  - Reset action/method unchanged (`POST` to `/index.php?rp=/password/reset`)
+  - Token fields unchanged
+  - Field names unchanged: `username`, `password`, `rememberme`, `email`, `action=reset`
+
+### CAPTCHA UI Artifacts
+- Login themed screenshot: `audit/login-captcha-themed-after.png`
+- Reset themed screenshot: `audit/reset-captcha-themed-after.png`

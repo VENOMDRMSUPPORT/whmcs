@@ -17,6 +17,9 @@ configuration.php
 templates_c/*
 !templates_c/.htaccess
 !templates_c/index.php
+compiled_templates/*
+!compiled_templates/.htaccess
+!compiled_templates/index.php
 
 
 # --------------------------------------------------------------
@@ -34,7 +37,11 @@ downloads/*
 # --------------------------------------------------------------
 # WHMCS Logs & Storage
 # --------------------------------------------------------------
-/storage/
+/storage/*
+!/storage/compiled_templates/
+/storage/compiled_templates/*
+!/storage/compiled_templates/.htaccess
+!/storage/compiled_templates/index.php
 /resources/logs/
 /resources/sessions/
 *.log
@@ -77,6 +84,12 @@ desktop.ini
 .env
 .env.local
 .env.*.local
+
+
+# --------------------------------------------------------------
+# Audit & Testing Artifacts
+# --------------------------------------------------------------
+audit/
 
 
 # --------------------------------------------------------------

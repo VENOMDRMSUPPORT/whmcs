@@ -640,3 +640,101 @@ and provide verifiable delivery evidence.
   ```bash
   git checkout HEAD -- docs/QA_CHECKLIST.md
   ```
+
+---
+
+## [2026-02-22] Task: Login/Reset Regression Fix + Re-Audit
+**Goal:** Fix themed login/reset regressions (missing remember me, captcha rendering gap, login success proof) using template-only changes (plus diagnostics), then rerun audit with evidence.
+**Author:** Agent
+**Changes:**
+- UI:
+  - Restored Remember Me field on the themed login form with stock-compatible semantics and required input name `rememberme`.
+  - Restored native captcha rendering in themed login and password-reset email prompt templates by using the WHMCS native captcha include with explicit form mapping.
+- WHMCS Settings (runtime test state in DB):
+  - Captcha was toggled/enabled during audit to verify rendering behavior in login/reset flow.
+  - ReCAPTCHA form mapping was normalized to include login/password-reset/contact/registration during test verification.
+- Files:
+  - `templates/twenty-one/login.tpl` (modified)
+  - `templates/twenty-one/password-reset-email-prompt.tpl` (modified)
+  - `docs/QA_CHECKLIST.md` (updated with re-audit table and evidence)
+  - `.docs/CHANGELOG.md` (this entry)
+**Related decisions:**
+- Decision: Use `captchaForm='clientLogin'` for themed login and `captchaForm='passwordReset'` for reset email prompt.
+- Rationale: In this WHMCS runtime, `clientLogin` is the recognized form key for login captcha enablement; this is the minimal fix that restores native captcha rendering without core modifications.
+- Decision: Keep route/input/token semantics untouched except restoring stock-equivalent `rememberme` and native captcha include usage.
+- Rationale: Requirement forbids core route/token logic changes.
+**Testing / Evidence:**
+- Login Remember Me present in rendered HTML (`name="rememberme"`).
+- Login captcha rendered (default captcha image block appears under login form).
+- Reset captcha rendered (default captcha image block appears under reset email prompt form).
+- Login success proof captured:
+  - `POST /index.php?rp=/login` responded `302 Location: clientarea.php`
+  - Follow-up `GET /clientarea.php` responded `200 OK`
+- Evidence screenshots:
+  - `audit/login-captcha-visible.png`
+  - `audit/reset-captcha-visible.png`
+- Activity log IDs observed in audit window:
+  - `421`, `422`, `423`, `424` (password reset request failures due to local mail transport)
+- Note:
+  - This environment does not emit a dedicated `tblactivitylog` row for successful client login or captcha mismatch for the tested paths; redirect/cookie/header chain is used as login success proof, while captcha mismatch message was verified in rendered response on contact flow.
+**Rollback plan:**
+- Revert themed template changes:
+  ```bash
+  git checkout HEAD -- templates/twenty-one/login.tpl templates/twenty-one/password-reset-email-prompt.tpl
+  ```
+- Revert QA/changelog documentation updates:
+  ```bash
+  git checkout HEAD -- docs/QA_CHECKLIST.md .docs/CHANGELOG.md
+  ```
+
+---
+
+## [2026-02-22] Task: CAPTCHA UI Cleanup (Dark Theme Alignment)
+**Goal:** Keep WHMCS-native captcha behavior unchanged while making captcha layout/styling visually consistent with the custom dark auth card on login and password reset pages.
+**Author:** Agent
+**Changes:**
+- UI:
+  - Added scoped wrapper `.venom-captcha-block` around existing native captcha include in:
+    - login form
+    - password reset email prompt form
+  - Added scoped CSS overrides under `.venom-captcha-block` only to normalize:
+    - spacing and typography
+    - image/input alignment on desktop
+    - mobile stacking under 480px
+    - input look to match auth input style
+  - Preserved native include and captcha internals (no custom captcha HTML replacement).
+- WHMCS Settings: none changed for this UI task.
+- Database: none changed for this UI task.
+- Files:
+  - `templates/twenty-one/login.tpl` (modified)
+  - `templates/twenty-one/password-reset-email-prompt.tpl` (modified)
+  - `templates/twenty-one/css/custom.css` (modified)
+  - `docs/QA_CHECKLIST.md` (updated)
+  - `.docs/CHANGELOG.md` (this entry)
+**Related decisions:**
+- Decision: Do not edit `includes/captcha.tpl`; style through parent wrapper only.
+- Rationale: Maintain stock WHMCS captcha behavior and upgrade compatibility.
+- Decision: Scope selectors to `.venom-captcha-block`.
+- Rationale: Prevent side effects on non-auth pages and other captcha usages.
+**Testing / Evidence:**
+- Visual evidence:
+  - `audit/login-captcha-themed-after.png`
+  - `audit/reset-captcha-themed-after.png`
+- Invariant checks (confirmed unchanged):
+  - login form action/method still `POST` to `/index.php?rp=/login`
+  - reset form action/method still `POST` to `/index.php?rp=/password/reset`
+  - token fields present
+  - field names unchanged: `username`, `password`, `rememberme`, `email`, `action`
+- Functional note in this environment:
+  - login flow still succeeds with 302 -> `clientarea.php`
+  - reset request still reaches requested state; local mail transport limitation remains unchanged from prior audit
+  - no captcha-specific Activity Log row emission observed in `tblactivitylog` for tested requests
+**Rollback plan:**
+- Revert UI cleanup templates and CSS:
+  ```bash
+  git checkout HEAD -- templates/twenty-one/login.tpl templates/twenty-one/password-reset-email-prompt.tpl templates/twenty-one/css/custom.css
+  ```
+- Revert documentation updates:
+  ```bash
+  git checkout HEAD -- docs/QA_CHECKLIST.md .docs/CHANGELOG.md
+  ```

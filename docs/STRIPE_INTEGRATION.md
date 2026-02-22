@@ -246,7 +246,7 @@ ORDER BY id DESC LIMIT 1;
    ```
 3. Run WHMCS cron:
    ```bash
-   /home/venom/bin/php8.1 -q /home/venom/workspace/venom-drm.test/crons/cron.php all --force -vvv
+   /home/venom/bin/php8.1 -q /home/venom/workspace/venom-drm.test/whmcs_crons/cron.php all --force -vvv
    ```
 4. Verify results
 
@@ -337,7 +337,7 @@ mysql -e "SELECT id, userid, nextduedate FROM tblhosting WHERE paymentmethod='st
 mysql -e "UPDATE tblhosting SET nextduedate=CURDATE(), nextinvoicedate=CURDATE() WHERE id=SERVICE_ID;" whmcs_db
 
 # 3. Run cron
-/home/venom/bin/php8.1 -q /home/venom/workspace/venom-drm.test/crons/cron.php all --force -vvv
+/home/venom/bin/php8.1 -q /home/venom/workspace/venom-drm.test/whmcs_crons/cron.php all --force -vvv
 
 # 4. Check results (replace CLIENT_ID)
 mysql -e "SELECT id, status, datepaid FROM tblinvoices WHERE userid=CLIENT_ID ORDER BY id DESC LIMIT 1;" whmcs_db
