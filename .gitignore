@@ -81,6 +81,7 @@ desktop.ini
 # --------------------------------------------------------------
 .claude/
 .kilocode/
+.cursor/mcp.json
 .env
 .env.local
 .env.*.local

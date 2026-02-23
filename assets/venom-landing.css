@@ -2165,3 +2165,428 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+
+    /* ========== Auth Pages - Unified Styles ========== */
+    /* These styles are shared between login, register, and password reset pages */
+    
+    /* Auth page container */
+    .venom-auth-page {
+      position: relative;
+      min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+    
+    /* Auth background - matches landing page */
+    .venom-auth-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: linear-gradient(165deg, #020205 0%, #030309 50%, #000000 100%),
+                  radial-gradient(ellipse at 50% 0%, hsl(220 50% 10% / 0.3), transparent 60%);
+      background-blend-mode: screen;
+    }
+    
+    .venom-auth-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+                  radial-gradient(circle at 80% 70%, hsl(240 100% 50% / 0.04) 0%, transparent 40%);
+    }
+    
+    /* Centering wrapper */
+    .venom-auth-center {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    
+    /* Motion wrapper for fade-in animation */
+    .venom-auth-motion {
+      width: 100%;
+      max-width: 420px;
+      animation: venom-auth-fadein 0.5s ease forwards;
+    }
+    
+    @keyframes venom-auth-fadein {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Glass card for auth pages */
+    .venom-auth-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 0.75rem;
+      background: rgba(15, 20, 40, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.08),
+                  0 0 0 1px rgba(6, 182, 212, 0.08);
+      padding: 2rem 1.75rem;
+    }
+    
+    /* Card header */
+    .venom-auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .venom-auth-logo-link {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      min-height: auto !important;
+      min-width: auto !important;
+    }
+    
+    /* Animated logo in auth card */
+    .venom-auth-card .animated-logo {
+      position: relative !important;
+      width: 64px !important;
+      height: 64px !important;
+      margin: 0 auto 1rem;
+    }
+    
+    .venom-auth-card .animated-logo-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #0891b2;
+      opacity: 0.25;
+      filter: blur(16px);
+      animation: glow-pulse 3s ease-in-out infinite;
+    }
+    
+    .venom-auth-card .animated-logo-ring-outer {
+      position: absolute;
+      inset: 6.25%;
+      border: 1.5px solid rgba(8, 145, 178, 0.5);
+      border-radius: 50%;
+      animation: spin 8s linear infinite;
+    }
+    
+    .venom-auth-card .animated-logo-ring-inner {
+      position: absolute;
+      inset: 12.5%;
+      border-top: 2px solid rgba(6, 182, 212, 0.6);
+      border-left: 2px solid rgba(6, 182, 212, 0.6);
+      border-radius: 50%;
+      animation: spin 3s linear infinite;
+    }
+    
+    .venom-auth-card .animated-logo-ring-decorative {
+      position: absolute;
+      inset: -12.5%;
+      border: 1px dashed rgba(8, 145, 178, 0.25);
+      border-radius: 50%;
+      animation: spin-reverse 12s linear infinite;
+      pointer-events: none;
+    }
+    
+    .venom-auth-card .animated-logo-inner {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #06b6d4;
+    }
+    
+    .venom-auth-card .animated-logo:hover .animated-logo-inner {
+      transform: scale(1.1) rotate(5deg);
+      transition: transform 0.3s ease;
+    }
+    
+    .venom-auth-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #f0f4f8;
+      margin: 0 0 0.5rem;
+      line-height: 1.2;
+    }
+    
+    .venom-auth-subtitle {
+      font-size: 0.875rem;
+      color: #8899aa;
+      margin: 0;
+    }
+    
+    /* Form styles */
+    .venom-auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    
+    .venom-auth-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .venom-auth-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #c8d8e8;
+      display: block;
+    }
+    
+    /* Input wrapper with gradient border */
+    .venom-auth-input-wrap {
+      position: relative;
+    }
+    
+    .venom-auth-input-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 0.75rem;
+      padding: 1px;
+      background: linear-gradient(135deg, #06b6d4 0%, #818cf8 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.7;
+      z-index: 1;
+    }
+    
+    .venom-auth-input-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8899aa;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      pointer-events: none;
+    }
+    
+    .venom-auth-input {
+      width: 100%;
+      padding: 0.625rem 1rem 0.625rem 2.5rem;
+      background: rgba(30, 41, 59, 0.5);
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      color: #f0f4f8;
+      outline: none;
+      box-shadow: none;
+      transition: background 0.2s ease;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .venom-auth-input:focus {
+      background: rgba(30, 41, 59, 0.7);
+      box-shadow: none;
+      outline: none;
+    }
+    
+    .venom-auth-input::placeholder {
+      color: #4a5a6a;
+    }
+    
+    /* Chrome autofill override */
+    .venom-auth-input:-webkit-autofill,
+    .venom-auth-input:-webkit-autofill:hover,
+    .venom-auth-input:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0 1000px rgba(20, 30, 50, 0.95) inset !important;
+      -webkit-text-fill-color: #f0f4f8 !important;
+      caret-color: #f0f4f8 !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+    
+    /* Password toggle button */
+    .venom-auth-pw-toggle {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: #8899aa;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    
+    .venom-auth-pw-toggle:hover {
+      color: #c8d8e8;
+    }
+    
+    /* Submit button */
+    .venom-auth-submit {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #0b1120;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #06b6d4 0%, #818cf8 100%);
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      margin-top: 0.25rem;
+    }
+    
+    .venom-auth-submit:hover {
+      box-shadow: 0 0 30px rgba(6, 182, 212, 0.5),
+                  0 0 60px rgba(6, 182, 212, 0.3);
+      transform: translateY(-1px);
+    }
+    
+    .venom-auth-submit:active {
+      transform: translateY(0);
+    }
+    
+    /* Checkbox */
+    .venom-auth-checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.875rem;
+      color: #c8d8e8;
+      margin: 0;
+      transition: color 0.2s;
+    }
+    
+    .venom-auth-checkbox-label:hover {
+      color: #06b6d4;
+    }
+    
+    .venom-auth-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 1.125rem;
+      height: 1.125rem;
+      border: 1px solid rgba(6, 182, 212, 0.4);
+      border-radius: 0.25rem;
+      background: rgba(30, 41, 59, 0.5);
+      display: grid;
+      place-content: center;
+      margin: 0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .venom-auth-checkbox::before {
+      content: "";
+      width: 0.65em;
+      height: 0.65em;
+      transform: scale(0);
+      transition: 120ms transform ease-in-out;
+      box-shadow: inset 1em 1em #06b6d4;
+      background-color: #06b6d4;
+      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+    
+    .venom-auth-checkbox:checked {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: #06b6d4;
+    }
+    
+    .venom-auth-checkbox:checked::before {
+      transform: scale(1);
+    }
+    
+    /* Card footer */
+    .venom-auth-footer {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.875rem;
+    }
+    
+    .venom-auth-footer-muted {
+      color: #8899aa;
+    }
+    
+    .venom-auth-footer-link {
+      color: #06b6d4;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    
+    .venom-auth-footer-link:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+    
+    /* Flash messages */
+    .venom-auth-flash .alert {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.1);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.875rem;
+      color: #f0f4f8;
+    }
+    
+    .venom-auth-flash .alert-success {
+      border-color: rgba(34, 197, 94, 0.3);
+      background: rgba(34, 197, 94, 0.1);
+    }
+    
+    .venom-auth-flash .alert-danger,
+    .venom-auth-flash .alert-error {
+      border-color: rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.1);
+    }
+    
+    .venom-auth-flash .alert-warning {
+      border-color: rgba(245, 158, 11, 0.3);
+      background: rgba(245, 158, 11, 0.1);
+    }
+    
+    .venom-auth-flash .alert-info {
+      border-color: rgba(6, 182, 212, 0.3);
+      background: rgba(6, 182, 212, 0.1);
+    }
+    
+    /* Responsive */
+    @media (max-width: 480px) {
+      .venom-auth-card {
+        padding: 1.5rem 1.25rem;
+      }
+      
+      .venom-auth-title {
+        font-size: 1.25rem;
+      }
+    }
