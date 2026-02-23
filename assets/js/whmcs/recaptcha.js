@@ -1,5 +1,5 @@
 /**
- * reCaptcha module
+ * reCaptcha module - used for captcha apis compatible with the google recaptcha api
  *
  * @copyright Copyright (c) WHMCS Limited 2005-2020
  * @license http://www.whmcs.com/license/ WHMCS Eula
@@ -8,6 +8,8 @@ var recaptchaLoadComplete = false,
     recaptchaCount = 0,
     recaptchaType = 'recaptcha',
     recaptchaValidationComplete = false;
+
+var PASSWORD_RESET_BUTTON_ID = 'resetPasswordButton';
 
 (function(module) {
     if (!WHMCS.hasModule('recaptcha')) {
@@ -24,14 +26,28 @@ var recaptchaLoadComplete = false,
                 recaptchaForms = jQuery(".btn-recaptcha").parents('form'),
                 isInvisible = false;
             recaptchaForms.each(function (i, el){
-                if (typeof recaptchaSiteKey === 'undefined') {
-                    console.log('Recaptcha site key not defined');
+                if (typeof recaptcha.siteKey === 'undefined') {
+                    console.error('Recaptcha site key not defined');
                     return;
                 }
-                recaptchaCount += 1;
+                if (typeof recaptcha.libUrl === 'undefined') {
+                    console.error('Recaptcha client js url not defined');
+                    return;
+                }
+                if (typeof recaptcha.apiObject === 'undefined') {
+                    console.error('Recaptcha client js api object name not defined');
+                    return;
+                }
                 var frm = jQuery(el),
-                    btnRecaptcha = frm.find(".btn-recaptcha"),
-                    required = (typeof requiredText !== 'undefined') ? requiredText : 'Required',
+                    btnRecaptcha = frm.find(".btn-recaptcha");
+
+                if (btnRecaptcha.attr('id') === PASSWORD_RESET_BUTTON_ID && !btnRecaptcha.data('captcha-required')) {
+                    return;
+                }
+
+                var required = (typeof recaptcha.requiredText !== 'undefined')
+                        ? recaptcha.requiredText
+                        : 'Required',
                     recaptchaId = 'divDynamicRecaptcha' + recaptchaCount;
 
                 isInvisible = btnRecaptcha.hasClass('btn-recaptcha-invisible')
@@ -58,16 +74,6 @@ var recaptchaLoadComplete = false,
                         .hide();
                 }
 
-
-                // alter form to work around JS behavior on .submit() when there
-                // there is an input with the name 'submit'
-                var btnSubmit = frm.find("input[name='submit']");
-                if (btnSubmit.length) {
-                    var action = frm.prop('action');
-                    frm.prop('action', action + '&submit=1');
-                    btnSubmit.remove();
-                }
-
                 // make callback for grecaptcha to invoke after
                 // injecting token & make it known via data-callback
                 var funcName = recaptchaId + 'Callback';
@@ -84,9 +90,9 @@ var recaptchaLoadComplete = false,
                     recaptchaType = 'invisible';
                     frm.on('submit.recaptcha', function (event) {
                         var recaptchaId = frm.find('.g-recaptcha').data('recaptcha-id');
-                        if (!grecaptcha.getResponse(recaptchaId).trim()) {
+                        if (!window[recaptcha.apiObject].getResponse(recaptchaId).trim()) {
                             event.preventDefault();
-                            grecaptcha.execute(recaptchaId);
+                            window[recaptcha.apiObject].execute(recaptchaId);
                             recaptchaValidationComplete = false;
                         } else {
                             recaptchaValidationComplete = true;
@@ -114,7 +120,7 @@ var recaptchaLoadComplete = false,
                     var recaptchaId = grecaptcha.render(
                         el,
                         {
-                            sitekey: recaptchaSiteKey,
+                            sitekey: recaptcha.siteKey,
                             size: (btn.hasClass('btn-recaptcha-invisible')) ? 'invisible' : 'normal',
                             callback: idToUse + 'Callback'
                         }
@@ -123,17 +129,83 @@ var recaptchaLoadComplete = false,
                 });
             }
 
-            // fetch/invoke the grecaptcha lib
+            // fetch/invoke the remote library
             if (recaptchaForms.length) {
-                var gUrl = "https://www.google.com/recaptcha/api.js?onload=recaptchaLoadCallback&render=explicit";
-                jQuery.getScript(gUrl, function () {
+                jQuery.getScript(recaptcha.libUrl, function () {
                     for(var i = postLoad.length - 1; i >= 0 ; i--){
                         postLoad[i]();
                     }
                 });
             }
+
+            // captcha overlay badge
+            let captchaOverlayBadge = jQuery('.captcha-overlay-badge'),
+                captchaOverlayPopup = jQuery('.captcha-overlay-popup');
+            if (recaptchaForms.length && captchaOverlayBadge.length) {
+                captchaOverlayBadge.show();
+                if (captchaOverlayPopup.length) {
+                    let captchaOverlayTimer;
+                    function captchaPopupHide() {
+                        captchaOverlayPopup.hide();
+                    }
+                    function debounce(func, delay) {
+                        return function() {
+                            const context = this;
+                            const args = arguments;
+                            clearTimeout(captchaOverlayTimer);
+                            captchaOverlayTimer = setTimeout(function() {
+                                func.apply(context, args);
+                            }, delay);
+                        };
+                    }
+                    const debouncedCaptchaPopupHide = debounce(captchaPopupHide, 3000);
+                    captchaOverlayBadge.bind('mouseenter', function() {
+                        captchaOverlayPopup.show();
+                        clearTimeout(captchaOverlayTimer);
+                    });
+                    captchaOverlayBadge.bind('mouseleave', debouncedCaptchaPopupHide);
+                    captchaOverlayBadge.bind('touchstart', function() {
+                        captchaOverlayPopup.show();
+                        clearTimeout(captchaOverlayTimer);
+                        captchaOverlayTimer = setTimeout(captchaPopupHide, 3000);
+                    });
+
+                }
+            }
             recaptchaLoadComplete = true;
         };
+
+        this.setupCallback = (callback) => {
+            if (typeof callback !== 'function') {
+                return;
+            }
+
+            jQuery('.g-recaptcha').each(function(i, el) {
+                const idToUse = jQuery(el).attr('id').substring(1);
+                const originalCallbackName = idToUse + 'Callback';
+                const backupCallbackName = originalCallbackName + 'Original';
+
+
+                if (typeof window[backupCallbackName] === 'undefined') {
+                    window[backupCallbackName] = window[originalCallbackName];
+                }
+
+                window[originalCallbackName] = callback;
+            });
+        }
+
+        this.restoreDefaultCallback = () => {
+            jQuery('.g-recaptcha').each(function(i, el) {
+                const idToUse = jQuery(el).attr('id').substring(1);
+                const originalCallbackName = idToUse + 'Callback';
+                const backupCallbackName = originalCallbackName + 'Original';
+
+                if (typeof window[backupCallbackName] !== 'undefined') {
+                    window[originalCallbackName] = window[backupCallbackName];
+                    delete window[backupCallbackName];
+                }
+            });
+        }
 
         return this;
     });

@@ -1,25 +1,4 @@
 
-# ── VENOM: Custom landing page for homepage ───────────────────────────────────
-# NOTE: This environment uses nginx as the frontend web server.
-# Apache .htaccess rewrite rules are NOT processed by nginx.
-# Guest homepage redirect is handled instead via WHMCS hook:
-#   includes/hooks/venom_homepage_redirect.php
-#
-# The block below is for Apache-based deployments (if the stack ever
-# switches from nginx to Apache httpd). It serves landing.php for the
-# exact root "/" while preserving all WHMCS routing via index.php.
-<IfModule mod_rewrite.c>
-RewriteEngine on
-RewriteBase /
-
-# Serve landing.php for exact root "/" only (no query string)
-# This keeps /index.php?rp=/login and all WHMCS routes working
-RewriteCond %{REQUEST_URI} ^/$
-RewriteCond %{QUERY_STRING} ^$
-RewriteRule ^$ /landing.php [L]
-</IfModule>
-# ── END VENOM homepage ───────────────────────────────────────────────────────
-
 ### BEGIN - WHMCS managed rules - DO NOT EDIT BETWEEN WHMCS MARKERS ###
 <IfModule mod_rewrite.c>
 RewriteEngine on

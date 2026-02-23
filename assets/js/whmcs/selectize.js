@@ -21,6 +21,50 @@
 })(
 function () {
     /**
+     * Applying fix
+     * Selectize dropdown selection outside modal window causes the modal to close
+     * Bug occurs only when same option is being selected twice
+     * Long known bug https://github.com/selectize/selectize.js/issues/1689
+     * Solution is taken from https://github.com/selectize/selectize.js/pull/1813
+     */
+    $(document).ready(function () {
+        const originalSetup = Selectize.prototype.setup;
+        Selectize.prototype.setup = function () {
+            originalSetup.apply(this, arguments);
+            const self = this;
+
+            this.$dropdown.off('mousedown', '[data-selectable]')
+            this.$dropdown.on('mouseup', '[data-selectable]', function() {
+                return self.onOptionSelect.apply(self, arguments);
+            });
+
+            this.$control.off('mousedown', '*:not(input)');
+            this.$control.on('mouseup', '*:not(input)', function(e) {
+                let child = e.target;
+                while (child && child.parentNode !== self.$control[0]) {
+                    child = child.parentNode;
+                }
+                e.currentTarget = child;
+                return self.onItemSelect.apply(self, arguments);
+            });
+
+            this.$control_input.off('blur');
+
+            $(document).off('mousedown' + this.eventNS);
+            $(document).on('mousedown' + this.eventNS, function(e) {
+                if (self.isFocused) {
+                    if ((e.target === self.$dropdown[0]) || (e.target.parentNode === self.$dropdown[0])) {
+                        return false;
+                    }
+                    if ((!self.$dropdown.has(e.target).length) && (e.target !== self.$control[0])) {
+                        self.blur(e.target);
+                    }
+                }
+            });
+        }
+    });
+
+    /**
      * Search-on-type client select & click "#goButton" on 'change' event
      * - will bind to <select> with '.selectize-client-search'
      * - <select> needs data-search-url attribute for 'load' event

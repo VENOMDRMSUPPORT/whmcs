@@ -109,7 +109,7 @@ foreach ($results as $data) {
 
             $duration += $time;
             $totalduration += $time;
-            $daytotals[$date] += $time;
+            $daytotals[$date] = ($daytotals[$date] ?? 0) + $time;
         }
         $reportdata["tablevalues"][$r][] = project_staff_logs_time($duration);
 
@@ -127,7 +127,7 @@ $reportdata["tablevalues"][$r][] = '<strong>Totals</strong>';
 
 for ($i = 0; $i <= $diffInDays; $i++) {
     $date = date("Y-m-d",mktime(0,0,0,$startmonth,$startday+$i,$startyear));
-    $reportdata["tablevalues"][$r][] = '<strong>'.project_staff_logs_time($daytotals[$date]).'</strong>';
+    $reportdata["tablevalues"][$r][] = '<strong>'.project_staff_logs_time($daytotals[$date] ?? 0).'</strong>';
     if (str_replace('-','',$date)==str_replace('-','',$datetosql)) break;
 }
 

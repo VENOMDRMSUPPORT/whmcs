@@ -30,6 +30,8 @@ CREATE TABLE `tblorders` (
   `fraudmodule` text COLLATE utf8_unicode_ci NOT NULL,
   `fraudoutput` text COLLATE utf8_unicode_ci NOT NULL,
   `notes` text COLLATE utf8_unicode_ci NOT NULL,
+  `purchase_source` int(10) UNSIGNED NOT NULL DEFAULT 4,
+  `has_referral_products` smallint(3) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `ordernum` (`ordernum`),
   KEY `userid` (`userid`),

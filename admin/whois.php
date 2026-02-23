@@ -18,6 +18,8 @@ $aInt->sidebar = "utilities";
 $aInt->icon = "domains";
 $aInt->requiredFiles(array("domainfunctions"));
 
+$action = App::getFromRequest('action');
+
 if ($action=="checkavailability") {
     check_token('WHMCS.admin.default');
     $whois = new WHOIS();

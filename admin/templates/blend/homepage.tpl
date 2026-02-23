@@ -35,18 +35,9 @@
     </ul>
 </div>
 
-{if $isSitejetPromptEnabled }
-    <div class="alert alert-info alert-dismissible textblack clearfix">
-        <button id="sitejet-alert-close" type="button" class="close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        <strong>{$_ADMINLANG.utilities.sitejetBuilder.prompt.title}</strong>
-        <p>{$_ADMINLANG.utilities.sitejetBuilder.prompt.description}</p>
-        <a href="{routePath('admin-utilities-sitejet-builder-index')}" class="btn btn-info btn-sm pull-right">
-            {$_ADMINLANG.utilities.sitejetBuilder.prompt.activateButton}
-        </a>
-    </div>
-{/if}
+{$homepagePromotionCarousel}
+
+{$mixPanelBanner}
 
 {foreach $staticWidgets as $widget}
     <div id="panel{$widget->getId()}" class="dashboard-panel-static-item dashboard-panel-item-columns-{$widget->getColumnSize()}{if in_array($widget->getId(), $hiddenWidgets)} hidden{/if}">

@@ -142,8 +142,8 @@
     },
     {
         "extensions": ".ac.in,.co.in,.org.in,.ernet.in,.gov.in,.net.in,.res.in,.in",
-        "uri": "socket://whois.registry.in",
-        "available": "No Data Found"
+        "uri": "socket://whois.nixiregistry.in",
+        "available": "available for registration"
     },
     {
         "extensions": ".is",
@@ -412,7 +412,7 @@
     },
     {
         "extensions": ".mobi",
-        "uri": "socket://whois.dotmobiregistry.net",
+        "uri": "socket://whois.nic.mobi",
         "available": "Domain not found"
     },
     {
@@ -524,11 +524,6 @@
         "extensions": ".im",
         "uri": "socket://whois.nic.im",
         "available": "was not found"
-    },
-    {
-        "extensions": ".gr,.com.gr,.net.gr,.org.gr,.edu.gr,.gov.gr",
-        "uri": "https://grwhois.ics.forth.gr:800/plainwhois/plainWhois?domainName=",
-        "available": "not exist"
     },
     {
         "extensions": ".ir",
@@ -1424,5 +1419,10 @@
         "extensions": ".nyc",
         "uri": "socket://whois.nic.nyc",
         "available": "No Data Found"
+    },
+    {
+        "extensions": ".it.com",
+        "uri": "socket://whois.it.com",
+        "available": "No match for"
     }
 ]

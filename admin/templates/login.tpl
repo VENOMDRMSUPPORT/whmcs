@@ -17,6 +17,7 @@
         <![endif]-->
       </head>
       <body>
+        {if $captcha}{$captcha->getMarkup()}{/if}
         <div class="login-container">
             <h1 class="logo">
                 <a href="login.php">
@@ -52,8 +53,7 @@
                         {if $captcha->isEnabled() && $captcha->isEnabledForForm($captchaForm)}
                             {if $captcha->recaptcha->isEnabled() && !$captcha->recaptcha->isInvisible()}
                                 <div class="form-group recaptcha-container"></div>
-                            {/if}
-                            {if !$captcha->recaptcha->isEnabled()}
+                            {elseif !$captcha->recaptcha->isEnabled()}
                                 <div class="form-group captcha-container text-center">
                                     <p>
                                         {lang key='login.captchaverify'}
@@ -109,8 +109,7 @@
                             {if $captcha->isEnabled() && $captcha->isEnabledForForm($captchaForm)}
                                 {if $captcha->recaptcha->isEnabled() && !$captcha->recaptcha->isInvisible()}
                                     <div class="form-group recaptcha-container"></div>
-                                {/if}
-                                {if !$captcha->recaptcha->isEnabled()}
+                                {elseif !$captcha->recaptcha->isEnabled()}
                                     <div class="form-group captcha-container text-center">
                                         <p>
                                             {lang key='login.captchaverify'}
@@ -196,9 +195,11 @@
         <div class="poweredby text-center">
             <a href="http://www.whmcs.com/" target="_blank">Powered by WHMCS</a>
         </div>
+        {if $captcha}
         <script type="text/javascript">
-            var recaptchaSiteKey = "{if $captcha}{$captcha->recaptcha->getSiteKey()}{/if}";
+            {$captcha->recaptcha->getPageJs()}
         </script>
+        {/if}
         <script type="text/javascript" src="templates/login.min.js"></script>
     </body>
 </html>

@@ -11,7 +11,7 @@
  * fields, you should create an overrides file.                       *
  *                                                                    *
  * For more information please refer to the online documentation at   *
- *   https://docs.whmcs.com/Additional_Domain_Fields                   *
+ *   https://go.whmcs.com/2349/custom-domain-fields                   *
  *                                                                    *
  **********************************************************************
  */
@@ -91,6 +91,75 @@ $additionaldomainfields[".ltd.uk"] = $additionaldomainfields[".co.uk"];
 $additionaldomainfields[".co.uk"][] = array("Name" => "WHOIS Opt-out", "LangVar" => "uktldwhoisoptout", "Type" => "tickbox",);
 $additionaldomainfields[".me.uk"] = $additionaldomainfields[".co.uk"];
 $additionaldomainfields[".uk"] = $additionaldomainfields[".co.uk"];
+
+// .DK
+
+$additionaldomainfields['.dk'][] = [
+    'Name' => 'Organization Type',
+    'LangVar' => 'dktldorgtype',
+    'Type' => 'dropdown',
+    'Options' => implode(
+        ',',
+        [
+            'Company',
+            'Person',
+            'Public Organization',
+            'Association',
+        ]
+    ),
+    'Default' => 'Company',
+];
+
+$additionaldomainfields['.dk'][] = [
+    'Name' => 'Organization ID Number',
+    'LangVar' => 'dktldorgid',
+    'Type' => 'text',
+    'Size' => '30',
+    'Default' => '',
+    'Description' => '',
+    'Required' => [
+        'Organization Type' => [
+            'Company',
+            'Public Organization',
+            'Association',
+        ],
+    ],
+];
+
+$additionaldomainfields['.dk'][] = [
+    'Name' => 'Punktum dk User Agreement',
+    'Description' => <<<DK_TERM
+<div class="tld-additional-fields-dk-terms mb-4">
+    Punktum dk A/S<br />
+    Ørestads Boulevard 108, 11th floor<br />
+    DK-2300 Copenhagen S<br />
+    <br />
+    To register a .dk domain name, you have to enter into an agreement with Punktum dk A/S. Punktum dk is the administrator for all .dk domain names.<br />
+    <br />
+    I hereby agree to enter into an agreement on the right to use the specified .dk domain name according to the terms applicable hereto. Among other things, this means that I will ensure that my contact details as a registrant are accurate at all times. I will perform Punktum dk A/S' identity check when requested to do so.<br />
+    <br />
+    My right to use the specified .dk domain name may be transferred, suspended, deleted, or blocked according to the conditions set out in Punktum dk A/S' terms of use.<br />
+    <br />
+    Pursuant to Section 18 (2) (13) of the Danish Consumer Contract Act, I agree to renounce the right to withdraw from the agreement on the right to use the specified .dk domain name.<br />
+    <br />
+    I give my consent for Punktum dk A/S, as domain administrator, to use my personal data in accordance with its personal data policy.<br />
+    <br />
+    I agree that I will pay to {CompanyName} the fee for the first registration period for the specified .dk domain name, and that payment for subsequent registration periods depends on my choice of management arrangement, cf. section 2.1 of Punktum dk A/S' terms and conditions.<br />
+    <br />
+    <a href="https://www.punktum.dk/en/articles/terms-and-conditions-for-the-right-of-use-to-a-dk-domain-name" target="_blank">Terms and Conditions for .dk Domain Names</a><br />
+    <a href="https://www.punktum.dk/en/articles/privacy-policy" target="_blank">Punktum dk Privacy Policy</a><br />
+    <a href="https://punktum.dk/en" target="_blank">About Punktum dk</a><br />
+</div>
+DK_TERM
+];
+
+$additionaldomainfields['.dk'][] = [
+    'Name' => '.DK Domain Agreement',
+    'LangVar' => 'dktldacceptterms',
+    'Type' => 'tickbox',
+    'Required' => true,
+    'Description' => 'I accept the Punktum dk A/S User Agreement.',
+];
 
 // .CA
 

@@ -5,7 +5,7 @@
  *
  * This file is deprecated and here for backwards compatibility.
  *
- * For more information please see https://docs.whmcs.com/Version_8.0_Release_Notes
+ * For more information please see https://go.whmcs.com/2372/8-0-release-notes
  */
 
 require 'init.php';

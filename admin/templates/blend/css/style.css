@@ -14,6 +14,10 @@
     font-size: 1.2em;
 }
 
+.txt-center {
+    text-align: center;
+}
+
 .font-size-sm {
     font-size: 0.85em;
 }
@@ -1047,6 +1051,10 @@ div.input-group-inline-flex {
     display: inline-flex;
 }
 
+.align-items-center {
+    align-items: center;
+}
+
 ul.dropdown-menu-page {
     left: -30px;
     min-width: 77px;
@@ -1148,6 +1156,12 @@ ul.admin-tabs > li > a {
     border: 1px solid #ccc;
     text-decoration: none;
     color: #202F60;
+    display: inline-flex;
+    align-items: center;
+}
+
+ul.admin-tabs > li > a > span.label {
+    line-height: 1.4em;
 }
 
 ul.client-tabs > li > a.dropdown-toggle,
@@ -1214,6 +1228,56 @@ ul.admin-tabs-v2 > li > a.dropdown-toggle {
     height: unset;
     line-height: unset;
     text-decoration: none;
+}
+
+/* --------------------------------------------------------------
+   Admin Dashboard Promotion Carousel
+-------------------------------------------------------------- */
+.admin-dashboard-carousel-controls .carousel-indicators {
+    display: inline-block;
+    position: initial;
+    width: initial;
+    margin-left: initial;
+}
+.admin-dashboard-carousel-controls .carousel-indicators li {
+    border: 1px solid #bbb;
+}
+.admin-dashboard-carousel-controls {
+    display: block;
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    z-index: 15;
+    width: 60%;
+    padding-left: 0;
+    margin-left: -30%;
+    text-align: center;
+    list-style: none;
+}
+.admin-dashboard-carousel-control {
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0);
+    filter: alpha(opacity = 50);
+    opacity: 0.5;
+    font-size: 16px;
+}
+.admin-dashboard-carousel-control:hover,
+.admin-dashboard-carousel-control:focus {
+    color: #fff;
+    text-decoration: none;
+}
+.admin-dashboard-carousel .promotion-content {
+    display: flex;
+}
+.admin-dashboard-carousel .promotion-logo {
+    height: 50px;
+    margin-right: 15px;
+}
+.admin-dashboard-carousel .btn-promotion-action {
+    position: relative;
+    right: -20px;
 }
 
 /* --------------------------------------------------------------
@@ -1647,6 +1711,12 @@ table.applink-links tr.tDnD_whileDrag td {
 .status-badge-error .icon {
     background-color: rgba(0, 0, 0, 0.2);
 }
+.status-badge-success {
+    background-color: #3fa93f;
+}
+.status-badge-success .icon {
+    background-color: rgba(0, 0, 0, 0.2);
+}
 .status-badge-warning {
     background-color: #ecce6c;
 }
@@ -1984,7 +2054,7 @@ div.md-editor.active {
     }
 }
 
-.ticket-reply-submit-options .btn-primary {
+.ticket-reply-submit-options .btn-primary:not(#generateAiSuggestion) {
     width: 120px;
 }
 
@@ -2623,6 +2693,23 @@ table.module-settings .icon-warning {
 .modal-wizard .wizard-transition-step {
     text-align: center;
 }
+
+.modal-wizard .wizard-transition-step .checkbox-wrapper {
+    padding: 0px 35px;
+    display: flex;
+    align-items: center;
+}
+
+.modal-wizard .wizard-transition-step .checkbox-wrapper input {
+    margin:0;
+}
+
+.modal-wizard .wizard-transition-step .checkbox-wrapper label {
+    margin-left: 10px;
+    text-align: left;
+    margin-bottom:0;
+}
+
 .modal-wizard .wizard-transition-step .icon {
     font-size: 7em;
     color: #96c03d;
@@ -2891,7 +2978,7 @@ table.module-settings .icon-warning {
 }
 .lookup-provider {
     padding: 20px;
-    height: 290px;
+    height: 310px;
     text-align: center;
 }
 .lookup-provider.active {
@@ -3425,6 +3512,9 @@ img.ssl-state {
 }
 .cc-number-field.dankort {
     background-image: url(../../../../assets/img/payment/dankort.png);
+}
+.cc-number-field.troy {
+    background-image: url(../../../../assets/img/payment/troy.png);
 }
 .iframe-input-container {
     height: 34px;
@@ -4413,4 +4503,65 @@ span.grey-item {
 .sitejet-warning {
     background-color: #fbf8e5;
     color: #937e55;
+}
+
+.mixpanel-modal {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    background: #fff;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+    transition: transform 0.3s ease-in-out, opacity 0.3s;
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.mixpanel-icon {
+    font-size: 20px;
+    color: #007bff;
+}
+
+.mixpanel-text {
+    margin: 5px 0 15px;
+    flex-grow: 1;
+}
+
+.mixpanel-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mixpanel-buttons .btn {
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: 6px;
+}
+
+#optInClose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #888;
+}
+
+#optInClose:hover {
+    color: #333;
+}
+
+.mixpanel-shown {
+    transform: translateX(0);
+    opacity: 1;
 }

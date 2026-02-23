@@ -13,7 +13,7 @@
         <div class="links">
             <a href="https://www.whmcs.com/report-a-bug" target="_blank">Report a Bug</a>
             |
-            <a href="https://docs.whmcs.com/" target="_blank">Documentation</a>
+            <a href="https://go.whmcs.com/1893/docs" target="_blank">Documentation</a>
             |
             <a href="https://www.whmcs.com/contact" target="_blank">Contact Us</a>
         </div>

@@ -9,7 +9,7 @@
     "tagline": "Secure recurring payment processing using SagePay's Token service with 3DSv2 support."
   },
   "support": {
-    "docs_url": "https:\/\/docs.whmcs.com\/SagePay"
+    "docs_url": "https:\/\/go.whmcs.com\/2129\/sagepay-tokens"
   },
   "authors": [
     {

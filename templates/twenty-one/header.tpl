@@ -8,7 +8,7 @@
     {$headoutput}
 </head>
 <body class="primary-bg-color" data-phone-cc-input="{$phoneNumberInputStyle}">
-
+    {if $captcha}{$captcha->getMarkup()}{/if}
     {$headeroutput}
 
     <header id="header" class="header">
@@ -79,20 +79,12 @@
 
         <div class="navbar navbar-light">
             <div class="container">
-                <a class="navbar-brand mr-3" href="{$WEB_ROOT}/">
-                    <div class="animated-logo" style="width: 36px; height: 36px;">
-                        <div class="animated-logo-glow"></div>
-                        <div class="animated-logo-ring-outer"></div>
-                        <div class="animated-logo-ring-inner"></div>
-                        <div class="animated-logo-ring-decorative"></div>
-                        <div class="animated-logo-inner">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 3L12 21L19 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M8 5L12 15L16 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <span class="brand-text">VENOM Solutions</span>
+                <a class="navbar-brand mr-3" href="{$WEB_ROOT}/index.php">
+                    {if $assetLogoPath}
+                        <img src="{$assetLogoPath}" alt="{$companyname}" class="logo-img">
+                    {else}
+                        {$companyname}
+                    {/if}
                 </a>
 
                 <form method="post" action="{routePath('knowledgebase-search')}" class="form-inline ml-auto">
@@ -165,7 +157,7 @@
 
     <section id="main-body">
         <div class="{if !$skipMainBodyContainer}container{/if}">
-            <div class="row">
+            <div class="{if !$inShoppingCart && ($primarySidebar->hasChildren() || $secondarySidebar->hasChildren())}row{/if}">
 
             {if !$inShoppingCart && ($primarySidebar->hasChildren() || $secondarySidebar->hasChildren())}
                 <div class="col-lg-4 col-xl-3">
@@ -179,4 +171,4 @@
                     {/if}
                 </div>
             {/if}
-            <div class="{if !$inShoppingCart && ($primarySidebar->hasChildren() || $secondarySidebar->hasChildren())}col-lg-8 col-xl-9{else}col-12{/if} primary-content">
+            <div class="{if !$inShoppingCart && ($primarySidebar->hasChildren() || $secondarySidebar->hasChildren())}col-lg-8 col-xl-9{/if} primary-content">

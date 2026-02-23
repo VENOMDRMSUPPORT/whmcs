@@ -119,7 +119,8 @@ HTML;
 }
 
 if (count($incfields)) {
-    $query = Capsule::table('tblaccounts');
+    $query = Capsule::table('tblaccounts')
+        ->where('tblaccounts.billingnoteid', '=', 0);
 
     foreach ($filterfield as $i => $val) {
         if ($val && array_key_exists($val, $filterfields)) {

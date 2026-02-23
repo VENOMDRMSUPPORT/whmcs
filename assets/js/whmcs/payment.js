@@ -380,11 +380,23 @@ display: function () {
         return this;
     }
 
-    this.errorShow = function (errorMessage) {
+    this.errorShow = (errorMessage, source = 'invoice-pay') => {
         let gatewayErrorsContainer = jQuery('.gateway-errors');
-        if (gatewayErrorsContainer.length == 0) return;
-        this.error(errorMessage);
-        gatewayErrorsContainer.slideDown()
+
+        if (source === 'checkout' && typeof showCheckoutError === 'function') {
+            // standardized function to show checkout error
+            showCheckoutError(errorMessage, gatewayErrorsContainer);
+        }
+
+        if (source === 'invoice-pay') {
+            if (gatewayErrorsContainer.length === 0) {
+                return this;
+            }
+
+            this.error(errorMessage);
+            gatewayErrorsContainer.slideDown();
+        }
+
         return this;
     }
 

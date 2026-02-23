@@ -5,7 +5,18 @@
  * @license http://www.whmcs.com/license/ WHMCS Eula
  */
 var elementsDiv = null,
-    modalInput = false;
+    modalInput = false,
+    stripeFormLocked = false;
+
+function resetStripeFormState(frm) {
+    scrollToGatewayInputError();
+    stripeFormLocked = false;
+    frm.find('button[type="submit"],input[type="submit"]')
+        .prop('disabled', false)
+        .removeClass('disabled')
+        .find('span').toggle();
+}
+
 function initStripe() {
     var paymentMethod = jQuery('input[name="paymentmethod"]'),
         frm = jQuery('#frmCheckout'),
@@ -180,7 +191,7 @@ function validateStripe(event) {
         event.preventDefault();
         return;
     }
-    var paymentMethod = jQuery('input[name="paymentmethod"]:checked'),
+    let paymentMethod = jQuery('input[name="paymentmethod"]:checked'),
         frm = elementsDiv.closest('form'),
         displayError = jQuery('.gateway-errors,.assisted-cc-input-feedback').first();
 
@@ -204,11 +215,7 @@ function validateStripe(event) {
             } else if (response.two_factor) {
                 stripeResponseHandler(null);
             } else if (response.validation_feedback) {
-                // An error has been received.
-                displayError.html(response.validation_feedback);
-                if (displayError.not(':visible')) {
-                    displayError.slideDown();
-                }
+                showCheckoutError(response.validation_feedback, displayError);
                 scrollToGatewayInputError();
                 WHMCS.form.reloadCaptcha();
             } else if (response.requires_payment) {
@@ -225,10 +232,7 @@ function validateStripe(event) {
                     if (result.error) {
                         var error = result.error.message;
                         if (error) {
-                            displayError.html(error);
-                            if (displayError.not(':visible')) {
-                                displayError.slideDown();
-                            }
+                            showCheckoutError(error, displayError);
                             scrollToGatewayInputError();
                             WHMCS.form.reloadCaptcha();
                         }
@@ -241,15 +245,9 @@ function validateStripe(event) {
                     response.token
                 ).then(function(result) {
                     if (result.error) {
-                        var error = result.error.message;
-                        if (error) {
-                            displayError.html(error);
-                            if (displayError.not(':visible')) {
-                                displayError.slideDown();
-                            }
-                            scrollToGatewayInputError();
-                            WHMCS.form.reloadCaptcha();
-                        }
+                        showCheckoutError(result.error?.message, displayError);
+                        scrollToGatewayInputError();
+                        WHMCS.form.reloadCaptcha();
                     } else {
                         stripeResponseHandler(null);
                     }
@@ -258,18 +256,12 @@ function validateStripe(event) {
             }
         },
         warning: function(error) {
-            WHMCS.form.reloadCaptcha();
-            displayError.html(defaultErrorMessage);
-            if (displayError.not(':visible')) {
-                displayError.slideDown();
-            }
+            showCheckoutError(defaultErrorMessage, displayError);
             scrollToGatewayInputError();
+            WHMCS.form.reloadCaptcha();
         },
         fail: function(error) {
-            displayError.html(defaultErrorMessage);
-            if (displayError.not(':visible')) {
-                displayError.slideDown();
-            }
+            showCheckoutError(defaultErrorMessage, displayError);
             scrollToGatewayInputError();
         }
     });
@@ -766,6 +758,16 @@ function cardListener(event) {
 
 function addNewCardClientSide(event)
 {
+    if (recaptchaType === 'invisible' && !recaptchaValidationComplete) {
+        event.preventDefault();
+        return;
+    }
+    event.preventDefault();
+    if (stripeFormLocked) {
+        return;
+    }
+    stripeFormLocked = true;
+
     var frm = elementsDiv.closest('form'),
         displayError = jQuery('.gateway-errors,.assisted-cc-input-feedback').first();
     event.preventDefault();
@@ -791,8 +793,8 @@ function addNewCardClientSide(event)
                         if (displayError.not(':visible')) {
                             displayError.slideDown();
                         }
-                        scrollToGatewayInputError();
                         WHMCS.form.reloadCaptcha();
+                        resetStripeFormState(frm);
                     } else {
                         stripeResponseHandler(null);
                     }
@@ -804,14 +806,14 @@ function addNewCardClientSide(event)
             if (displayError.not(':visible')) {
                 displayError.slideDown();
             }
-            scrollToGatewayInputError();
+            resetStripeFormState(frm);
         },
         fail: function(error) {
             displayError.html(error);
             if (displayError.not(':visible')) {
                 displayError.slideDown();
             }
-            scrollToGatewayInputError();
+            resetStripeFormState(frm);
         }
     });
 }

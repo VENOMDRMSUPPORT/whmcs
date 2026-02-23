@@ -249,6 +249,12 @@
     color: #fff;
     text-decoration: none;
 }
+.badge-shadow {
+    -webkit-text-shadow: rgba(0, 0, 0, 0.5) 1px 1px 1px;
+    -moz-text-shadow: rgba(0, 0, 0, 0.5) 1px 1px 1px;
+    -ms-text-shadow: rgba(0, 0, 0, 0.5) 1px 1px 1px;
+    text-shadow: rgba(0, 0, 0, 0.5) 1px 1px 1px;
+}
 .status-badge-green {
     background-color: #5dc560;
 }
@@ -604,6 +610,19 @@
     .dashboard-panel-item-columns-3 {
         width: 100%;
     }
+}
+
+/* --- Invoices --- */
+
+.invoice-alert-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 15px;
+    width: 100%;
+    border: 1px solid #faebcc;
+    border-radius: 4px;
+    z-index: 10000;
 }
 
 .btn-link-default {

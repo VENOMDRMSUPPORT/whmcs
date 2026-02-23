@@ -691,7 +691,26 @@ function elementOutOfViewPort(element) {
     out.any = out.top || out.left || out.bottom || out.right;
 
     return out.any;
-};
+}
+
+function showCheckoutError(errorMessage, container = null) {
+    jQuery('.alert-danger').hide();
+
+    const selectors = [
+        '.checkout-error-feedback',
+        '#existingLoginMessage',
+        '.gateway-errors',
+        '.assisted-cc-input-feedback'
+    ];
+
+    if (!container) {
+        container = jQuery(selectors.join(', ')).first();
+    }
+
+    if (container.length) {
+        container.html(errorMessage).slideDown('fast');
+    }
+}
 
 /**
  * General utilities module
@@ -782,6 +801,39 @@ function () {
         do cryptoObject.getRandomValues(x);
         while (x[0] - x[0] % n > 4294967296 - n);
         return x[0] % n;
+    };
+
+    this.ensureElementHasId = function (element, prefix) {
+        element = jQuery(element);
+        if (typeof element.attr('id') === "undefined") {
+            element.attr('id', this.generateUniqueIdentifier(prefix));
+        }
+        return this;
+    };
+
+    this.generateUniqueIdentifier = function(prefix)
+    {
+        let id = Math
+            .random()
+            .toString(36)
+            .replace('0.',prefix || 'x_');
+        if (this.generatedIds.includes(id)) {
+            return this.generateUniqueIdentifier(prefix);
+        }
+        this.generatedIds.push(id);
+        return id;
+    };
+
+    this.generatedIds = [];
+
+    this.clearLocalStorage = function (element) {
+        if (typeof (Storage) === "undefined") {
+            return;
+        }
+        if (element.data('noClear') === true) {
+            return;
+        }
+        localStorage.removeItem(element.data('localStorageId'));
     };
 
     return this;
@@ -902,30 +954,30 @@ jqClient: function () {
      */
     this.jsonPost = function (options) {
         options = options || {};
-        this.post(options.url, options.data, function(response) {
-            if (response.warning) {
-                console.log('[WHMCS] Warning: ' + response.warning);
+        this.post(options.url, options.data, function(jsonResponse, httpStatusText, jqXHR) {
+            if (jsonResponse.warning) {
+                console.log('[WHMCS] Warning: ' + jsonResponse.warning);
                 if (typeof options.warning === 'function') {
-                    options.warning(response.warning);
+                    options.warning(jsonResponse.warning, jsonResponse, jqXHR);
                 }
-            } else if (response.error) {
-                console.log('[WHMCS] Error: ' + response.error);
+            } else if (jsonResponse.error) {
+                console.log('[WHMCS] Error: ' + jsonResponse.error);
                 if (typeof options.error === 'function') {
-                    options.error(response.error);
+                    options.error(jsonResponse.error, jsonResponse, jqXHR);
                 }
-            } else {
-                if (typeof options.success === 'function') {
-                    options.success(response);
-                }
+            } else if (typeof options.success === 'function') {
+                options.success(jsonResponse, jqXHR);
             }
-        }, 'json').fail(function(xhr, errorMsg){
-            console.log('[WHMCS] Fail: ' + errorMsg);
+        }, 'json')
+        .fail(function(jqXHR, jqResponseType, httpStatusText){
+            console.log('[WHMCS] Fail: ' + jqResponseType);
             if (typeof options.fail === 'function') {
-                options.fail(errorMsg, xhr);
+                options.fail(jqResponseType, jqXHR.responseJSON, jqXHR);
             }
-        }).always(function() {
+        })
+        .always(function(jqXHR, jqResponseType, httpStatusText) {
             if (typeof options.always === 'function') {
-                options.always();
+                options.always(jqXHR);
             }
         });
     };
@@ -1432,7 +1484,210 @@ effects: function () {
             });
         });
     };
+},
+/*
+<script>WHMCS.ui.markdownEditor.register()</script>
+<someTag id="someTag-node"
+    class="container-markdown-editor editor-tagging local-storage"
+    data-locale="de"
+    data-local-storage-id="someTag-node-session-1234"
+    data-fetch-preview-url="https://x.local/mde/preview"
+    data-fetch-help-url="https://x.local/mde/help"
+    data-tagging-url="url-to-handle-tagging"
+    />
+NOTE: elements without IDs will not be initialized via `register` or `getEditorById`
+to ensure no target node is reinitialized within a previously initialized node.
+ */
+markdownEditor: function () {
+    this.editors = {};
+    this.counters = {};
+    this.register = function () {
+        let self = this;
+        jQuery('.container-markdown-editor')
+            .each(function (i, el) {
+                el = jQuery(el);
+                if (typeof el.attr('id') === "undefined") {
+                    console.debug('Element has no id', el);
+                    return;
+                }
+                self.getEditorById(el.attr('id'));
+                self.withTagging(el);
+            });
+    };
+    this.withTagging = function(el) {
+        if (!el.is('.editor-tagging')) {
+            return;
+        }
+        el.atwho({
+            at: "@",
+            displayTpl: "<li class=\"mention-list\">${gravatar} ${username} - ${name} (${email})</li>",
+            insertTpl: mentionsFormat,
+            data: el.data('tagging-url'),
+            limit: 5
+        });
+    }
+    this.getEditorById = function(id) {
+        let self = this;
+        let el = jQuery('#' + id);
+        if (typeof self.editors[id] === 'undefined') {
+            self.editors[id] = self.init(el);
+        }
 
+        return self.editors[id];
+    };
+    this.init = function (element) {
+        let self = this;
+        let elementId = element.attr('id');
+        let footerId = elementId + '-footer';
+        let footerIdRef = '#' + footerId;
+        let footerNode ='<div id="'
+            + footerId
+            + '" class="markdown-editor-status"></div>';
+        let locale = (typeof element.data('locale') === 'undefined')
+            ? 'en'
+            : element.data('locale');
+        let localStorageId = element.data('localStorageId');
+        let csrf_token = csrfToken;
+        let fetchPreviewUrl = element.data('fetchPreviewUrl');
+        self.counters[elementId] = 0;
+
+        element.markdown(
+            {
+                footer: footerNode,
+                autofocus: false,
+                savable: false,
+                resize: 'vertical',
+                iconlibrary: 'glyph',
+                language: locale,
+                onShow: function(e){
+                    let content = '',
+                        save_enabled = false;
+                    if(typeof(Storage) !== "undefined") {
+                        // Code for localStorage/sessionStorage.
+                        content = localStorage.getItem(localStorageId);
+                        save_enabled = true;
+                        if (content && typeof(content) !== "undefined") {
+                            e.setContent(content);
+                        }
+                    }
+                    jQuery(footerIdRef).html(
+                        self.parseMdeFooter(content, save_enabled, 'saved')
+                    );
+                },
+                onChange: function(e){
+                    let content = e.getContent(),
+                        save_enabled = false;
+                        elementId = e.$element.attr('id');
+                    if(typeof(Storage) !== "undefined") {
+                        self.counters[elementId] = 3;
+                        save_enabled = true;
+                        localStorage.setItem(localStorageId, content);
+                        self.doCountdown(elementId);
+                    }
+                    jQuery(footerIdRef).html(
+                        self.parseMdeFooter(content, save_enabled)
+                    );
+                },
+                onPreview: function(e){
+                    let originalContent = e.getContent(),
+                        parsedContent;
+
+                    jQuery.ajax({
+                        url: fetchPreviewUrl,
+                        async: false,
+                        data: {
+                            token: csrf_token,
+                            action: 'parseMarkdown',
+                            content: originalContent
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            parsedContent = data;
+                        },
+                        method: 'POST'
+                    });
+
+                    return parsedContent.body ? parsedContent.body : '';
+                },
+                additionalButtons: [
+                    [{
+                        name: "groupCustom",
+                        data: [{
+                            name: "cmdHelp",
+                            title: "Help",
+                            hotkey: "Ctrl+F1",
+                            btnClass: "btn open-modal",
+                            icon: {
+                                glyph: 'fas fa-question-circle',
+                                fa: 'fas fa-question-circle',
+                                'fa-3': 'icon-question-sign'
+                            },
+                            callback: function(e) {
+                                e.$editor.removeClass("md-fullscreen-mode");
+                            }
+                        }]
+                    }]
+                ],
+                hiddenButtons: [
+                    'cmdImage'
+                ],
+            }
+        );
+
+        self.addEventHelpModal(element);
+
+        return element;
+    };
+    this.parseMdeFooter = function(content, auto_save, saveText) {
+        if (typeof saveText == 'undefined') {
+            saveText = 'autosaving';
+        }
+        let pattern = /[^\s]+/g,
+            m = [],
+            word_count = 0,
+            line_count = 0;
+        if (content) {
+            m = content.match(pattern);
+            line_count = content.split(/\\r\\n|\\r|\\n/).length;
+        }
+        if (m) {
+            for(let i = 0; i < m.length; i++) {
+                if(m[i].charCodeAt(0) >= 0x4E00) {
+                    word_count += m[i].length;
+                } else {
+                    word_count += 1;
+                }
+            }
+        }
+        return '<div class="smallfont">lines: ' + line_count
+            + '&nbsp;&nbsp;&nbsp;words: ' + word_count + ''
+            + (auto_save
+                    ? '&nbsp;&nbsp;&nbsp;<span class="markdown-save">' + saveText + '</span>'
+                    : ''
+            )
+            + '</div>';
+    };
+    this.doCountdown = function(elementId) {
+        let self = this;
+        if (self.counters[elementId] >= 0) {
+            if (self.counters[elementId] === 0) {
+                jQuery("span.markdown-save").html('saved');
+            }
+            self.counters[elementId]--;
+            setTimeout(function (id) {
+                self.doCountdown(id)},
+                1000,
+                elementId
+            );
+        }
+    };
+    this.addEventHelpModal = function(element) {
+        element.parent().find('button[data-handler="bootstrap-markdown-cmdHelp"]')
+            .attr('data-modal-title', 'Markdown Guide')
+            .attr('data-modal-size', 'modal-lg')
+            .attr('href', element.data('fetchHelpUrl'));
+        return this;
+    };
 }
 });
 
@@ -1496,22 +1751,29 @@ function () {
         });
     };
 
-    this.reloadCaptcha = function (element)
-    {
+    this.reloadCaptcha = (captchaElement) => {
         if (typeof grecaptcha !== 'undefined') {
+            recaptchaValidationComplete = false;
             grecaptcha.reset();
-        } else {
-            if (!element) {
-                element = jQuery('#inputCaptchaImage');
-            }
 
-            var src = jQuery(element).data('src');
-            jQuery(element).attr('src', src + '?nocache=' + (new Date()).getTime());
+            WHMCS.recaptcha.restoreDefaultCallback();
 
-            var userInput = jQuery('#inputCaptcha');
-            if (userInput.length) {
-                userInput.val('');
-            }
+            return;
+        }
+
+        if (!captchaElement) {
+            captchaElement = jQuery('#inputCaptchaImage');
+        }
+
+        const captchaInput = jQuery('#inputCaptcha');
+
+        if (captchaElement.length) {
+            captchaElement.attr(
+                'src',
+                whmcsBaseUrl + '/includes/verifyimage.php?nocache=' + new Date().getTime()
+            );
+
+            captchaInput.val('');
         }
     };
 
@@ -1540,6 +1802,50 @@ function () {
     }
 })(
 function () {
+    /**
+     * Applying fix
+     * Selectize dropdown selection outside modal window causes the modal to close
+     * Bug occurs only when same option is being selected twice
+     * Long known bug https://github.com/selectize/selectize.js/issues/1689
+     * Solution is taken from https://github.com/selectize/selectize.js/pull/1813
+     */
+    $(document).ready(function () {
+        const originalSetup = Selectize.prototype.setup;
+        Selectize.prototype.setup = function () {
+            originalSetup.apply(this, arguments);
+            const self = this;
+
+            this.$dropdown.off('mousedown', '[data-selectable]')
+            this.$dropdown.on('mouseup', '[data-selectable]', function() {
+                return self.onOptionSelect.apply(self, arguments);
+            });
+
+            this.$control.off('mousedown', '*:not(input)');
+            this.$control.on('mouseup', '*:not(input)', function(e) {
+                let child = e.target;
+                while (child && child.parentNode !== self.$control[0]) {
+                    child = child.parentNode;
+                }
+                e.currentTarget = child;
+                return self.onItemSelect.apply(self, arguments);
+            });
+
+            this.$control_input.off('blur');
+
+            $(document).off('mousedown' + this.eventNS);
+            $(document).on('mousedown' + this.eventNS, function(e) {
+                if (self.isFocused) {
+                    if ((e.target === self.$dropdown[0]) || (e.target.parentNode === self.$dropdown[0])) {
+                        return false;
+                    }
+                    if ((!self.$dropdown.has(e.target).length) && (e.target !== self.$control[0])) {
+                        self.blur(e.target);
+                    }
+                }
+            });
+        }
+    });
+
     /**
      * Search-on-type client select & click "#goButton" on 'change' event
      * - will bind to <select> with '.selectize-client-search'
@@ -2612,11 +2918,23 @@ display: function () {
         return this;
     }
 
-    this.errorShow = function (errorMessage) {
+    this.errorShow = (errorMessage, source = 'invoice-pay') => {
         let gatewayErrorsContainer = jQuery('.gateway-errors');
-        if (gatewayErrorsContainer.length == 0) return;
-        this.error(errorMessage);
-        gatewayErrorsContainer.slideDown()
+
+        if (source === 'checkout' && typeof showCheckoutError === 'function') {
+            // standardized function to show checkout error
+            showCheckoutError(errorMessage, gatewayErrorsContainer);
+        }
+
+        if (source === 'invoice-pay') {
+            if (gatewayErrorsContainer.length === 0) {
+                return this;
+            }
+
+            this.error(errorMessage);
+            gatewayErrorsContainer.slideDown();
+        }
+
         return this;
     }
 
@@ -2828,6 +3146,9 @@ jQuery(document).ready(function() {
         if (currentStep === '2' || currentStep === '4') {
             skipTwo = true;
         }
+
+        trackWizardAction(currentStep, 'skipped')
+
         wizardStepTransition(skipTwo, true);
     }).on('click', '#btnWizardBack', function(e) {
         e.preventDefault();
@@ -2872,6 +3193,18 @@ jQuery(document).ready(function() {
 
     jQuery('#addPayment').submit(function (e) {
         e.preventDefault();
+
+        const action = getQueryParam('action');
+        if (action === 'edit' && typeof handleUnsavedChanges === 'function') {
+            handleUnsavedChanges(e, function() {
+                handleAddPaymentSubmit();
+            });
+        } else {
+            handleAddPaymentSubmit();
+        }
+    });
+
+    function handleAddPaymentSubmit() {
         addingPayment = false;
         jQuery('#btnAddPayment').attr('disabled', 'disabled');
         jQuery('#paymentText').hide();
@@ -2895,7 +3228,7 @@ jQuery(document).ready(function() {
                 addInvoicePayment();
             }
         });
-    });
+    }
 
     $('#modalDuplicateTransaction').on('hidden.bs.modal', function () {
         if (addingPayment === false) {
@@ -2946,6 +3279,9 @@ jQuery(document).ready(function() {
 
     // Bootstrap Confirmation popup auto object registration
     WHMCS.ui.confirmation.register();
+
+    // Markdown editor data-driven object registration
+    WHMCS.ui.markdownEditor.register();
 
     var mcProductPromos = jQuery("#mcConfigureProductPromos");
 
@@ -3015,11 +3351,31 @@ jQuery(document).ready(function() {
 
     if (jQuery('.captcha-type').length) {
         jQuery(document).on('change', '.captcha-type', function() {
-            var settings = jQuery('.recaptchasetts');
-            if (jQuery(this).val() === '') {
-                settings.hide();
+            jQuery('#captcha-preview').attr(
+                'src',
+                jQuery(this).find(':selected').data('image')
+            );
+            let recaptchaSettings = jQuery('.recaptchasetts'),
+                recaptchaV3Settings = jQuery('.recaptchav3setts'),
+                hCaptchaSettings = jQuery('.hcaptchasetts'),
+                captchaType = jQuery(this).val();
+
+            if (['recaptcha', 'invisible'].includes(captchaType)) {
+                recaptchaSettings.show();
+                recaptchaV3Settings.hide();
+                hCaptchaSettings.hide();
+            } else if (['hcaptcha', 'hcaptcha-invisible'].includes(captchaType)) {
+                recaptchaSettings.hide();
+                recaptchaV3Settings.hide();
+                hCaptchaSettings.show();
+            } else if ('recaptchav3' === captchaType) {
+                hCaptchaSettings.hide();
+                recaptchaSettings.show();
+                recaptchaV3Settings.show();
             } else {
-                settings.show();
+                recaptchaSettings.hide();
+                hCaptchaSettings.hide();
+                recaptchaV3Settings.hide();
             }
         });
     }
@@ -3468,6 +3824,8 @@ function wizardStepTransition(skipNextStep, skip) {
     var lastStep = $('.modal-wizard .wizard-step:visible');
     var nextStepNumber = currentStepNumber + increment;
     if ($('#wizardStep' + nextStepNumber).length) {
+        trackWizardPageView(nextStepNumber)
+
         $('#wizardStep' + currentStepNumber).fadeOut('', function() {
             var newClass = 'completed';
             if (skip) {
@@ -3520,6 +3878,8 @@ function wizardStepBackTransition() {
     var previousStepNumber = parseInt(currentStepNumber) - 1;
 
     $('#wizardStep' + currentStepNumber).fadeOut('', function() {
+        trackWizardPageView(previousStepNumber)
+
         if (previousStepNumber < 1) {
             $('#btnWizardBack').fadeOut('slow');
             $('#btnWizardDoNotShow').fadeIn('slow');
@@ -3538,14 +3898,6 @@ function wizardStepBackTransition() {
 function fadeoutLoaderAndAllowSubmission(modal) {
     modal.find('.loader').fadeOut();
     modal.find('.modal-submit').removeProp('disabled');
-}
-
-function openSetupWizard() {
-    $('#modalFooterLeft').html('<a href="#" id="btnWizardSkip" class="btn btn-link pull-left hidden">Skip Step</a>' +
-        '<a href="#" id="btnWizardDoNotShow" class="btn btn-link pull-left">Do not show this again</a>' +
-        '</div>');
-    $('#modalAjaxSubmit').before('<a href="#" id="btnWizardBack" class="btn btn-default hidden">Back</a>');
-    openModal('wizard.php?wizard=GettingStarted', '', 'Getting Started Wizard', 'modal-lg', 'modal-wizard modal-setup-wizard', 'Next', '', '',true);
 }
 
 function addInvoicePayment() {
@@ -3693,6 +4045,131 @@ function autosizeTextarea(el) {
     init(el)
 }
 
+function calculateInvoiceTotal(invoiceId, invoiceItems) {
+    return WHMCS.http.jqClient.post(
+        WHMCS.adminUtils.getAdminRouteUrl('/invoice-total/calculate'),
+        {
+            invoiceId: invoiceId,
+            items: invoiceItems,
+            token: csrfToken
+        }
+    );
+}
+
+function destroyInvoiceItem(id) {
+    return WHMCS.http.jqClient.post(
+        WHMCS.adminUtils.getAdminRouteUrl('/invoice-item/destroy'),
+        {
+            invoiceItemId: id,
+            token: csrfToken
+        }
+    );
+}
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+function getWizardStepPageData(stepNumber) {
+    const stepPageMap = {
+        1: {
+            title: 'General',
+            path: '/getting-started',
+        },
+        2: {
+            title: 'Payments',
+            path: '/getting-started/payments/step1',
+        },
+        3: {
+            title: 'Domain',
+            path: '/getting-started/domains/step1',
+        },
+        4: {
+            title: 'eNom',
+            path: '/getting-started/enom',
+        },
+        5: {
+            title: 'Web Hosting',
+            path: '/getting-started/hosting',
+        },
+        6: {
+            title: 'Add-ons & Extras',
+            path: '/getting-started/marketConnect/step1',
+        },
+        7: {
+            title: 'Complete',
+            path: '/getting-started/complete',
+        }
+    };
+
+    return stepPageMap[stepNumber] || { title: 'Unknown step', path: '/getting-started/unknown' };
+}
+
+function isMixpanelEnabled() {
+    return (typeof mixpanel_enabled !== 'undefined') && (mixpanel_enabled === true);
+}
+
+function trackWizardPageView(stepNumber, action = 'view') {
+    if (!isMixpanelEnabled()) {
+        return;
+    }
+
+    const stepPageData = getWizardStepPageData(stepNumber);
+    const fullUrl = this.getFullUrl(stepPageData.path);
+
+    mixpanel.track_pageview({
+        "page": `${stepPageData.title} (${action})`,
+        "\$current_url": fullUrl,
+        "\$referrer": fullUrl,
+    });
+}
+
+function trackWizardAction(stepNumber, action) {
+    if (!isMixpanelEnabled()) {
+        return;
+    }
+
+    const stepPageData = getWizardStepPageData(stepNumber);
+    const fullUrl = this.getFullUrl(stepPageData.path);
+
+    mixpanel.track(`${stepPageData.title} (${action})`, {
+        "\$current_url": fullUrl,
+    });
+}
+
+function trackAppModalEvent(type, name, data = {}) {
+    if (!isMixpanelEnabled()) return;
+
+    const defaultData = {
+        "\$current_url": getFullUrl(window.location.href),
+        "\$referrer": getFullUrl(document.referrer),
+    };
+
+    const payload = Object.assign({}, defaultData, data);
+
+    switch (type) {
+        case 'page':
+            mixpanel.track_pageview({
+                page: name,
+                ...payload
+            });
+            break;
+        case 'event':
+            mixpanel.track(
+                name,
+                payload
+            );
+            break;
+        default:
+            console.warn(`Unknown Mixpanel event type: ${type}`);
+    }
+}
+
+function getFullUrl(path) {
+    return new URL(path, window.location.origin).toString();
+}
+
 /*!
  * WHMCS Ajax Driven Modal Framework
  *
@@ -3799,7 +4276,15 @@ function openModal(url, postData, modalTitle, modalSize, modalClass, submitLabel
     // fetch modal content
     WHMCS.http.jqClient.post(url, postData, function(data) {
         updateAjaxModal(data);
-    }, 'json').fail(function() {
+    }, 'json').fail(function(xhr) {
+        var contentType = xhr.getResponseHeader('content-type') || '';
+        if (contentType.includes('text/html')) {
+            document.open();
+            document.write(xhr.responseText);
+            document.close();
+            return;
+        }
+
         jQuery('#modalAjax .modal-body').html('An error occurred while communicating with the server. Please try again.');
         jQuery('#modalAjax .loader').fadeOut();
     }).always(function () {
@@ -4096,8 +4581,7 @@ jQuery(document).ready(
             standardSelectize = jQuery('.selectize-select'),
             promoSelectize = jQuery('.selectize-promo'),
             tags = jQuery('.selectize-tags'),
-            newTicketCC = jQuery('.selectize-newTicketCc,.selectize-ticketCc'),
-            currentValue = '';
+            newTicketCC = jQuery('.selectize-newTicketCc,.selectize-ticketCc');
 
         jQuery(multiSelectize).selectize(
             {
@@ -4148,22 +4632,30 @@ jQuery(document).ready(
                         return '<div' + colour + '><span class="name">' + escape(item.name) + '</span></div>';
                     }
                 },
+                onInitialize: function () {
+                    this.currentValue = '';
+                },
                 onFocus: function() {
-                    currentValue = this.getValue();
+                    this.currentValue = this.getValue();
                     this.clear();
                 },
-                onBlur: function()
-                {
-                    if (this.getValue() == '') {
-                        this.setValue(currentValue);
+                onChange: function() {
+                    if (this.getValue() === '') {
+                        return;
                     }
-                    if (
-                        jQuery(standardSelectize).hasClass('selectize-auto-submit')
-                        && currentValue !== this.getValue()
-                    ) {
-                        this.setValue(this.getValue());
+
+                    if (this.currentValue === this.getValue()) {
+                        return;
+                    }
+
+                    this.currentValue = this.getValue();
+
+                    if (jQuery(standardSelectize).hasClass('selectize-auto-submit')) {
                         jQuery(standardSelectize).parent('form').submit();
                     }
+                },
+                onBlur: function() {
+                    this.setValue(this.currentValue);
                 }
             }
         );
@@ -4185,7 +4677,7 @@ jQuery(document).ready(
                         }
                         if (typeof otherPromos !== 'undefined'
                             && item.optgroup === otherPromos
-                            && currentValue !== ''
+                            && this.currentValue !== ''
                         ) {
                             jQuery('#nonApplicablePromoWarning').show();
                         } else {
@@ -4220,25 +4712,32 @@ jQuery(document).ready(
                         }
                     }
                 },
+                onInitialize: function () {
+                    this.currentValue = '';
+                },
                 onFocus: function() {
                     this.$control.parent('div').css('overflow', 'visible');
-                    currentValue = this.getValue();
+                    this.currentValue = this.getValue();
                     this.clear();
                 },
-                onBlur: function()
-                {
-                    this.$control.parent('div').css('overflow', 'hidden');
+                onChange: function() {
                     if (this.getValue() === '') {
-                        this.setValue(currentValue);
-                        updatesummary();
+                        return;
                     }
-                    if (
-                        jQuery(promoSelectize).hasClass('selectize-auto-submit')
-                        && currentValue !== this.getValue()
-                    ) {
-                        this.setValue(this.getValue());
+
+                    if (this.currentValue === this.getValue()) {
+                        return;
+                    }
+
+                    this.currentValue = this.getValue();
+
+                    if (jQuery(promoSelectize).hasClass('selectize-auto-submit')) {
                         jQuery(promoSelectize).parent('form').submit();
                     }
+                },
+                onBlur: function() {
+                    this.$control.parent('div').css('overflow', 'hidden');
+                    this.setValue(this.currentValue);
                 }
             }
         );
@@ -4543,27 +5042,78 @@ $(document).ready(function(){
         });
     }
 
-    // Sitejet Alert
-
-    $('#sitejet-alert-close').on('click', handleSitejetAlertClose);
-
-    function handleSitejetAlertClose(e) {
-        e.preventDefault();
-
-        $(e.currentTarget).off('click');
-
-        hideSitejetPrompt()
-            .then(function () {
-                $(e.currentTarget).closest('.alert-dismissible').fadeOut();
-            })
-            .always(function () {
-                $(e.currentTarget).on('click', handleSitejetAlertClose);
-            })
+    jQuery('.admin-dashboard-carousel button.close').on(
+        'click',
+        dismissAdminDashboardCarouselItem
+    );
+    jQuery(window).on(
+        'load resize orientationchange',
+        normalizeAdminDashboardCarouselContent
+    );
+    function normalizeAdminDashboardCarouselContent() {
+        let carouselContent = jQuery('.admin-dashboard-carousel .promotion-content');
+        carouselContent.css('min-height', 0);
+        let maxHeight = Math.max
+            .apply(
+                null,
+                carouselContent.map(getCarouselItemOuterHeight).get()
+            );
+        carouselContent.css('min-height', maxHeight + 'px');
     }
-
-    function hideSitejetPrompt() {
-        return WHMCS.http.jqClient.post(
-            WHMCS.adminUtils.getAdminRouteUrl('/utilities/sitejet/prompt/hide'),
+    function getCarouselItemOuterHeight() {
+        let element = jQuery(this);
+        let item = element.closest('.item');
+        let outerHeight = 0;
+        if (item.hasClass('active')) {
+            return element.outerHeight();
+        }
+        item.addClass('active');
+        outerHeight = element.outerHeight();
+        item.removeClass('active');
+        return outerHeight;
+    }
+    function removeAdminDashboardSpecificPromotion(carousel, identifier) {
+        let carouselItems = carousel.find('.item');
+        let carouselIndicators = carousel.find('.carousel-indicators li');
+        let targetIndex = 0;
+        carouselItems.removeClass('active');
+        carouselItems.each(function(index, item) {
+            if (jQuery(item).find('[data-identifier="' + identifier + '"]').length > 0) {
+                let nextIndex = parseInt(index) + 1;
+                if (nextIndex >= carouselItems.length) {
+                    nextIndex = 0;
+                }
+                targetIndex = nextIndex;
+                jQuery(item).remove();
+                jQuery(carouselItems[nextIndex]).addClass('active');
+            }
+        });
+        if (carouselItems.length <= 2) {
+            jQuery('.admin-dashboard-carousel-controls').remove();
+            return false;
+        }
+        if (targetIndex !== 0) {
+            targetIndex--;
+        }
+        carouselIndicators.removeClass('active');
+        carouselIndicators.each(function(index, indicator) {
+            if (index === targetIndex) {
+                jQuery(indicator).addClass('active');
+            }
+        });
+        carouselIndicators.last().remove();
+    }
+    function dismissAdminDashboardCarouselItem() {
+        let identifier = jQuery(this).closest('.alert')
+            .data('identifier');
+        let carousel = jQuery('.admin-dashboard-carousel');
+        if (carousel.find('.item').length <= 1) {
+            carousel.remove();
+        } else {
+            removeAdminDashboardSpecificPromotion(carousel, identifier);
+        }
+        WHMCS.http.jqClient.post(
+            WHMCS.adminUtils.getAdminRouteUrl('/promotions/dismiss/' + identifier),
             {
                 token: csrfToken,
             }
@@ -4580,7 +5130,11 @@ function refreshWidget(widgetName, requestString) {
     var panelBody = obj.find('.panel-body');
     var icon = obj.find('i.fa-sync');
     panelBody.addClass('panel-loading');
-    var jqxhr = WHMCS.http.jqClient.post(WHMCS.adminUtils.getAdminRouteUrl('/widget/refresh&widget=' + widgetName + '&' + requestString),
+    var jqxhr = WHMCS.http.jqClient.post(
+        WHMCS.adminUtils.getAdminRouteUrl('/widget/refresh&widget=' + widgetName + '&' + requestString),
+        {
+            'token': csrfToken
+        },
         function(data) {
             panelBody.html(data.widgetOutput);
             panelBody.removeClass('panel-loading');
@@ -4589,6 +5143,102 @@ function refreshWidget(widgetName, requestString) {
             icon.removeClass('fa-spin');
         });
 }
+
+jQuery(document).ready(function () {
+    let mixpanelModal = jQuery("#mixpanelOptInModal");
+    let setupWizardModal = jQuery(".whmcs-modal.modal-setup-wizard.in");
+    const dataAdminIdBlock = document.querySelector('[data-user-id]');
+    const authAdminId = dataAdminIdBlock ? dataAdminIdBlock.getAttribute('data-user-id') : null;
+
+    if (!authAdminId) {
+        return;
+    }
+
+    if (document.cookie.indexOf(`trackingOptInDismissed_${authAdminId}=true;`) !== -1) {
+        return;
+    }
+
+    function dismissOptIn(isDismissedForYear) {
+        mixpanelModal.removeClass("mixpanel-shown");
+
+        const whmcsPath = window.location.pathname.split('/')[1] || '';
+        const dataAdminIdBlock = document.querySelector('input.adminUserId') || document.getElementById('mixpanelOptInModal');
+        const authAdminId = dataAdminIdBlock && dataAdminIdBlock.hasAttribute('data-user-id')
+            ? dataAdminIdBlock.getAttribute('data-user-id')
+            : null;
+
+        if (!authAdminId) {
+            return;
+        }
+
+        let cookieSettings = `trackingOptInDismissed_${authAdminId}=true; path=/${whmcsPath}; SameSite=Lax`;
+
+        if (window.location.protocol === "https:") {
+            cookieSettings += "; Secure";
+        }
+
+        if (isDismissedForYear) {
+            cookieSettings += `; max-age=${365 * 24 * 60 * 60}`;
+        }
+
+        document.cookie = cookieSettings;
+    }
+
+    if (setupWizardModal.length) {
+        return;
+    }
+
+    mixpanelModal.addClass("mixpanel-shown");
+
+    const observer = new MutationObserver(() => {
+        let updatedGswModal = jQuery(".whmcs-modal.modal-setup-wizard.in");
+        if (updatedGswModal.length) {
+            dismissOptIn(false);
+            observer.disconnect();
+        }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    jQuery("#optInAccept").on("click", function () {
+        saveMixPanelTrackingData(true);
+        dismissOptIn(false);
+        jQuery("#optInAccept").hide();
+        observer.disconnect();
+    });
+    jQuery("#optInDismiss").on("click", function () {
+        dismissOptIn(true);
+        jQuery("#optInDismiss").hide();
+        observer.disconnect();
+    });
+    jQuery("#optInClose").on("click", function() {
+        dismissOptIn(false);
+        observer.disconnect();
+    });
+
+    function saveMixPanelTrackingData(status) {
+        WHMCS.http.jqClient.post(
+            WHMCS.adminUtils.getAdminRouteUrl('/mixpanel/config/set'),
+            {
+                token: csrfToken,
+                MixPanelTrackingEnabled: status
+            }
+        );
+    }
+
+    const checkbox = document.querySelector("input[name='mixpaneltrackingenabled']");
+    const saveButton = document.querySelector('input[type="submit"].btn.btn-primary');
+
+    if (!checkbox || !saveButton) return;
+
+    let wasChecked = checkbox.checked;
+
+    saveButton.addEventListener("click", function () {
+        if (wasChecked && !checkbox.checked) {
+            dismissOptIn(false);
+        }
+    });
+});
 
 /*!
  * Automation Status Javascript.
@@ -5147,6 +5797,15 @@ jQuery(document).ready(function() {
             }
         }, 'json').fail(function (xhr) {
             var response = (xhr.responseText != '' ? xhr.responseText : xhr.statusText);
+
+            var contentType = xhr.getResponseHeader('content-type') || '';
+            if (contentType.includes('text/html')) {
+                document.open();
+                document.write(xhr.responseText);
+                document.close();
+                return;
+            }
+
             $.growl.error({ title: '', message: response })
         }).always(function (xhr) {
             buttonIcon.removeClass().addClass(iconState);
@@ -5179,6 +5838,25 @@ jQuery(document).ready(function() {
  */
 
 jQuery(document).ready(function() {
+    const telephoneSharedCountries = new Map([
+        ['um', 'us'], // United States Outlying Islands shares dialing code with the US
+        ['ic', 'es'], // Canary Islands shares dialing code with Spain
+        ['gs', 'fk'], // South Georgia and Sandwich Islands shares dialing code with Falkland Islands
+        ['aq', 'nf'], // Antarctica shares dialing code with Norfolk Island
+        ['tf', 're'], // French Southern Territories shares dialing code with Réunion (La Réunion)
+        ['hm', 'nf'], // Heard Island and Mcdonald Islands shares dialing code with Norfolk Island
+        ['an', 'bq'], // Netherlands Antilles shares dialing code with Caribbean Netherlands
+        ['pn', 'nz'], // Pitcairn shares dialing code with New Zealand
+    ]);
+
+    function assertTelephoneCountry(country) {
+        country = country.toLowerCase();
+        if (telephoneSharedCountries.has(country)) {
+            return telephoneSharedCountries.get(country);
+        }
+        return country;
+    }
+
     if (typeof customCountryData !== "undefined") {
         var teleCountryData = $.fn['intlTelInput'].getCountryData();
         for (var code in customCountryData) {
@@ -5213,10 +5891,7 @@ jQuery(document).ready(function() {
             var countryInput = jQuery('[name^="country"], [name$="country"]'),
                 initialCountry = 'us';
             if (countryInput.length) {
-                initialCountry = countryInput.val().toLowerCase();
-                if (initialCountry === 'um') {
-                    initialCountry = 'us';
-                }
+                initialCountry = assertTelephoneCountry(countryInput.val());
             }
 
             phoneInput.each(function(){
@@ -5228,14 +5903,19 @@ jQuery(document).ready(function() {
                 jQuery(this).before(
                     '<input id="populatedCountryCode' + inputName + '" type="hidden" name="country-calling-code-' + inputName + '" value="" />'
                 );
-                thisInput.intlTelInput({
-                    preferredCountries: [initialCountry, "us", "gb"].filter(function(value, index, self) {
-                        return self.indexOf(value) === index;
-                    }),
-                    initialCountry: initialCountry,
-                    autoPlaceholder: 'polite', //always show the helper placeholder
-                    separateDialCode: true
-                });
+                try {
+                    thisInput.intlTelInput({
+                        preferredCountries: [initialCountry, "us", "gb"].filter(function (value, index, self) {
+                            return self.indexOf(value) === index;
+                        }),
+                        initialCountry: initialCountry,
+                        autoPlaceholder: 'polite', //always show the helper placeholder
+                        separateDialCode: true
+                    });
+                } catch (error) {
+                    console.log(error.message);
+                    return false;
+                }
 
                 thisInput.on('countrychange', function (e, countryData) {
                     jQuery('#populatedCountryCode' + inputName).val(countryData.dialCode);
@@ -5259,11 +5939,13 @@ jQuery(document).ready(function() {
 
                 countryInput.on('change', function() {
                     if (thisInput.val() === '') {
-                        var country = jQuery(this).val().toLowerCase();
-                        if (country === 'um') {
-                            country = 'us';
+                        var country = assertTelephoneCountry(jQuery(this).val());
+                        try {
+                            phoneInput.intlTelInput('setCountry', country);
+                        } catch (error) {
+                            console.log(error.message);
+                            return false;
                         }
-                        phoneInput.intlTelInput('setCountry', country);
                     }
                 });
 
@@ -5312,10 +5994,7 @@ jQuery(document).ready(function() {
                 inputName = inputName.replace('contactdetails[', '').replace('][Phone Number]', '').replace('][Phone]', '');
 
                 var countryInput = jQuery('[name$="' + inputName + '][Country]"]'),
-                    initialCountry = countryInput.val().toLowerCase();
-                if (initialCountry === 'um') {
-                    initialCountry = 'us';
-                }
+                    initialCountry = assertTelephoneCountry(countryInput.val());
 
                 thisInput.before('<input id="populated' + inputName + 'CountryCode" class="' + inputName + 'customwhois" type="hidden" name="contactdetails[' + inputName + '][Phone Country Code]" value="" />');
                 thisInput.intlTelInput({
@@ -5349,10 +6028,7 @@ jQuery(document).ready(function() {
 
                 countryInput.on('blur', function() {
                     if (thisInput.val() === '') {
-                        var country = jQuery(this).val().toLowerCase();
-                        if (country === 'um') {
-                            country = 'us';
-                        }
+                        var country = assertTelephoneCountry(jQuery(this).val());
                         thisInput.intlTelInput('setCountry', country);
                     }
                 });

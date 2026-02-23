@@ -6,8 +6,7 @@ It also provides a CLI tool for validating and converting OpenAPI 3.0.x Descript
 
 [![Latest Stable Version](https://poser.pugx.org/cebe/php-openapi/v/stable)](https://packagist.org/packages/cebe/php-openapi)
 [![Total Downloads](https://poser.pugx.org/cebe/php-openapi/downloads)](https://packagist.org/packages/cebe/php-openapi)
-[![Build Status](https://github.com/cebe/php-openapi/workflows/PHP%20Composer/badge.svg)](https://github.com/cebe/php-openapi/actions)
-[![License](https://poser.pugx.org/cebe/php-openapi/license)](https://packagist.org/packages/cebe/php-openapi)
+[![Build Status](https://github.com/cebe/php-openapi/workflows/CI/badge.svg)](https://github.com/cebe/php-openapi/actions)
 
 
 ## Install
@@ -195,9 +194,20 @@ references to structures in external files, we must provide the full context.
 
 ```php
 use cebe\openapi\Reader;
+use cebe\openapi\spec\OpenAPI;
+use cebe\openapi\ReferenceContext;
+
+// there are two different modes for resolving references:
+// ALL: resolve all references, which will result in a large description with a lot of repetition
+// but no references (except if there are recursive references, these will stop at some level)
+$mode = ReferenceContext::RESOLVE_MODE_ALL;
+// INLINE: only references to external files are resolved, references to places in the current file
+// are still Reference objects.
+$mode = ReferenceContext::RESOLVE_MODE_INLINE;
+
 // an absolute URL or file path is needed to allow resolving external references
-$openapi = Reader::readFromJsonFile('https://www.example.com/api/openapi.json');
-$openapi = Reader::readFromYamlFile('https://www.example.com/api/openapi.yaml');
+$openapi = Reader::readFromJsonFile('https://www.example.com/api/openapi.json', OpenAPI::class, $mode);
+$openapi = Reader::readFromYamlFile('https://www.example.com/api/openapi.yaml', OpenAPI::class, $mode);
 ```
 
 If data has been loaded in a different way you can manually resolve references like this by giving a context:
@@ -266,6 +276,16 @@ This library is currently work in progress, the following list tracks completene
   - [x] OAuth Flows Object
   - [x] OAuth Flow Object
   - [x] Security Requirement Object
+
+# Development
+
+You may use the docker environment for local development:
+
+    docker-compose build
+    make IN_DOCKER=1 install
+    make IN_DOCKER=1 test
+    ...
+
 
 # Support
 

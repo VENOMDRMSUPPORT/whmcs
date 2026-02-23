@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Database\Query\Builder;
+use WHMCS\Billing\BillingNote\Status;
+use WHMCS\Billing\Payment\Transaction\LedgerType;
 use WHMCS\Carbon;
 use WHMCS\Database\Capsule;
 
@@ -62,16 +65,15 @@ $statement = array();
 $count = $balance = $totalcredits = $totaldebits = 0;
 
 if ($userid) {
+    $invoiceStatusesForReport = [
+        'Unpaid',
+        'Paid',
+        'Collections',
+    ];
+
     $results = Capsule::table('tblinvoices')
         ->where('userid', '=', $userid)
-        ->whereIn(
-            'status',
-            [
-                'Unpaid',
-                'Paid',
-                'Collections',
-            ]
-        )
+        ->whereIn('status', $invoiceStatusesForReport)
         ->orderBy('date', 'asc')
         ->get()
         ->all();
@@ -104,8 +106,17 @@ if ($userid) {
     }
 
     $results = Capsule::table('tblaccounts')
-        ->where('userid', '=', $userid)
-        ->orderBy('date', 'asc')
+        ->leftJoin('tblbillingnotes', 'tblaccounts.billingnoteid', '=', 'tblbillingnotes.id')
+        ->leftJoin('tblinvoices', 'tblaccounts.invoiceid', '=', 'tblinvoices.id')
+        ->where('tblaccounts.userid', '=', $userid)
+        ->where(static function (Builder $query) use ($invoiceStatusesForReport) {
+            $query->whereNull('tblbillingnotes.id')
+                ->orWhere(static function (Builder $query) use ($invoiceStatusesForReport) {
+                    $query->whereIn('tblinvoices.status', $invoiceStatusesForReport)
+                        ->where('tblbillingnotes.status', '=', Status::Closed);
+                });
+        })
+        ->orderBy('tblaccounts.date', 'asc')
         ->get()
         ->all();
     foreach ($results as $result) {
@@ -210,5 +221,5 @@ $reportdata["tablevalues"][] = array(
     '<b>Ending Balance</b>',
     '<b>'.formatCurrency($totalcredits).'</b>',
     '<b>'.formatCurrency($totaldebits).'</b>',
-    '<b>'.formatCurrency($balance).'</b>'
+    '<b>'.formatCurrency($balance).'</b>',
 );

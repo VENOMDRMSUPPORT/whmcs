@@ -367,16 +367,10 @@
                         {$LANG.cPanel.backup}
                     </a>
                 </div>
-                <div class="col-md-3 col-sm-4 col-xs-6 col-6" id="cPanelSubdomains">
-                    <a href="clientarea.php?action=productdetails&amp;id={$serviceid}&amp;dosinglesignon=1&amp;app=Domains_SubDomains" target="_blank" class="d-block mb-3">
-                        <img src="modules/servers/cpanel/img/subdomains.png" />
-                        {$LANG.cPanel.subdomains}
-                    </a>
-                </div>
-                <div class="col-md-3 col-sm-4 col-xs-6 col-6" id="cPanelAddonDomains">
-                    <a href="clientarea.php?action=productdetails&amp;id={$serviceid}&amp;dosinglesignon=1&amp;app=Domains_AddonDomains" target="_blank" class="d-block mb-3">
+                <div class="col-md-3 col-sm-4 col-xs-6 col-6" id="cPanelDomains">
+                    <a href="clientarea.php?action=productdetails&amp;id={$serviceid}&amp;dosinglesignon=1&amp;app=Domains_domains" target="_blank" class="d-block mb-3">
                         <img src="modules/servers/cpanel/img/addon_domains.png" />
-                        {$LANG.cPanel.addonDomains}
+                        {$LANG.cPanel.domains}
                     </a>
                 </div>
                 <div class="col-md-3 col-sm-4 col-xs-6 col-6" id="cPanelCronJobs">
@@ -426,7 +420,7 @@
 
             {include file="$template/includes/alert.tpl" type="danger" msg=$LANG.cPanel.emailAccountCreateFailed|cat:' <span id="emailCreateFailedErrorMsg"></span>' textcenter=true hide=true idname="emailCreateFailed" additionalClasses="email-create-feedback"}
 
-            <form id="frmCreateEmailAccount" onsubmit="doEmailCreate();return false">
+            <form method="POST" id="frmCreateEmailAccount" onsubmit="doEmailCreate();return false">
                 <input type="hidden" name="id" value="{$serviceid}" />
                 <input type="hidden" name="email_quota" value="250" />
                 <div class="row">
@@ -512,7 +506,7 @@
                         {$LANG.orderpaymentmethod}
                     </div>
                     <div class="col-xs-6 col-6">
-                        {$paymentmethod}
+                        {$paymentmethod|escape}
                     </div>
                 </div>
             </div>

@@ -1,32 +1,31 @@
-{* VENOM Solutions — Password Reset Email Prompt *}
-{if $errorMessage}
-    <div class="venom-flash-area">
-        {include file="$template/includes/alert.tpl" type="error" msg=$errorMessage textcenter=true}
-    </div>
-{/if}
+<div class="mb-4">
+    <h6 class="h3">{lang key='pwreset'}</h6>
+    <p class="text-muted mb-0">{lang key='pwresetemailneeded'}</p>
+</div>
 
-<form method="post" action="{routePath('password-reset-validate-email')}" class="venom-form" role="form">
+<form method="post" action="{routePath('password-reset-validate-email')}" role="form">
     <input type="hidden" name="action" value="reset" />
 
-    <div class="venom-field">
-        <label for="inputEmail" class="venom-label">{lang key='loginemail'}</label>
-        <div class="venom-input-wrap">
-            <span class="venom-input-icon"><i class="fas fa-envelope"></i></span>
-            <input type="email" class="venom-auth-input" name="email" id="inputEmail" placeholder="{lang key='enteremail'}" autofocus>
-        </div>
+    <div class="form-group">
+        <label for="inputEmail">{lang key='loginemail'}</label>
+        <div class="input-group input-group-merge">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+            </div>
+            <input type="email" class="form-control" name="email" id="inputEmail" placeholder="name@example.com" autofocus>
+          </div>
     </div>
 
-    {if $captcha->isEnabled()}
-        <div class="venom-captcha-wrap">
-            <div class="venom-captcha-block">
-                {include file="$template/includes/captcha.tpl"}
-            </div>
+    {if $captcha && $captcha->isEnabled() && $showCaptchaAfterLimit}
+        <div class="text-center margin-bottom">
+            {include file="$template/includes/captcha.tpl"}
         </div>
     {/if}
 
-    <div class="venom-form-submit">
-        <button type="submit" class="venom-btn-submit{$captcha->getButtonClass($captchaForm)}">
+    <div class="form-group text-center">
+        <button type="submit" id="resetPasswordButton" {if $showCaptchaAfterLimit}data-captcha-required="true"{/if} class="btn btn-primary{$captcha->getButtonClass($captchaForm)}">
             {lang key='pwresetsubmit'}
         </button>
     </div>
+
 </form>

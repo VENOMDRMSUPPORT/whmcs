@@ -32,7 +32,7 @@
 
 if (!defined("WHMCS")) die("This file cannot be accessed directly");
 
-class OPS extends PEAR {
+class OPS {
 
     var $_OPS_VERSION   = '0.9';
     var $_OPT           = '';
@@ -63,9 +63,6 @@ class OPS extends PEAR {
 
     function __construct($args=false)
     {
-
-        $this->PEAR();
-
         if (is_array($args)) {
             if ($args['option']=='compress') {
                 $this->_OPT = 'compress';
@@ -329,7 +326,8 @@ class OPS extends PEAR {
                 xml_get_current_line_number($xp)
             );
             xml_parser_free($xp);
-            return $this->raiseError($error);
+            trigger_error($error, E_USER_WARNING);
+            return false;
         }
 
         xml_parser_free($xp);
@@ -353,7 +351,7 @@ class OPS extends PEAR {
                 break;
 
               case 'item':
-                $key = $value['attributes']['key'];
+                $key = $value['attributes']['key'] ?? null;
 
                 switch ($value['type']) {
                   case 'open':
@@ -363,7 +361,7 @@ class OPS extends PEAR {
                   case 'complete':
                     array_push($depth, $key);
                     $p = join('::',$depth);
-                    $temp[$p] = $value['value'];
+                    $temp[$p] = $value['value'] ?? null;
                     array_pop($depth);
                     break;
 

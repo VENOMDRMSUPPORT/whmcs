@@ -108,7 +108,7 @@ function handler_open(event) {
     })
         .then(({setupIntent, error}) => {
             if (error) {
-                displayError.html(error);
+                displayError.html(error.message);
                 if (displayError.not(':visible')) {
                     displayError.slideDown();
                 }
@@ -131,7 +131,7 @@ function handler_open(event) {
                 stripeACH.confirmUsBankAccountSetup(clientToken)
                     .then(({setupIntent, error}) => {
                         if (error) {
-                            displayError.html(error);
+                            displayError.html(error.message);
                             if (displayError.not(':visible')) {
                                 displayError.slideDown();
                             }

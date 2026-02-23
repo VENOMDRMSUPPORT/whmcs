@@ -89,5 +89,38 @@ function () {
         return x[0] % n;
     };
 
+    this.ensureElementHasId = function (element, prefix) {
+        element = jQuery(element);
+        if (typeof element.attr('id') === "undefined") {
+            element.attr('id', this.generateUniqueIdentifier(prefix));
+        }
+        return this;
+    };
+
+    this.generateUniqueIdentifier = function(prefix)
+    {
+        let id = Math
+            .random()
+            .toString(36)
+            .replace('0.',prefix || 'x_');
+        if (this.generatedIds.includes(id)) {
+            return this.generateUniqueIdentifier(prefix);
+        }
+        this.generatedIds.push(id);
+        return id;
+    };
+
+    this.generatedIds = [];
+
+    this.clearLocalStorage = function (element) {
+        if (typeof (Storage) === "undefined") {
+            return;
+        }
+        if (element.data('noClear') === true) {
+            return;
+        }
+        localStorage.removeItem(element.data('localStorageId'));
+    };
+
     return this;
 });

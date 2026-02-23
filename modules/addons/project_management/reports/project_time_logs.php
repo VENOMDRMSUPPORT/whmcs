@@ -29,6 +29,7 @@ if (!$range) {
 }
 
 $unassignedSelected = ($staffId == 'unassigned') ? ' selected="selected"' : '';
+$staffDropdown = '';
 foreach (Admin::all() as $admin) {
     $selected = ($admin->id == $staffId) ? ' selected="selected"' : '';
     $staffDropdown .= "<option value=\"{$admin->id}\"{$selected}>{$admin->fullName}</option>";

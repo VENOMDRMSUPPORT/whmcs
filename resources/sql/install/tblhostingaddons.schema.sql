@@ -30,6 +30,7 @@ CREATE TABLE `tblhostingaddons` (
   `paymentmethod` text COLLATE utf8_unicode_ci NOT NULL,
   `notes` text COLLATE utf8_unicode_ci NOT NULL,
   `subscriptionid` varchar(128) COLLATE utf8_unicode_ci NOT NULL default '',
+  `upsell_from_products` varchar(40) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),

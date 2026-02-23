@@ -151,7 +151,7 @@ function stripe_sepa_form_submit(event)
         }
     ).then(({setupIntent, error}) => {
         if (error) {
-            displayError.html(error);
+            displayError.html(error.message);
             if (displayError.not(':visible')) {
                 displayError.slideDown();
             }

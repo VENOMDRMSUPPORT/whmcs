@@ -1,7 +1,7 @@
 {$infobox}
 
 <h2 class="ticket-subject">
-    #{$tid} - {if !$subject}({AdminLang::trans('emails.nosubject')}){else}{$subject}{/if}
+    {if !empty($pinned)}{$pinned}{/if}#{$tid} - {if !$subject}({AdminLang::trans('emails.nosubject')}){else}{$subject}{/if}
     <select name="ticketstatus" id="ticketstatus" class="form-control select-inline ticket-status">
         {foreach $statuses as $statusitem}
             <option value="{$statusitem.title}"{if $statusitem.title eq $status} selected{/if} style="color:{$statusitem.color}">{$statusitem.title}</option>
@@ -58,13 +58,17 @@
     <li><a href="#tab4" role="tab" data-toggle="tab" onclick="loadTab(4, 'clientlog', 0)">{$_ADMINLANG.support.clientlog}</a></li>
     <li><a href="#tab5" role="tab" data-toggle="tab">{$_ADMINLANG.fields.options}</a></li>
     <li><a href="#tab6" role="tab" data-toggle="tab" onclick="loadTab(6, 'ticketlog', 0)">{$_ADMINLANG.support.ticketlog}</a></li>
+    <li>
+        <a href="#tab7" role="tab" data-toggle="tab" onclick="loadTab(7, 'ticketactions', 0)"
+            >{$_ADMINLANG.support.ticketactions} <span class="label ticket-actions-count">{$numScheduledActions}</span></a>
+    </li>
 </ul>
 <div class="tab-content admin-tabs">
   <div class="tab-pane active" id="tab0">
 
     <form method="post" action="{$smarty.server.PHP_SELF}?action=viewticket&id={$ticketid}&amp;postreply=1" enctype="multipart/form-data" name="replyfrm" id="frmAddTicketReply" data-no-clear="true">
         <input type="hidden" name="postreply" value="1" />
-
+         <input type="hidden" name="trace_id" value="">
         <textarea name="message" id="replymessage" rows="14" class="form-control bottom-margin-10">{if $signature}
 
 
@@ -117,6 +121,27 @@
                     &nbsp;
                     {$_ADMINLANG.support.insertpredef}
                 </button>
+                {if in_array('Create Scheduled Ticket Actions', $admin_perms)}
+                <button type="button"
+                        class="btn btn-default btns-padded btn-schedule-actions btn-scheduled-actions-manage">
+                    <i class="fal fa-calendar" aria-hidden="true"></i>{$_ADMINLANG.support.ticket.action.manageactions}
+                </button>
+                {/if}
+                {if in_array($aiCopilotName, $active_addons)}
+                    <button type="button"
+                            class="btn btn-default btns-padded btn-schedule-actions btn-ai-suggestions-manage"
+                            {if !in_array($adminRoleId, $aiCopilotAccessValue)}
+                                title="{$_ADMINLANG.support.aiCopilotNoPermission}"
+                                disabled
+                            {elseif !$aiCopilotLicenseValid}
+                                title="{$aiCopilotLicenseMessage|escape:'html'}"
+                                disabled
+                            {/if}>
+                        <i class="fas fa-sparkles"></i>
+                        &nbsp;
+                        {$_ADMINLANG.support.aiSuggestions}
+                    </button>
+                {/if}
                 <div class="dropdown btns-padded">
                     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMoreOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                         <i class="fas fa-cog"></i>
@@ -150,6 +175,150 @@
                     {$predefinedreplies}
                 </div>
             </div>
+            {if in_array('Create Scheduled Ticket Actions', $admin_perms)}
+            <div id="ticketReplyScheduledActions" class="inner-container">
+                {$scheduledActionsAndActionsPanel}
+            </div>
+            {/if}
+            <div id="ticketReplyAiSuggestions" class="inner-container"
+                 data-license-valid="{if isset($aiCopilotLicenseValid)}{$aiCopilotLicenseValid|string_format:"%d"}{else}1{/if}"
+                 data-license-message="{$aiCopilotLicenseMessage|default:''|escape:'html'}"
+                 data-license-reason="{$aiCopilotLicenseReason|default:''|escape:'html'}">
+                    <!-- Loading Overlay -->
+                    <div class="ai-loading-overlay">
+                        <div class="loading-content">
+                            <div class="spinner"></div>
+                            <p>{$_ADMINLANG.aiSuggestions.processing}</p>
+                            <p class="loading-subtext">{$_ADMINLANG.aiSuggestions.processingRequest}</p>
+                        </div>
+                    </div>
+
+                    <!-- Review Instructions Header -->
+                    <div class="ai-review-instructions">
+                        <div class="ai-review-content">
+                            <h4 class="ai-review-title">{$_ADMINLANG.aiSuggestions.reviewSanitizedDataTitle}</h4>
+                            <p class="ai-review-description">
+                                {$_ADMINLANG.aiSuggestions.reviewSanitizedDataDesc}
+                            </p>
+                        </div>
+                    </div>
+
+                    <form id="aiSuggestionsForm">
+                        <!-- Section 1: Tone and Length Controls (appears after first generation) -->
+                        <div id="aiToneLengthControls" class="ai-tone-length-controls ai-hidden">
+                            <div class="controls-header">
+                                <h5><i class="fas fa-sliders-h"></i> {$_ADMINLANG.aiSuggestions.adjustToneLength}</h5>
+                            </div>
+                            <div class="controls-body">
+                                <div class="control-group">
+                                    <label for="aiToneSelector">
+                                        <i class="fas fa-comment-dots"></i> {$_ADMINLANG.aiSuggestions.tone}
+                                    </label>
+                                    <select id="aiToneSelector" class="form-control">
+                                        <option value="friendly" selected>{$_ADMINLANG.aiSuggestions.toneFriendly}</option>
+                                        <option value="formal">{$_ADMINLANG.aiSuggestions.toneFormal}</option>
+                                        <option value="technical">{$_ADMINLANG.aiSuggestions.toneTechnical}</option>
+                                    </select>
+                                </div>
+                                <div class="control-group">
+                                    <label for="aiLengthSelector">
+                                        <i class="fas fa-align-left"></i> {$_ADMINLANG.aiSuggestions.length}
+                                    </label>
+                                    <select id="aiLengthSelector" class="form-control">
+                                        <option value="concise">{$_ADMINLANG.aiSuggestions.lengthConcise}</option>
+                                        <option value="detailed" selected>{$_ADMINLANG.aiSuggestions.lengthDetailed}</option>
+                                    </select>
+                                </div>
+                                <div class="control-group regenerate-group">
+                                    <button type="button" id="generateAiSuggestion" class="btn btn-default btn-regenerate"
+                                            {if !$aiCopilotLicenseValid}disabled{/if}>
+                                        <i class="fas fa-sync-alt"></i> {$_ADMINLANG.aiSuggestions.regenerate}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: AI References (collapsible) -->
+                        <div id="aiReferencesSection" class="ai-references-section ai-collapsible-section" style="display: none;">
+                            <div class="collapsible-header" data-toggle="collapse" data-target="#aiReferencesContent">
+                                <h5><i class="fas fa-book"></i> {$_ADMINLANG.aiSuggestions.references}</h5>
+                                <i class="fas fa-chevron-down toggle-icon"></i>
+                            </div>
+                            <div id="aiReferencesContent" class="collapse">
+                                <div class="references-body"></div>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Review Sanitized Data -->
+                        <div class="ai-section ticket-content-section">
+                            <div class="section-header">
+                                <h5 class="section-title"><i class="fas fa-ticket-alt"></i> {$_ADMINLANG.support.aiTicketContent}</h5>
+                                <button type="button" class="btn btn-sm btn-link section-toggle" data-expanded="true">
+                                    <i class="fas fa-chevron-up"></i>
+                                </button>
+                            </div>
+
+                            <div class="section-content">
+                                <div class="ai-form-section">
+                                    <label for="aiTicketSubject">{$_ADMINLANG.support.aiSubject}</label>
+                                    <input type="text" id="aiTicketSubject" name="subject" class="form-control"
+                                           placeholder="{$_ADMINLANG.support.aiPlaceholderSubject}" />
+                                </div>
+                                <div class="ai-form-section">
+                                    <label for="aiTicketContent">{$_ADMINLANG.support.aiInitialMessage}</label>
+                                    <textarea id="aiTicketContent" name="content" class="form-control" rows="3"
+                                              placeholder="{$_ADMINLANG.support.aiPlaceholderContent}"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 4: Reply Thread (collapsed by default) -->
+                        <div class="ai-section reply-thread-section">
+                            <div id="replyThread" class="reply-thread"></div>
+                        </div>
+
+
+                        <!-- Generate AI Suggestion Button (initial state) -->
+                        <div class="ai-generate-button-container" id="aiInitialGenerateButton">
+                            <button type="button" id="generateAiSuggestionInitial" class="btn btn-primary"
+                                    {if !$aiCopilotLicenseValid}disabled{/if}>
+                                <i class="fas fa-sparkles"></i> {$_ADMINLANG.support.aiGenerate}
+                            </button>
+                        </div>
+
+                        <!-- Hidden field for complete conversation history -->
+                        <textarea id="aiReplyHistory" name="history" class="form-control hidden"></textarea>
+                    </form>
+
+                </div>
+
+                <!-- Confirmation Modal (moved outside container to fix backdrop issue) -->
+            <div class="modal fade" id="aiConfirmModal" tabindex="-1" role="dialog" aria-labelledby="aiConfirmModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h4 class="modal-title" id="aiConfirmModalLabel">
+                                    {$_ADMINLANG.support.aiConfirmReview}
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>{$_ADMINLANG.support.aiConfirmReviewMessage}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">
+                                    {$_ADMINLANG.global.cancel}
+                                </button>
+                                <button type="button" class="btn btn-primary" id="aiConfirmGenerate">
+                                    {$_ADMINLANG.global.continue}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
             <div id="ticketReplyAttachments" class="inner-container">
                 <div class="row">
                     <div class="col-sm-9">
@@ -364,6 +533,19 @@
                     <input type="text" name="mergetid"  class="form-control input-150 input-inline"> ({$_ADMINLANG.support.notocombine})
                 </td>
             </tr>
+            <tr>
+                <td class="fieldlabel">
+                    {$_ADMINLANG.support.preventClientClosure}
+                </td>
+                <td class="fieldarea">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" name="preventClientClosure"{if $preventClientClosure} checked="checked"{/if}>
+                        {$_ADMINLANG.support.preventClientClosureDescription}
+                    </label>
+                </td>
+                <td class="fieldlabel form-field-hidden-on-respond">&nbsp;</td>
+                <td class="fieldarea form-field-hidden-on-respond">&nbsp;</td>
+            </tr>
         </table>
         <div class="btn-container">
             <button id="btnSaveChanges" type="submit" class="btn btn-primary" value="save">
@@ -379,6 +561,10 @@
     <i class="fa fa-spinner fa-spin"></i>
     {$_ADMINLANG.global.loading}
 
+  </div>
+  <div class="tab-pane" id="tab7">
+    <i class="fa fa-spinner fa-spin"></i>
+    {$_ADMINLANG.global.loading}
   </div>
 </div>
 
@@ -412,7 +598,7 @@
         </table>
     </div>
     <div id="relatedservicesexpand" class="ticket-action-buttons pull-right">
-        <button id="btnRelatedServiceExpand" class="btn btn-default btn-xs{if !$relatedservicesexpand} disabled" disabled="disabled{/if}">
+        <button id="btnRelatedServiceExpand" class="btn btn-default btn-xs{if !isset($relatedservicesexpand) || !$relatedservicesexpand} disabled" disabled="disabled{/if}">
             <span>
                 <i class="far fa-stream"></i>
                 {$_ADMINLANG.support.viewAllServices}
@@ -424,7 +610,7 @@
         </button>
     </div>
     <div id="selectRelatedService" class="ticket-action-buttons" style="margin-bottom:15px;">
-        <button id="btnSelectRelatedService" type="button" class="btn btn-default btn-xs{if !count($relatedservice)} disabled" disabled="disabled{/if}" data-expandable="{$relatedservicesexpand}">
+        <button id="btnSelectRelatedService" type="button" class="btn btn-default btn-xs{if !count($relatedservice)} disabled" disabled="disabled{/if}"{if isset($relatedservicesexpand)} data-expandable="{$relatedservicesexpand}"{/if}>
             <i class="fas fa-tasks"></i>
             {lang key='support.associateService'}
         </button>
@@ -607,6 +793,29 @@
                             </ul>
                         {/if}
                     </div>
+                    {if $reply.admin && ($reply.is_ai_generated|default:false) && in_array($aiCopilotName, $active_addons)}
+                        <div class="ai-rating-section
+                                    {if !in_array($adminRoleId, $aiCopilotAccessValue) || !$aiCopilotLicenseValid}disabled{/if}">
+                            <label class="ai-rating-label">
+                                <i class="fas fa-sparkles"></i>
+                                Rate this AI suggestion
+                            </label>
+                            <div class="ai-star-rating" data-reply-id="{$reply.id}" data-trace-id="{$reply.trace_id}">
+                                {assign var="canRate" value=in_array($adminRoleId, $aiCopilotAccessValue) && $aiCopilotLicenseValid}
+                                {for $i=1 to 5}
+                                    <i class="fas fa-star
+                                        {if $canRate}
+                                           star {if $reply.agent_score >= $i}active{else}inactive{/if}
+                                        {else}
+                                            disabled
+                                        {/if}"
+                                       data-rating="{$i}">
+                                    </i>
+                                {/for}
+                            </div>
+
+                        </div>
+                    {/if}
                 </div>
                 <div class="clear"></div>
             </div>
@@ -630,3 +839,65 @@
     <input type="hidden" name="splitpriority" id="splitpriority" />
     <input type="hidden" name="splitnotifyclient" id="splitnotifyclient" />
 </form>
+
+<!-- AI Rating Feedback Modal -->
+<div class="modal fade" id="aiRatingFeedbackModal" tabindex="-1" role="dialog" aria-labelledby="aiRatingFeedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="aiRatingFeedbackModalLabel">
+                    {$_ADMINLANG.support.aiRatingFeedback|default:'Provide Feedback'}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <!-- Loader overlay -->
+                <div id="aiRatingFeedbackLoader" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.9); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: #8b5cf6; margin-bottom: 10px;"></i>
+                        <p style="color: #6b7280; font-weight: 500;">Submitting feedback...</p>
+                    </div>
+                </div>
+
+                <!-- Success message -->
+                <div id="aiRatingFeedbackSuccess" style="display: none; padding: 20px; text-align: center;">
+                    <i class="fas fa-check-circle" style="font-size: 48px; color: #10b981; margin-bottom: 15px;"></i>
+                    <h5 style="color: #10b981; margin-bottom: 10px;">Thank you for your feedback!</h5>
+                    <p style="color: #6b7280;">Your rating has been submitted successfully.</p>
+                </div>
+
+                <!-- Error message -->
+                <div id="aiRatingFeedbackError" style="display: none; padding: 20px; text-align: center;">
+                    <i class="fas fa-exclamation-circle" style="font-size: 48px; color: #ef4444; margin-bottom: 15px;"></i>
+                    <h5 style="color: #ef4444; margin-bottom: 10px;">Submission Failed</h5>
+                    <p id="aiRatingFeedbackErrorMessage" style="color: #6b7280;">Failed to submit rating. Please try again.</p>
+                </div>
+
+                <!-- Form content -->
+                <div id="aiRatingFeedbackForm">
+                    <p>{$_ADMINLANG.support.aiRatingFeedbackMessage|default:'We appreciate your feedback. Please let us know how we can improve the AI suggestions.'}</p>
+                    <textarea id="aiRatingFeedbackText" class="form-control" rows="4" placeholder="{$_ADMINLANG.support.aiRatingFeedbackPlaceholder|default:'Enter your feedback here...'}"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="aiRatingFeedbackCancel">
+                    {$_ADMINLANG.global.cancel}
+                </button>
+                <button type="button" class="btn btn-primary" id="aiRatingFeedbackSubmit">
+                    {$_ADMINLANG.global.submit}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/AiRating.js"></script>
+<script>
+$(document).ready(function() {
+    if (typeof aiRating !== 'undefined') {
+        aiRating.init();
+    }
+});
+</script>

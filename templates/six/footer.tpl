@@ -13,21 +13,7 @@
 <section id="footer">
     <div class="container">
         <a href="#" class="back-to-top"><i class="fas fa-chevron-up"></i></a>
-        
-        {* VENOM DRM - Footer Navigation Links *}
-        <div class="footer-links" style="margin-bottom: 1rem;">
-            <a href="/terms-of-service.php" style="color: #7a849a; margin: 0 0.75rem;">Terms of Service</a>
-            <a href="/privacy-policy.php" style="color: #7a849a; margin: 0 0.75rem;">Privacy Policy</a>
-            <a href="/refund-policy.php" style="color: #7a849a; margin: 0 0.75rem;">Refund Policy</a>
-            <a href="/acceptable-use.php" style="color: #7a849a; margin: 0 0.75rem;">Acceptable Use</a>
-        </div>
-        
-        {* Software-only disclaimer *}
-        <p style="color: #5a6378; font-size: 0.85rem; margin-bottom: 0.5rem;">
-            <strong>Software Only · No Content Included</strong> — This license covers server management software only. No content, media, or streaming data is provided.
-        </p>
-        
-        <p>{lang key="copyrightFooterNotice" year=$date_year company="VENOM Solutions"}</p>
+        <p>{lang key="copyrightFooterNotice" year=$date_year company=$companyname}</p>
     </div>
 </section>
 

@@ -58,22 +58,29 @@ function () {
         });
     };
 
-    this.reloadCaptcha = function (element)
-    {
+    this.reloadCaptcha = (captchaElement) => {
         if (typeof grecaptcha !== 'undefined') {
+            recaptchaValidationComplete = false;
             grecaptcha.reset();
-        } else {
-            if (!element) {
-                element = jQuery('#inputCaptchaImage');
-            }
 
-            var src = jQuery(element).data('src');
-            jQuery(element).attr('src', src + '?nocache=' + (new Date()).getTime());
+            WHMCS.recaptcha.restoreDefaultCallback();
 
-            var userInput = jQuery('#inputCaptcha');
-            if (userInput.length) {
-                userInput.val('');
-            }
+            return;
+        }
+
+        if (!captchaElement) {
+            captchaElement = jQuery('#inputCaptchaImage');
+        }
+
+        const captchaInput = jQuery('#inputCaptcha');
+
+        if (captchaElement.length) {
+            captchaElement.attr(
+                'src',
+                whmcsBaseUrl + '/includes/verifyimage.php?nocache=' + new Date().getTime()
+            );
+
+            captchaInput.val('');
         }
     };
 

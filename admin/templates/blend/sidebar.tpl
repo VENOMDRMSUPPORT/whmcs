@@ -213,6 +213,18 @@
     <span class="sub-header">{$_ADMINLANG.support.tags}</span>
     <input id="ticketTags" value="{$tags|implode:','}" class="selectize-tags" placeholder="{lang key='support.addTag'}" />
 
+    <div class="pin-ticket">
+        {if $pinnedTicket}
+            <button class="btn btn-danger btn-block btn-xs" id="pin-ticket" type="button" data-admin-full-name="{$adminFullName}" data-admin-id="{$adminid}" data-ticket-id="{$ticketid}" data-type="unpin">
+                {lang key="support.unpinTicket"}
+            </button>
+        {else}
+            <button class="btn btn-info btn-block btn-xs" id="pin-ticket" type="button" data-admin-full-name="{$adminFullName}" data-admin-id="{$adminid}" data-ticket-id="{$ticketid}" data-type="pin">
+                {lang key="support.pinTicket"}
+            </button>
+        {/if}
+    </div>
+
     <div class="watch-ticket">
         {if $watchingTicket}
             <button class="btn btn-danger btn-block btn-xs" id="watch-ticket" type="button" data-admin-full-name="{$adminFullName}" data-admin-id="{$adminid}" data-ticket-id="{$ticketid}" data-type="unwatch">

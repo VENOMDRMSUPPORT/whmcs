@@ -70,6 +70,7 @@ class Overview extends AbstractWidget
                 Capsule::raw("DATE_FORMAT(date, '%k') AS dateTime"),
                 Capsule::raw('SUM(amountin/rate) AS amountIn')
             )
+            ->where('billingnoteid', '=', 0)
             ->where('date', '>', $today)
             ->groupBy(Capsule::raw("DATE_FORMAT(date, '%k')"))
             ->get()
@@ -85,6 +86,7 @@ class Overview extends AbstractWidget
                 Capsule::raw('SUM(amountin/rate) AS amountIn')
             )
             ->where('date', '>', $month)
+            ->where('billingnoteid', '=', 0)
             ->groupBy(Capsule::raw("DATE_FORMAT(date, '%e %M')"))
             ->get()
             ->all();
@@ -98,6 +100,7 @@ class Overview extends AbstractWidget
                 Capsule::raw('SUM(amountin/rate) AS amountIn')
             )
             ->where('date', '>', $year)
+            ->where('billingnoteid', '=', 0)
             ->groupBy(Capsule::raw("date_format(date, '%M %Y')"))
             ->get()
             ->all();

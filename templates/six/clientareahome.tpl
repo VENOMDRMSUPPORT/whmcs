@@ -1,11 +1,5 @@
-{*
- * VENOM Solutions — SaaS Licensing Portal
- * This file delegates to the custom portal home template.
- * Edit clientareahome-venom.tpl to change the client area home layout.
- *}
-{include file="$template/clientareahome-venom.tpl"}
-{* ── original default content below is intentionally suppressed ── *}
-{if false}
+{include file="$template/includes/flashmessage.tpl"}
+
 <div class="tiles clearfix">
     <div class="row">
         <div class="col-sm-3 col-xs-6 tile" onclick="window.location='clientarea.php?action=services'">
@@ -77,6 +71,12 @@
         {$addon_html}
     </div>
 {/foreach}
+
+{if $captchaError}
+    <div class="alert alert-danger">
+        {$captchaError}
+    </div>
+{/if}
 
 <div class="client-home-panels">
     <div class="row">
@@ -159,4 +159,3 @@
         </div>
     </div>
 </div>
-{/if}

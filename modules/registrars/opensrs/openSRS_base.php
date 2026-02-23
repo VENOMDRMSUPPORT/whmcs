@@ -34,23 +34,15 @@
  */
 
 
-# assuming that the PEAR directory is within your path, otherwise change the path here
 
-if (file_exists(dirname(__FILE__).'/PEAR/PEAR.php')) {
-    require_once dirname(__FILE__).'/PEAR/PEAR.php';
-}
 if (file_exists(dirname(__FILE__).'/Crypt/CBC.php')) {
     require_once dirname(__FILE__).'/Crypt/CBC.php';
 }
 
-# local requirements
-
-if (!class_exists("PEAR")) return false;
-
 require_once 'OPS.php';
 require_once 'country_codes.php';
 
-class openSRS_base extends PEAR {
+class openSRS_base {
 
     var $USERNAME               = '';
     var $HRS_USERNAME           = '';
@@ -100,7 +92,6 @@ class openSRS_base extends PEAR {
     var $_iv;
     var $crypt_type             = 'SSL';            /* 'DES' or 'BLOWFISH' or 'SSL' */
     var $crypt_mode             = 'CBC';                /* only 'CBC' */
-    var $crypt_rand_source      = MCRYPT_DEV_URANDOM;   /* or MCRYPT_DEV_RANDOM or MCRYPT_RAND */
     var $affiliate_id;
 
     var $PERMISSIONS = array (
@@ -238,9 +229,6 @@ class openSRS_base extends PEAR {
 
     function __construct( $environment=NULL, $protocol=NULL, $regusername=NULL, $regprivatekey=NULL )
     {
-
-        $this->PEAR();
-
         $this->crypt_type = strtoupper($this->crypt_type);
         
         if ('SSL' == $this->crypt_type) {
@@ -335,7 +323,6 @@ class openSRS_base extends PEAR {
 #
 
     function send_cmd($request) {
-        global $HTTP_SERVER_VARS;
 
         if (!is_array($request)) {
             $data = array(
@@ -403,7 +390,7 @@ class openSRS_base extends PEAR {
             return $data;
         }
 
-        $request['registrant_ip'] = $HTTP_SERVER_VARS['REMOTE_ADDR'];
+        $request['registrant_ip'] = $_SERVER['REMOTE_ADDR'] ?? null;
 
         if ( strstr($request['action'], 'lookup') ) {
             # lookups are treated specially 
@@ -840,9 +827,6 @@ class openSRS_base extends PEAR {
 
     function close_socket() {
         fclose($this->_socket);
-        if ($this->_CBC) {
-            $this->_CBC->_Crypt_CBC();          /* destructor */
-        }
         $this->_CBC             = false;
         $this->_authenticated   = false;
         $this->_socket          = false;
@@ -864,10 +848,10 @@ class openSRS_base extends PEAR {
             $this->_log('i',$data);
         } else {
             $data = $this->_CBC ? $this->_CBC->decrypt($buf) : $buf;
-            if (!$args['no_xml']) {
+            if (empty($args['no_xml'])) {
                 $data = $this->_OPS->decode($data);
             }
-            if ($args['binary']) {
+            if (!empty($args['binary'])) {
                 $temp = unpack('H*temp', $data);
                 $this->_log('r', 'BINARY: ' . $temp['temp'] );
             } else {
@@ -886,7 +870,7 @@ class openSRS_base extends PEAR {
 
     function send_data($message, $args=array()) {
 
-        if (!$args['no_xml']) {
+        if (empty($args['no_xml'])) {
             $message['protocol'] = $this->protocol;
             $data_to_send = $this->_OPS->encode( $message );
 
@@ -900,7 +884,7 @@ class openSRS_base extends PEAR {
             $data_to_send = $message;
         }
 
-        if ($args['binary']) {
+        if (!empty($args['binary'])) {
             $temp = unpack('H*temp', $message);
             $this->_log('s', 'BINARY: ' . $temp['temp'] );
         } else {
@@ -1178,9 +1162,9 @@ class openSRS_base extends PEAR {
         if (!$header || !isset($header['content-length']) || (empty($header['content-length']))) {
             $this->_OPS->_log('raw', 'e', 'UNEXPECTED ERROR: No Content-Length header provided!' );
         }
-    
-        $len = (int)$header['content-length'];
-    
+
+        $len = (is_array($header) && isset($header['content-length'])) ? (int)$header['content-length'] : 0;
+
         $line = '';
         while (strlen($line) < $len) {
             $line .= fread($fh, $len);
@@ -1199,7 +1183,13 @@ class openSRS_base extends PEAR {
         }
     
         if ('SSL' == $this->crypt_type) {
-            $this->_OPS->_log('http', 'r', $header['full_header'].$line);
+            $message = sprintf(
+                '%s%s',
+                (is_array($header) && isset($header['full_header'])) ? $header['full_header'] : '',
+                $line
+            );
+
+            $this->_OPS->_log('http', 'r', $message);
             $this->close_socket();
         }
         return $buf;

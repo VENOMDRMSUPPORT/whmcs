@@ -8325,6 +8325,10 @@ button.close {
     font-size: 1.2em;
 }
 
+.txt-center {
+    text-align: center;
+}
+
 .font-size-sm {
     font-size: 0.85em;
 }
@@ -9358,6 +9362,10 @@ div.input-group-inline-flex {
     display: inline-flex;
 }
 
+.align-items-center {
+    align-items: center;
+}
+
 ul.dropdown-menu-page {
     left: -30px;
     min-width: 77px;
@@ -9459,6 +9467,12 @@ ul.admin-tabs > li > a {
     border: 1px solid #ccc;
     text-decoration: none;
     color: #202F60;
+    display: inline-flex;
+    align-items: center;
+}
+
+ul.admin-tabs > li > a > span.label {
+    line-height: 1.4em;
 }
 
 ul.client-tabs > li > a.dropdown-toggle,
@@ -9525,6 +9539,56 @@ ul.admin-tabs-v2 > li > a.dropdown-toggle {
     height: unset;
     line-height: unset;
     text-decoration: none;
+}
+
+/* --------------------------------------------------------------
+   Admin Dashboard Promotion Carousel
+-------------------------------------------------------------- */
+.admin-dashboard-carousel-controls .carousel-indicators {
+    display: inline-block;
+    position: initial;
+    width: initial;
+    margin-left: initial;
+}
+.admin-dashboard-carousel-controls .carousel-indicators li {
+    border: 1px solid #bbb;
+}
+.admin-dashboard-carousel-controls {
+    display: block;
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    z-index: 15;
+    width: 60%;
+    padding-left: 0;
+    margin-left: -30%;
+    text-align: center;
+    list-style: none;
+}
+.admin-dashboard-carousel-control {
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0);
+    filter: alpha(opacity = 50);
+    opacity: 0.5;
+    font-size: 16px;
+}
+.admin-dashboard-carousel-control:hover,
+.admin-dashboard-carousel-control:focus {
+    color: #fff;
+    text-decoration: none;
+}
+.admin-dashboard-carousel .promotion-content {
+    display: flex;
+}
+.admin-dashboard-carousel .promotion-logo {
+    height: 50px;
+    margin-right: 15px;
+}
+.admin-dashboard-carousel .btn-promotion-action {
+    position: relative;
+    right: -20px;
 }
 
 /* --------------------------------------------------------------
@@ -9958,6 +10022,12 @@ table.applink-links tr.tDnD_whileDrag td {
 .status-badge-error .icon {
     background-color: rgba(0, 0, 0, 0.2);
 }
+.status-badge-success {
+    background-color: #3fa93f;
+}
+.status-badge-success .icon {
+    background-color: rgba(0, 0, 0, 0.2);
+}
 .status-badge-warning {
     background-color: #ecce6c;
 }
@@ -10295,7 +10365,7 @@ div.md-editor.active {
     }
 }
 
-.ticket-reply-submit-options .btn-primary {
+.ticket-reply-submit-options .btn-primary:not(#generateAiSuggestion) {
     width: 120px;
 }
 
@@ -10934,6 +11004,23 @@ table.module-settings .icon-warning {
 .modal-wizard .wizard-transition-step {
     text-align: center;
 }
+
+.modal-wizard .wizard-transition-step .checkbox-wrapper {
+    padding: 0px 35px;
+    display: flex;
+    align-items: center;
+}
+
+.modal-wizard .wizard-transition-step .checkbox-wrapper input {
+    margin:0;
+}
+
+.modal-wizard .wizard-transition-step .checkbox-wrapper label {
+    margin-left: 10px;
+    text-align: left;
+    margin-bottom:0;
+}
+
 .modal-wizard .wizard-transition-step .icon {
     font-size: 7em;
     color: #96c03d;
@@ -11202,7 +11289,7 @@ table.module-settings .icon-warning {
 }
 .lookup-provider {
     padding: 20px;
-    height: 290px;
+    height: 310px;
     text-align: center;
 }
 .lookup-provider.active {
@@ -11736,6 +11823,9 @@ img.ssl-state {
 }
 .cc-number-field.dankort {
     background-image: url(../../../../assets/img/payment/dankort.png);
+}
+.cc-number-field.troy {
+    background-image: url(../../../../assets/img/payment/troy.png);
 }
 .iframe-input-container {
     height: 34px;
@@ -12724,6 +12814,67 @@ span.grey-item {
 .sitejet-warning {
     background-color: #fbf8e5;
     color: #937e55;
+}
+
+.mixpanel-modal {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    background: #fff;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+    transition: transform 0.3s ease-in-out, opacity 0.3s;
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.mixpanel-icon {
+    font-size: 20px;
+    color: #007bff;
+}
+
+.mixpanel-text {
+    margin: 5px 0 15px;
+    flex-grow: 1;
+}
+
+.mixpanel-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mixpanel-buttons .btn {
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: 6px;
+}
+
+#optInClose {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #888;
+}
+
+#optInClose:hover {
+    color: #333;
+}
+
+.mixpanel-shown {
+    transform: translateX(0);
+    opacity: 1;
 }
 
 .md-editor{display:block;border:1px solid #ddd}.md-editor .md-footer,.md-editor>.md-header{display:block;padding:6px 4px;background:#f5f5f5}.md-editor>.md-header{margin:0}.md-editor>.md-preview{background:#fff;border-top:1px dashed #ddd;border-bottom:1px dashed #ddd;min-height:10px;overflow:auto}.md-editor>textarea{font-family:Menlo,Monaco,Consolas,"Courier New",monospace;font-size:14px;outline:0;margin:0;display:block;padding:0;width:100%;border:0;border-top:1px dashed #ddd;border-bottom:1px dashed #ddd;border-radius:0;box-shadow:none;background:#eee}.md-editor>textarea:focus{box-shadow:none;background:#fff}.md-editor.active{border-color:#66afe9;outline:0;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);box-shadow:inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)}.md-editor .md-controls{float:right;padding:3px}.md-editor .md-controls .md-control{right:5px;color:#bebebe;padding:3px 3px 3px 10px}.md-editor .md-controls .md-control:hover{color:#333}.md-editor.md-fullscreen-mode{width:100%;height:100%;position:fixed;top:0;left:0;z-index:99999;padding:60px 30px 15px;background:#fff!important;border:0!important}.md-editor.md-fullscreen-mode .md-footer{display:none}.md-editor.md-fullscreen-mode .md-input,.md-editor.md-fullscreen-mode .md-preview{margin:0 auto!important;height:100%!important;font-size:20px!important;padding:20px!important;color:#999;line-height:1.6em!important;resize:none!important;box-shadow:none!important;background:#fff!important;border:0!important}.md-editor.md-fullscreen-mode .md-preview{color:#333;overflow:auto}.md-editor.md-fullscreen-mode .md-input:focus,.md-editor.md-fullscreen-mode .md-input:hover{color:#333;background:#fff!important}.md-editor.md-fullscreen-mode .md-header{background:0 0;text-align:center;position:fixed;width:100%;top:20px}.md-editor.md-fullscreen-mode .btn-group{float:none}.md-editor.md-fullscreen-mode .btn{border:0;background:0 0;color:#b3b3b3}.md-editor.md-fullscreen-mode .btn.active,.md-editor.md-fullscreen-mode .btn:active,.md-editor.md-fullscreen-mode .btn:focus,.md-editor.md-fullscreen-mode .btn:hover{box-shadow:none;color:#333}.md-editor.md-fullscreen-mode .md-fullscreen-controls{position:absolute;top:20px;right:20px;text-align:right;z-index:1002;display:block}.md-editor.md-fullscreen-mode .md-fullscreen-controls a{color:#b3b3b3;clear:right;margin:10px;width:30px;height:30px;text-align:center}.md-editor.md-fullscreen-mode .md-fullscreen-controls a:hover{color:#333;text-decoration:none}.md-editor.md-fullscreen-mode .md-editor{height:100%!important;position:relative}.md-editor .md-fullscreen-controls{display:none}.md-nooverflow{overflow:hidden;position:fixed;width:100%}
@@ -17577,6 +17728,12 @@ a.editable-click.editable-disabled:hover {
     color: #fff;
     text-decoration: none;
 }
+.badge-shadow {
+    -webkit-text-shadow: rgba(0, 0, 0, 0.5) 1px 1px 1px;
+    -moz-text-shadow: rgba(0, 0, 0, 0.5) 1px 1px 1px;
+    -ms-text-shadow: rgba(0, 0, 0, 0.5) 1px 1px 1px;
+    text-shadow: rgba(0, 0, 0, 0.5) 1px 1px 1px;
+}
 .status-badge-green {
     background-color: #5dc560;
 }
@@ -17934,6 +18091,19 @@ a.editable-click.editable-disabled:hover {
     }
 }
 
+/* --- Invoices --- */
+
+.invoice-alert-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 15px;
+    width: 100%;
+    border: 1px solid #faebcc;
+    border-radius: 4px;
+    z-index: 10000;
+}
+
 .btn-link-default {
     background: none;
     border: none;
@@ -18278,6 +18448,10 @@ a.editable-click.editable-disabled:hover {
 .modal-marketconnect-login .create-acct-link a {
     font-weight: bold;
     text-decoration: none;
+}
+.modal-marketconnect-login .gdpr-consent {
+    font-weight: normal;
+    font-size: 1em;
 }
 
 .panel-market-item {
@@ -19120,7 +19294,11 @@ a.editable-click.editable-disabled:hover {
     max-height: 400px;
     overflow: auto;
 }
-
+.modal-mc-service .dynamic-service.faq h4 {
+    color: #666;
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
 .marketconnect-product-redirect {
     margin: 0 0 10px 0;
     padding: 65px 50px;
@@ -19217,7 +19395,34 @@ a.editable-click.editable-disabled:hover {
 .mc-sm-container .status.refunded {
     background-color:#de9e5b;
 }
-
+.marketconnect-dynamic-pricing .table-pricing {
+    font-size: 0.9em;
+    line-height: initial;
+    table-layout: fixed;
+    width: 100%;
+}
+.marketconnect-dynamic-pricing .table-pricing-header {
+    font-weight: bold;
+    margin-bottom: initial;
+}
+.marketconnect-dynamic-pricing td:first-child {
+    text-align: left;
+    font-weight: 600;
+}
+.marketconnect-dynamic-pricing .div-pricing-wrapper {
+    margin-top: 20px;
+}
+.marketconnect-dynamic-pricing .div-plans-wrapper {
+    display: none;
+}
+.marketconnect-dynamic-pricing .table-pricing span {
+    font-size: 0.875em;
+    font-weight: bold;
+    white-space: nowrap;
+    display: block;
+    margin-top: 2px;
+    color: #666;
+}
 @media (min-width:768px) {
     .mc-sm-container .field-label {
         text-align: right;
@@ -19247,6 +19452,11 @@ a.editable-click.editable-disabled:hover {
         flex-flow: row wrap;
     }
 }
+
+.massaction-delete-btn {
+    margin-left: 4px;
+}
+
 
 /**
  * WHMCS Telephone Country Code Dropdown

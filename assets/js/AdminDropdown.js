@@ -14,8 +14,7 @@ jQuery(document).ready(
             standardSelectize = jQuery('.selectize-select'),
             promoSelectize = jQuery('.selectize-promo'),
             tags = jQuery('.selectize-tags'),
-            newTicketCC = jQuery('.selectize-newTicketCc,.selectize-ticketCc'),
-            currentValue = '';
+            newTicketCC = jQuery('.selectize-newTicketCc,.selectize-ticketCc');
 
         jQuery(multiSelectize).selectize(
             {
@@ -66,22 +65,30 @@ jQuery(document).ready(
                         return '<div' + colour + '><span class="name">' + escape(item.name) + '</span></div>';
                     }
                 },
+                onInitialize: function () {
+                    this.currentValue = '';
+                },
                 onFocus: function() {
-                    currentValue = this.getValue();
+                    this.currentValue = this.getValue();
                     this.clear();
                 },
-                onBlur: function()
-                {
-                    if (this.getValue() == '') {
-                        this.setValue(currentValue);
+                onChange: function() {
+                    if (this.getValue() === '') {
+                        return;
                     }
-                    if (
-                        jQuery(standardSelectize).hasClass('selectize-auto-submit')
-                        && currentValue !== this.getValue()
-                    ) {
-                        this.setValue(this.getValue());
+
+                    if (this.currentValue === this.getValue()) {
+                        return;
+                    }
+
+                    this.currentValue = this.getValue();
+
+                    if (jQuery(standardSelectize).hasClass('selectize-auto-submit')) {
                         jQuery(standardSelectize).parent('form').submit();
                     }
+                },
+                onBlur: function() {
+                    this.setValue(this.currentValue);
                 }
             }
         );
@@ -103,7 +110,7 @@ jQuery(document).ready(
                         }
                         if (typeof otherPromos !== 'undefined'
                             && item.optgroup === otherPromos
-                            && currentValue !== ''
+                            && this.currentValue !== ''
                         ) {
                             jQuery('#nonApplicablePromoWarning').show();
                         } else {
@@ -138,25 +145,32 @@ jQuery(document).ready(
                         }
                     }
                 },
+                onInitialize: function () {
+                    this.currentValue = '';
+                },
                 onFocus: function() {
                     this.$control.parent('div').css('overflow', 'visible');
-                    currentValue = this.getValue();
+                    this.currentValue = this.getValue();
                     this.clear();
                 },
-                onBlur: function()
-                {
-                    this.$control.parent('div').css('overflow', 'hidden');
+                onChange: function() {
                     if (this.getValue() === '') {
-                        this.setValue(currentValue);
-                        updatesummary();
+                        return;
                     }
-                    if (
-                        jQuery(promoSelectize).hasClass('selectize-auto-submit')
-                        && currentValue !== this.getValue()
-                    ) {
-                        this.setValue(this.getValue());
+
+                    if (this.currentValue === this.getValue()) {
+                        return;
+                    }
+
+                    this.currentValue = this.getValue();
+
+                    if (jQuery(promoSelectize).hasClass('selectize-auto-submit')) {
                         jQuery(promoSelectize).parent('form').submit();
                     }
+                },
+                onBlur: function() {
+                    this.$control.parent('div').css('overflow', 'hidden');
+                    this.setValue(this.currentValue);
                 }
             }
         );

@@ -2685,17 +2685,6 @@ if (!class_exists('Net_IDNA2')) {
          */
         private $_version = '2003';
 
-        /**
-         * Cached value indicating whether or not mbstring function overloading is
-         * on for strlen
-         *
-         * This is cached for optimal performance.
-         *
-         * @var boolean
-         * @see Net_IDNA2::_byteLength()
-         */
-        private static $_mb_string_overload = null;
-
         // }}}
         // {{{ constructor
         /**
@@ -2711,12 +2700,6 @@ if (!class_exists('Net_IDNA2')) {
 
             if (is_array($options)) {
                 $this->setParams($options);
-            }
-
-            // populate mbstring overloading cache if not set
-            if (self::$_mb_string_overload === null) {
-                self::$_mb_string_overload = (extension_loaded('mbstring')
-                    && (ini_get('mbstring.func_overload') & 0x02) === 0x02);
             }
         }
 
@@ -3795,20 +3778,15 @@ if (!class_exists('Net_IDNA2')) {
         }
 
         /**
-         * Gets the length of a string in bytes even if mbstring function
-         * overloading is turned on
+         * Return the byte length of a string.
+         * Note: mbstring.func_overload was removed in PHP 8+, so strlen() is sufficient.
          *
          * @param string $string the string for which to get the length.
          *
          * @return integer the length of the string in bytes.
-         *
-         * @see Net_IDNA2::$_mb_string_overload
          */
         private static function _byteLength($string) {
-            if (self::$_mb_string_overload) {
-                return mb_strlen($string, '8bit');
-            }
-            return strlen((binary) $string);
+            return strlen($string);
         }
 
         // }}}}

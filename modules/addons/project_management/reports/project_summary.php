@@ -2,6 +2,7 @@
 
 use WHMCS\Carbon;
 use WHMCS\Database\Capsule;
+use WHMCS\Module\Addon\Setting;
 
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
@@ -21,10 +22,7 @@ if (!$range) {
 }
 
 $statusdropdown = '<select name="status" class="form-control"><option value="">- Any -</option>';
-$statuses = Capsule::table('tbladdonmodules')
-    ->where('module', 'project_management')
-    ->where('setting', 'statusvalues')
-    ->value('value');
+$statuses = Setting::getSettingValueForModule('project_management', 'statusvalues');
 $statuses = explode(",", $statuses);
 foreach ($statuses as $statusx) {
     $statusx = explode("|", $statusx, 2);

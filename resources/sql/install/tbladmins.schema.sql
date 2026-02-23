@@ -34,6 +34,7 @@ CREATE TABLE `tbladmins` (
   `hidden_widgets` text COLLATE utf8_unicode_ci NOT NULL,
   `widget_order` text COLLATE utf8_unicode_ci NOT NULL,
   `user_preferences` mediumtext CHARACTER SET utf8 COLLATE utf8_unicode_ci,
+  `mixpanel_tracking_enabled` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),

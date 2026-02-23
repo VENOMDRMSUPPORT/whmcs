@@ -91,4 +91,23 @@ function elementOutOfViewPort(element) {
     out.any = out.top || out.left || out.bottom || out.right;
 
     return out.any;
-};
+}
+
+function showCheckoutError(errorMessage, container = null) {
+    jQuery('.alert-danger').hide();
+
+    const selectors = [
+        '.checkout-error-feedback',
+        '#existingLoginMessage',
+        '.gateway-errors',
+        '.assisted-cc-input-feedback'
+    ];
+
+    if (!container) {
+        container = jQuery(selectors.join(', ')).first();
+    }
+
+    if (container.length) {
+        container.html(errorMessage).slideDown('fast');
+    }
+}

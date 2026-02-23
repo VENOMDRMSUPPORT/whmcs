@@ -112,9 +112,9 @@
                         don't have a firewall or DNS rule blocking outgoing connections to
                         our website.</p>
                     <p>
-                        For further assistance, please refer to the <a
-                                href="https://docs.whmcs.com/License_Troubleshooting"
-                                target="_blank">License Troubleshooting</a> documentation.
+                        For help, see our <a
+                                href="https://go.whmcs.com/1949/license-troubleshooting"
+                                target="_blank">documentation</a>.
                     </p>
                 {elseif $licenseError eq "error"}
                     <p>Unable to perform license validation due to the following <strong>local server</strong> configuration issue:</p>
@@ -123,9 +123,9 @@
                     </div>
                     <p>Please resolve the error shown above to enable license validation to complete successfully.</p>
                     <p>
-                        For further assistance, please refer to the <a
-                                href="https://docs.whmcs.com/License_Troubleshooting"
-                                target="_blank">License Troubleshooting</a> documentation.
+                        For help, see our <a
+                                href="https://go.whmcs.com/1949/license-troubleshooting"
+                                target="_blank">documentation</a>.
                     </p>
                 {elseif $licenseError eq "change"}
                     <p>You can change your license key by entering your admin login details

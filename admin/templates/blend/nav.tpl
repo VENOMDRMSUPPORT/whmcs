@@ -467,7 +467,7 @@
                 {/if}
                 {if in_array("Configure General Settings",$admin_perms)}
                     <li>
-                        <a id="Menu-Config-SetupWizard" href="#" onclick="openSetupWizard();return false;">
+                        <a id="Menu-Config-SetupWizard" class="px-0" href="{routePath('admin-getting-started-index')}">
                             <span class="ico-container wizard"><i class="fad fa-magic"></i></span>
                             {$_ADMINLANG.help.setupWizard}
                         </a>

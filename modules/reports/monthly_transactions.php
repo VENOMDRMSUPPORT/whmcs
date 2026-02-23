@@ -36,6 +36,7 @@ $dateFormat = Capsule::raw('date_format(date, "%e")');
 $result = Capsule::table('tblaccounts')
     ->join('tblclients', 'tblclients.id', '=', 'tblaccounts.userid')
     ->where('tblclients.currency', $currencyid)
+    ->where('tblaccounts.billingnoteid', '=', 0)
     ->whereBetween(
         'date',
         [
@@ -66,6 +67,7 @@ foreach ($result as $data) {
 $result = Capsule::table('tblaccounts')
     ->where('userid', 0)
     ->where('currency', $currencyid)
+    ->where('billingnoteid', '=', 0)
     ->whereBetween(
         'date',
         [

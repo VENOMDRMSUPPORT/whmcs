@@ -24,7 +24,7 @@ INSERT INTO `tbltask` VALUES (1,1530,'WHMCS\\Cron\\Task\\AddLateFees',1,1,1440,'
 (17,1670,'WHMCS\\Cron\\Task\\OverageBilling',1,1,43200,'Overage Billing Charges','Process Overage Billing Charges','2016-11-02 16:59:20','2016-11-02 16:59:20'),
 (18,1540,'WHMCS\\Cron\\Task\\ProcessCreditCardPayments',1,1,1440,'Credit Card Charges','Process Credit Card Charges','2016-11-02 16:59:20','2016-11-02 16:59:20'),
 (19,1580,'WHMCS\\Cron\\Task\\AutoSuspensions',1,1,1440,'Overdue Suspensions','Process Overdue Suspensions','2016-11-02 16:59:21','2016-11-02 16:59:21'),
-(20,1700,'WHMCS\\Cron\\Task\\TicketEscalations',1,1,3,'Ticket Escalation Rules','Process and escalate tickets per any Escalation Rules','2016-11-02 16:59:21','2016-11-02 16:59:21'),
+(20,1750,'WHMCS\\Cron\\Task\\TicketEscalations',1,1,3,'Ticket Escalation Rules','Process and escalate tickets per any Escalation Rules','2016-11-02 16:59:21','2024-10-29 15:00:00'),
 (21,1690,'WHMCS\\Cron\\Task\\UpdateDomainExpiryStatus',1,1,1440,'Domain Expiry','Update Domain Expiry Status','2016-11-02 16:59:21','2016-11-02 16:59:21'),
 (22,1660,'WHMCS\\Cron\\Task\\UpdateServerUsage',1,1,1440,'Server Usage Stats','Updating Disk & Bandwidth Usage Stats','2016-11-02 16:59:21','2016-11-02 16:59:21'),
 (23,2000,'WHMCS\\Cron\\Task\\RunJobsQueue',1,1,5,'Run Jobs Queue','Execute queued jobs that are due for execution.','2018-04-18 10:21:42','2018-04-18 10:21:42'),
@@ -39,7 +39,10 @@ INSERT INTO `tbltask` VALUES (1,1530,'WHMCS\\Cron\\Task\\AddLateFees',1,1,1440,'
 (32, 1640, 'WHMCS\\Cron\\Task\\EmailCampaigns', 1, 1, 5, 'Process Email Campaigns', 'Process Scheduled Email Campaigns', '2020-07-17 11:42:30', '2020-07-17 11:42:30'),
 (33, 1636, 'WHMCS\\Cron\\Task\\ProcessEmailQueue', 1, 1, 1, 'Process Email Queue', 'Process Queued Emails', '2020-07-17 11:42:30', '2020-07-17 11:42:30'),
 (34, 1850, 'WHMCS\\Cron\\Task\\SslReissues', 1, 1, 1440, 'SSL Certificate Reissues', 'SSL Certificate Reissues', '2022-01-17 11:00:00', '2022-01-17 11:00:00'),
-(35, 1605, 'WHMCS\\Cron\\Task\\InvoiceAutoCancellation', 1, 1, 1440, 'Overdue Invoice Cancellations', 'Cancel Overdue Invoices', '2024-03-21 11:00:00', '2024-03-21 11:00:00');
+(35, 1605, 'WHMCS\\Cron\\Task\\InvoiceAutoCancellation', 1, 1, 1440, 'Overdue Invoice Cancellations', 'Cancel Overdue Invoices', '2024-03-21 11:00:00', '2024-03-21 11:00:00'),
+(36, 1720,'WHMCS\\Cron\\Task\\TicketScheduledActions', 1, 1, 1, 'Ticket Scheduled Actions', 'Process Ticket Scheduled Actions', '2024-10-29 15:00:00', '2024-10-29 15:00:00'),
+(37, 1700, 'WHMCS\\Cron\\Task\\TaxVatAutoConfiguration', 1, 1, 1440, 'VAT Rules Automatic Update', 'Automatically update VAT rules.', '2025-06-26 11:48:42', '2025-06-26 11:48:42');
+
 /*!40000 ALTER TABLE `tbltask` ENABLE KEYS */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

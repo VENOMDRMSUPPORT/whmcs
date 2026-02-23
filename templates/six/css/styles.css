@@ -477,11 +477,61 @@ section#home-banner .btn {
 }
 
 section#home-banner .btn.search {
-    background-color: #4ab98b;
+    background-color: #338464;
 }
 section#home-banner .btn.transfer {
-    background-color: #bbb;
+    background-color: #757575;
 }
+
+
+section#home-banner .advanced-input {
+    width: 100%;
+    background-color: white;
+}
+
+section#home-banner .advanced-input span {
+    text-align: left;
+}
+
+section#home-banner textarea#message {
+    width: 100%;
+    height: 120px;
+    resize: none;
+    border-left: none;
+    border-right: none;
+}
+
+section#home-banner .advanced-input .input-group-btn {
+    position: absolute;
+    right: 185px;
+    top: 65px
+}
+
+
+section#home-banner .advanced-input label {
+    font-size: 12px;
+    color: #333;
+    font-weight: 300;
+}
+
+
+section#home-banner .advanced-input input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+section#home-banner .multiselect {
+    color: #333333;
+    font-size: 12px;
+}
+
+section#home-banner .advanced-input .multiselect-container li.active a {
+    background-color: unset;
+}
+
+section#home-banner .multiselect-search {
+    border: 1px solid #ccc;
+}
+
 
 @media (max-width: 992px) {
     section#home-banner h2 {
@@ -599,9 +649,31 @@ section#home-banner .btn.transfer {
 }
 .client-home-panels .panel > .panel-body {
     padding: 0;
-    max-height: 170px;
     overflow: auto;
 }
+
+.client-home-panels #registerDomainPanel .panel-body .input-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.client-home-panels #registerDomainPanel .panel-body .input-group .form-control {
+    flex: 1 1 40%;
+    min-width: 0;
+    width: auto;
+}
+
+.client-home-panels #registerDomainPanel .panel-body .input-group-btn {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    width: auto;
+}
+
+.client-home-panels #registerDomainPanel .panel-body .input-group-btn input {
+    flex: 1 1 auto;
+}
+
 .client-home-panels .panel > .panel-footer {
     border-top: 0;
 }
@@ -1543,7 +1615,7 @@ table.dtr-inline.collapsed .responsive-edit-button {
 }
 .ticket-reply .rating span.star,
 .ticket-reply .rating-done span.star {
-    font-family: "Font Awesome 5 Pro";
+    font-family: "Font Awesome 6 Pro";
     font-weight: normal;
     font-style: normal;
     display: inline-block;
@@ -2388,6 +2460,19 @@ tr.masspay-total td {
  */
 .recaptcha-container {
     display: inline-block;
+}
+
+.google-recaptcha-align {
+    padding-top: 20px;
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+@media (max-width: 768px) {
+    .google-recaptcha-align {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
 }
 
 #google-recaptcha-domainchecker {
@@ -3614,7 +3699,9 @@ form[data-role="json-form"] .has-error .tooltip.top .tooltip-arrow {
 .cc-number-field.dankort {
     background-image: url(../../../assets/img/payment/dankort.png);
 }
-
+.cc-number-field.troy {
+    background-image: url(../../../assets/img/payment/troy.png);
+}
 /**
  * Usage Billing
  */
@@ -3851,13 +3938,13 @@ form[data-role="json-form"] .has-error .tooltip.top .tooltip-arrow {
     text-transform: uppercase;
 }
 .tld-sale-group-hot {
-    background-color: #f9615a;
+    background-color: #E71408;
 }
 .tld-sale-group-sale {
-    background-color: #f7d458;
+    background-color: #8E7106;
 }
 .tld-sale-group-new {
-    background-color: #2ad588;
+    background-color: #1A8454;
 }
 
 .w-hidden {
@@ -4103,4 +4190,12 @@ div[menuitemname='Active Products/Services'] .btn-view-more.disabled {
         display: flex;
         justify-content: center;
     }
+}
+
+.d-none {
+    display: none;
+}
+
+.checkout-error-feedback > p {
+    margin-bottom: 1em;
 }

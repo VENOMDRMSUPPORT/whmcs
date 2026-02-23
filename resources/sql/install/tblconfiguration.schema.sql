@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS `tblconfiguration`;
 CREATE TABLE `tblconfiguration` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `setting` varchar(64) NOT NULL,
-  `value` text COLLATE utf8_unicode_ci NOT NULL,
+  `value` mediumtext COLLATE utf8_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),

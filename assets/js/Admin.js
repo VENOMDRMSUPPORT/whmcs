@@ -155,6 +155,9 @@ jQuery(document).ready(function() {
         if (currentStep === '2' || currentStep === '4') {
             skipTwo = true;
         }
+
+        trackWizardAction(currentStep, 'skipped')
+
         wizardStepTransition(skipTwo, true);
     }).on('click', '#btnWizardBack', function(e) {
         e.preventDefault();
@@ -199,6 +202,18 @@ jQuery(document).ready(function() {
 
     jQuery('#addPayment').submit(function (e) {
         e.preventDefault();
+
+        const action = getQueryParam('action');
+        if (action === 'edit' && typeof handleUnsavedChanges === 'function') {
+            handleUnsavedChanges(e, function() {
+                handleAddPaymentSubmit();
+            });
+        } else {
+            handleAddPaymentSubmit();
+        }
+    });
+
+    function handleAddPaymentSubmit() {
         addingPayment = false;
         jQuery('#btnAddPayment').attr('disabled', 'disabled');
         jQuery('#paymentText').hide();
@@ -222,7 +237,7 @@ jQuery(document).ready(function() {
                 addInvoicePayment();
             }
         });
-    });
+    }
 
     $('#modalDuplicateTransaction').on('hidden.bs.modal', function () {
         if (addingPayment === false) {
@@ -273,6 +288,9 @@ jQuery(document).ready(function() {
 
     // Bootstrap Confirmation popup auto object registration
     WHMCS.ui.confirmation.register();
+
+    // Markdown editor data-driven object registration
+    WHMCS.ui.markdownEditor.register();
 
     var mcProductPromos = jQuery("#mcConfigureProductPromos");
 
@@ -342,11 +360,31 @@ jQuery(document).ready(function() {
 
     if (jQuery('.captcha-type').length) {
         jQuery(document).on('change', '.captcha-type', function() {
-            var settings = jQuery('.recaptchasetts');
-            if (jQuery(this).val() === '') {
-                settings.hide();
+            jQuery('#captcha-preview').attr(
+                'src',
+                jQuery(this).find(':selected').data('image')
+            );
+            let recaptchaSettings = jQuery('.recaptchasetts'),
+                recaptchaV3Settings = jQuery('.recaptchav3setts'),
+                hCaptchaSettings = jQuery('.hcaptchasetts'),
+                captchaType = jQuery(this).val();
+
+            if (['recaptcha', 'invisible'].includes(captchaType)) {
+                recaptchaSettings.show();
+                recaptchaV3Settings.hide();
+                hCaptchaSettings.hide();
+            } else if (['hcaptcha', 'hcaptcha-invisible'].includes(captchaType)) {
+                recaptchaSettings.hide();
+                recaptchaV3Settings.hide();
+                hCaptchaSettings.show();
+            } else if ('recaptchav3' === captchaType) {
+                hCaptchaSettings.hide();
+                recaptchaSettings.show();
+                recaptchaV3Settings.show();
             } else {
-                settings.show();
+                recaptchaSettings.hide();
+                hCaptchaSettings.hide();
+                recaptchaV3Settings.hide();
             }
         });
     }
@@ -795,6 +833,8 @@ function wizardStepTransition(skipNextStep, skip) {
     var lastStep = $('.modal-wizard .wizard-step:visible');
     var nextStepNumber = currentStepNumber + increment;
     if ($('#wizardStep' + nextStepNumber).length) {
+        trackWizardPageView(nextStepNumber)
+
         $('#wizardStep' + currentStepNumber).fadeOut('', function() {
             var newClass = 'completed';
             if (skip) {
@@ -847,6 +887,8 @@ function wizardStepBackTransition() {
     var previousStepNumber = parseInt(currentStepNumber) - 1;
 
     $('#wizardStep' + currentStepNumber).fadeOut('', function() {
+        trackWizardPageView(previousStepNumber)
+
         if (previousStepNumber < 1) {
             $('#btnWizardBack').fadeOut('slow');
             $('#btnWizardDoNotShow').fadeIn('slow');
@@ -865,14 +907,6 @@ function wizardStepBackTransition() {
 function fadeoutLoaderAndAllowSubmission(modal) {
     modal.find('.loader').fadeOut();
     modal.find('.modal-submit').removeProp('disabled');
-}
-
-function openSetupWizard() {
-    $('#modalFooterLeft').html('<a href="#" id="btnWizardSkip" class="btn btn-link pull-left hidden">Skip Step</a>' +
-        '<a href="#" id="btnWizardDoNotShow" class="btn btn-link pull-left">Do not show this again</a>' +
-        '</div>');
-    $('#modalAjaxSubmit').before('<a href="#" id="btnWizardBack" class="btn btn-default hidden">Back</a>');
-    openModal('wizard.php?wizard=GettingStarted', '', 'Getting Started Wizard', 'modal-lg', 'modal-wizard modal-setup-wizard', 'Next', '', '',true);
 }
 
 function addInvoicePayment() {
@@ -1018,4 +1052,129 @@ function autosizeTextarea(el) {
     };
 
     init(el)
+}
+
+function calculateInvoiceTotal(invoiceId, invoiceItems) {
+    return WHMCS.http.jqClient.post(
+        WHMCS.adminUtils.getAdminRouteUrl('/invoice-total/calculate'),
+        {
+            invoiceId: invoiceId,
+            items: invoiceItems,
+            token: csrfToken
+        }
+    );
+}
+
+function destroyInvoiceItem(id) {
+    return WHMCS.http.jqClient.post(
+        WHMCS.adminUtils.getAdminRouteUrl('/invoice-item/destroy'),
+        {
+            invoiceItemId: id,
+            token: csrfToken
+        }
+    );
+}
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+function getWizardStepPageData(stepNumber) {
+    const stepPageMap = {
+        1: {
+            title: 'General',
+            path: '/getting-started',
+        },
+        2: {
+            title: 'Payments',
+            path: '/getting-started/payments/step1',
+        },
+        3: {
+            title: 'Domain',
+            path: '/getting-started/domains/step1',
+        },
+        4: {
+            title: 'eNom',
+            path: '/getting-started/enom',
+        },
+        5: {
+            title: 'Web Hosting',
+            path: '/getting-started/hosting',
+        },
+        6: {
+            title: 'Add-ons & Extras',
+            path: '/getting-started/marketConnect/step1',
+        },
+        7: {
+            title: 'Complete',
+            path: '/getting-started/complete',
+        }
+    };
+
+    return stepPageMap[stepNumber] || { title: 'Unknown step', path: '/getting-started/unknown' };
+}
+
+function isMixpanelEnabled() {
+    return (typeof mixpanel_enabled !== 'undefined') && (mixpanel_enabled === true);
+}
+
+function trackWizardPageView(stepNumber, action = 'view') {
+    if (!isMixpanelEnabled()) {
+        return;
+    }
+
+    const stepPageData = getWizardStepPageData(stepNumber);
+    const fullUrl = this.getFullUrl(stepPageData.path);
+
+    mixpanel.track_pageview({
+        "page": `${stepPageData.title} (${action})`,
+        "\$current_url": fullUrl,
+        "\$referrer": fullUrl,
+    });
+}
+
+function trackWizardAction(stepNumber, action) {
+    if (!isMixpanelEnabled()) {
+        return;
+    }
+
+    const stepPageData = getWizardStepPageData(stepNumber);
+    const fullUrl = this.getFullUrl(stepPageData.path);
+
+    mixpanel.track(`${stepPageData.title} (${action})`, {
+        "\$current_url": fullUrl,
+    });
+}
+
+function trackAppModalEvent(type, name, data = {}) {
+    if (!isMixpanelEnabled()) return;
+
+    const defaultData = {
+        "\$current_url": getFullUrl(window.location.href),
+        "\$referrer": getFullUrl(document.referrer),
+    };
+
+    const payload = Object.assign({}, defaultData, data);
+
+    switch (type) {
+        case 'page':
+            mixpanel.track_pageview({
+                page: name,
+                ...payload
+            });
+            break;
+        case 'event':
+            mixpanel.track(
+                name,
+                payload
+            );
+            break;
+        default:
+            console.warn(`Unknown Mixpanel event type: ${type}`);
+    }
+}
+
+function getFullUrl(path) {
+    return new URL(path, window.location.origin).toString();
 }

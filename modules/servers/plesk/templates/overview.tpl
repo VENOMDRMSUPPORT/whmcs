@@ -2,7 +2,7 @@
 <script src="modules/servers/plesk/js/client.js?v={$versionHash}"></script>
 
 {if $error}
-    {include file="$template/includes/alert.tpl" type="danger" msg=$error}
+    {include file="$template/includes/alert.tpl" type=$alertType msg=$error}
 {/if}
 <div class="row">
     {if $isSitejetActive}
@@ -418,7 +418,7 @@
                         {lang key='orderpaymentmethod'}
                     </div>
                     <div class="col-xs-6 col-6">
-                        {$paymentmethod}
+                        {$paymentmethod|escape}
                     </div>
                 </div>
             </div>
@@ -443,3 +443,57 @@
         </div>
     </div>
 </div>
+
+{if $configurableoptions}
+    <div class="panel card panel-default mb-3" id="PleskConfigurableOptionsPanel">
+        <div class="panel-heading card-header">
+            <h3 class="panel-title card-title m-0">{$LANG.orderconfigpackage}</h3>
+        </div>
+        <div class="panel-body card-body">
+            {foreach from=$configurableoptions item=configoption}
+                <div class="row">
+                    <div class="col-md-5 col-xs-6 col-6 text-right">
+                        <strong>{$configoption.optionname|escape}</strong>
+                    </div>
+                    <div class="col-md-7 col-xs-6 col-6 text-left">
+                        {if $configoption.optiontype eq 3}
+                            {if $configoption.selectedqty}
+                                {$LANG.yes}
+                            {else}
+                                {$LANG.no}
+                            {/if}
+                        {elseif $configoption.optiontype eq 4}
+                            {$configoption.selectedqty} x {$configoption.selectedoption|escape}
+                        {else}
+                            {$configoption.selectedoption|escape}
+                        {/if}
+                    </div>
+                </div>
+            {/foreach}
+        </div>
+    </div>
+{/if}
+
+{if $customfields}
+    <div class="panel card panel-default mb-3" id="PleskAdditionalInfoPanel">
+        <div class="panel-heading card-header">
+            <h3 class="panel-title card-title m-0">{$LANG.additionalInfo}</h3>
+        </div>
+        <div class="panel-body card-body">
+            {foreach from=$customfields item=field}
+                <div class="row">
+                    <div class="col-md-5 col-xs-6 col-6 text-right">
+                        <strong>{$field.name|escape}</strong>
+                    </div>
+                    <div class="col-md-7 col-xs-6 col-6 text-left">
+                        {if empty($field.value)}
+                            {$LANG.blankCustomField}
+                        {else}
+                            {$field.value|escape}
+                        {/if}
+                    </div>
+                </div>
+            {/foreach}
+        </div>
+    </div>
+{/if}
