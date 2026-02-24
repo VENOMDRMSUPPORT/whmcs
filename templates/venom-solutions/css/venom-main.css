@@ -209,12 +209,13 @@ html {
 }
 
 .header-container {
-    max-width: 1200px;
+    width: 100%;
+    max-width: none;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.875rem 20px;
+    padding: 0.875rem clamp(18px, 3.6vw, 56px);
 }
 
 .header-brand {
@@ -338,17 +339,40 @@ html {
     box-shadow: 0 10px 22px hsl(var(--background) / 0.4);
 }
 
+.header-brand-lockup {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.venom-header-client .venom-logo-icon {
+    transform: translateY(5px);
+}
+
 .client-area-badge {
-    margin-left: 12px;
-    padding: 5px 10px;
-    border-radius: 999px;
-    border: 1px solid hsl(var(--primary) / 0.38);
-    background: hsl(var(--primary) / 0.14);
-    color: hsl(var(--foreground));
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    margin-left: 48px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.92;
+}
+
+.client-area-badge::before {
+    content: "";
+    width: 12px;
+    height: 1px;
+    background: hsl(var(--primary) / 0.58);
+    box-shadow: 0 0 8px hsl(var(--primary) / 0.35);
 }
 
 .nav-link.is-active {
@@ -356,21 +380,136 @@ html {
     opacity: 1;
 }
 
-.nav-actions-client {
-    gap: 12px;
+.nav-links-client-dropdown {
+    justify-self: end;
+    margin-left: auto;
 }
 
-.client-profile-chip {
+.venom-header-client .header-container {
+    padding-inline: clamp(18px, 3.2vw, 56px);
+}
+
+.venom-header-client .header-nav {
+    margin-left: auto;
+}
+
+.venom-header-client .header-brand {
+    margin-right: 10px;
+}
+
+.client-menu-dropdown {
+    position: relative;
+}
+
+.client-menu-trigger {
+    list-style: none;
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 8px 12px;
+    padding: 7px 11px;
     border-radius: 12px;
     border: 1px solid hsl(var(--primary) / 0.26);
     background: linear-gradient(150deg, hsl(var(--card) / 0.86) 0%, hsl(var(--primary) / 0.12) 100%);
+    color: hsl(var(--foreground));
+    cursor: pointer;
+    user-select: none;
+    min-height: 40px;
+}
+
+.client-menu-trigger::-webkit-details-marker {
+    display: none;
+}
+
+.client-menu-caret {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(var(--muted-foreground));
+    transition: transform 0.2s ease;
+}
+
+.client-menu-dropdown[open] .client-menu-caret {
+    transform: rotate(180deg);
+}
+
+.client-menu-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 220px;
+    border-radius: 12px;
+    border: 1px solid hsl(var(--border) / 0.55);
+    background: linear-gradient(165deg, hsl(var(--card) / 0.98) 0%, hsl(var(--card) / 0.95) 100%);
+    box-shadow: 0 14px 28px hsl(var(--background) / 0.5);
+    padding: 8px;
+    display: grid;
+    gap: 4px;
+    z-index: 120;
+}
+
+.client-menu-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
     text-decoration: none;
     color: hsl(var(--foreground));
-    min-height: 42px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 12px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.client-menu-item-icon {
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: hsl(var(--muted-foreground));
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+}
+
+.client-menu-item:hover {
+    background: hsl(var(--primary) / 0.09);
+    color: hsl(var(--foreground));
+}
+
+.client-menu-item:hover .client-menu-item-icon {
+    color: hsl(var(--primary));
+}
+
+.client-menu-item.is-active {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.2) 0%, hsl(var(--primary) / 0.1) 100%);
+    color: hsl(var(--primary));
+    box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.32);
+}
+
+.client-menu-item.is-active .client-menu-item-icon {
+    color: hsl(var(--primary));
+}
+
+.client-menu-item-danger {
+    color: #fca5a5;
+    margin-top: 6px;
+    padding-top: 13px;
+    border-top: 1px solid hsl(var(--border) / 0.6);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.client-menu-item-danger .client-menu-item-icon {
+    color: rgb(252 165 165 / 0.85);
+}
+
+.client-menu-item-danger:hover {
+    color: #fecaca;
+    background: rgb(239 68 68 / 0.14);
+}
+
+.client-menu-item-danger:hover .client-menu-item-icon {
+    color: #fda4af;
 }
 
 .client-profile-avatar {
@@ -401,17 +540,12 @@ html {
 }
 
 .client-profile-name {
-    font-size: 0.86rem;
+    font-size: 0.84rem;
     font-weight: 700;
-    max-width: 170px;
+    max-width: 130px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.client-logout-link {
-    min-height: 42px;
-    padding: 10px 18px;
 }
 
 @media (min-width: 769px) {
@@ -485,6 +619,115 @@ html {
 .main-body-content {
     position: relative;
     z-index: 1;
+}
+
+.clientarea-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 36px 20px;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+
+.clientarea-main {
+    min-width: 0;
+}
+
+.clientarea-left-rail {
+    position: sticky;
+    top: calc(var(--venom-mobile-header-offset) + 20px);
+    display: grid;
+    gap: 16px;
+}
+
+@media (min-width: 1025px) {
+    .clientarea-shell {
+        display: block;
+        position: relative;
+        padding-left: 328px;
+    }
+
+    .clientarea-left-rail {
+        position: fixed;
+        top: calc(var(--venom-mobile-header-offset) + 18px);
+        left: max(20px, calc((100vw - 1320px) / 2 + 20px));
+        width: 280px;
+        max-height: calc(100vh - var(--venom-mobile-header-offset) - 34px);
+        overflow-y: auto;
+        padding-right: 2px;
+    }
+}
+
+.client-rail-card,
+.client-rail-quick {
+    padding: 18px;
+    border-radius: 16px;
+}
+
+.client-rail-card h3,
+.client-rail-quick h4 {
+    margin: 0 0 12px;
+    font-size: 0.86rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+}
+
+.client-rail-nav {
+    display: grid;
+    gap: 8px;
+}
+
+.client-rail-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 12px;
+    border-radius: 10px;
+    color: hsl(var(--muted-foreground));
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid hsl(var(--border) / 0.55);
+    background: hsl(var(--card) / 0.45);
+    transition: all 0.2s ease;
+}
+
+.client-rail-item:hover {
+    border-color: hsl(var(--primary) / 0.38);
+    color: hsl(var(--foreground));
+    background: hsl(var(--primary) / 0.08);
+}
+
+.client-rail-item.is-active {
+    border-color: hsl(var(--primary) / 0.62);
+    background: hsl(var(--primary) / 0.14);
+    color: hsl(var(--foreground));
+}
+
+.client-quick-grid {
+    display: grid;
+    gap: 8px;
+}
+
+.client-quick-link {
+    display: block;
+    padding: 10px 11px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+    background: hsl(var(--card) / 0.42);
+    border: 1px solid hsl(var(--primary) / 0.28);
+    transition: all 0.2s ease;
+}
+
+.client-quick-link:hover {
+    background: hsl(var(--primary) / 0.12);
+    border-color: hsl(var(--primary) / 0.5);
 }
 
 .glass-card {
@@ -595,6 +838,8 @@ html {
 .btn-venom-outline:focus-visible,
 .nav-link:focus-visible,
 .nav-link-secondary:focus-visible,
+.client-menu-trigger:focus-visible,
+.client-menu-item:focus-visible,
 .footer-column a:focus-visible,
 input:focus-visible,
 select:focus-visible,
@@ -670,16 +915,22 @@ button:focus-visible {
 }
 
 .footer-container {
-    max-width: 1200px;
+    width: 100%;
+    max-width: none;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 clamp(18px, 3.6vw, 56px);
 }
 
 .footer-grid {
     display: grid;
-    grid-template-columns: 1.2fr 2fr;
+    grid-template-columns: minmax(260px, 1.1fr) minmax(520px, 1.9fr);
     gap: 48px;
     margin-bottom: 48px;
+}
+
+.footer-links {
+    justify-self: end;
+    width: min(100%, 760px);
 }
 
 .footer-brand {
@@ -1005,6 +1256,16 @@ label {
 }
 
 @media (max-width: 1024px) {
+    .clientarea-shell {
+        grid-template-columns: 1fr;
+        padding-top: 24px;
+        gap: 0;
+    }
+
+    .clientarea-left-rail {
+        display: none;
+    }
+
     .footer-grid {
         grid-template-columns: 1fr;
         gap: 40px;
@@ -1123,18 +1384,65 @@ label {
     }
 
     .client-area-badge {
-        display: none;
+        display: inline-flex;
     }
 
-    .nav-links-client .nav-link.is-active {
-        color: hsl(var(--foreground));
-        border-color: hsl(var(--primary) / 0.42);
-        background: hsl(var(--primary) / 0.12);
+    .venom-header-client .header-brand {
+        margin-right: 0;
     }
 
-    .client-profile-chip {
+    .venom-header-client .header-nav {
+        position: static;
+        top: auto;
+        left: auto;
+        right: auto;
+        transform: none;
+        opacity: 1;
+        z-index: auto;
+        background: transparent;
+        backdrop-filter: none;
+        padding: 0;
+        gap: 0;
+        border-bottom: none;
+    }
+
+    .nav-links-client-dropdown {
+        justify-self: stretch;
+    }
+
+    .venom-header-client .nav-links-client-dropdown {
+        justify-self: end;
+        width: auto;
+    }
+
+    .client-menu-dropdown,
+    .client-menu-trigger {
         width: 100%;
-        justify-content: flex-start;
+    }
+
+    .venom-header-client .client-menu-dropdown,
+    .venom-header-client .client-menu-trigger {
+        width: auto;
+    }
+
+    .client-menu-panel {
+        position: static;
+        margin-top: 8px;
+        width: 100%;
+        min-width: 0;
+        box-shadow: none;
+        border-color: hsl(var(--border) / 0.42);
+    }
+
+    .venom-header-client .client-menu-panel {
+        position: absolute;
+        margin-top: 0;
+        top: calc(100% + 10px);
+        right: 0;
+        width: max-content;
+        min-width: 240px;
+        box-shadow: 0 14px 28px hsl(var(--background) / 0.5);
+        border-color: hsl(var(--border) / 0.55);
     }
 
     .client-profile-name {

@@ -1,4 +1,7 @@
-<div class="client-area">
+<div class="clientarea-shell">
+    {include file="$template/includes/clientarea-left-rail.tpl"}
+    <div class="clientarea-main">
+<div class="client-home-page">
     <div class="container">
         <div class="page-header">
             <div>
@@ -157,9 +160,11 @@
         </div>
     </div>
 </div>
+    </div>
+</div>
 
 <style>
-.client-area {
+.client-home-page {
     max-width: 1200px;
     margin: 0 auto;
     padding: 40px 20px;

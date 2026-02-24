@@ -108,9 +108,40 @@
         });
     }
 
+    function initClientMenuDropdown() {
+        var clientMenu = document.querySelector(".client-menu-dropdown");
+        if (!clientMenu) {
+            return;
+        }
+
+        var menuTrigger = clientMenu.querySelector("summary");
+
+        document.addEventListener("click", function (event) {
+            if (!clientMenu.open) {
+                return;
+            }
+
+            if (!clientMenu.contains(event.target)) {
+                clientMenu.removeAttribute("open");
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key !== "Escape" || !clientMenu.open) {
+                return;
+            }
+
+            clientMenu.removeAttribute("open");
+            if (menuTrigger) {
+                menuTrigger.focus();
+            }
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         initMobileMenu();
         initSmoothScroll();
         initCopyButtons();
+        initClientMenuDropdown();
     });
 })();

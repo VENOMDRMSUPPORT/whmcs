@@ -12,6 +12,18 @@
 {assign var=isAuthPage value=($filename eq 'login' or $filename eq 'register' or $filename eq 'pwreset')}
 {assign var=isLandingPage value=($filename eq 'index')}
 {assign var=useClientHeader value=($loggedin and not $isAuthPage and not $isLandingPage)}
+{assign var=currentClientMenu value=''}
+{if $templatefile eq 'clientareaproducts' or $templatefile eq 'clientareaproductdetails' or $filename eq 'upgrade'}
+    {assign var=currentClientMenu value='services'}
+{elseif $templatefile eq 'clientareainvoices' or $filename eq 'viewinvoice'}
+    {assign var=currentClientMenu value='billing'}
+{elseif $filename eq 'supporttickets' or $filename eq 'submitticket' or $filename eq 'viewticket' or $templatefile eq 'supportticketslist' or $templatefile eq 'supportticketsubmit'}
+    {assign var=currentClientMenu value='tickets'}
+{elseif $templatefile eq 'clientareadetails' or $templatefile eq 'clientareachangepw' or $templatefile eq 'clientareasecurity'}
+    {assign var=currentClientMenu value='account'}
+{elseif $templatefile eq 'clientareahome'}
+    {assign var=currentClientMenu value='dashboard'}
+{/if}
 
 <body class="{if $useClientHeader}client-area{else}landing{/if} theme-dark">
     {$headeroutput}
@@ -25,37 +37,47 @@
 
     <header class="venom-header {if $useClientHeader}venom-header-client{/if}">
         <div class="header-container">
-            <a href="{$WEB_ROOT}/index.php" class="header-brand">
-                {include file="$template/includes/logo.tpl" size="36px" textSize="1.3rem"}
-                {if $useClientHeader}
-                    <span class="client-area-badge">Client Area</span>
-                {/if}
+            <a href="{if $useClientHeader}{$WEB_ROOT}/clientarea.php{else}{$WEB_ROOT}/index.php{/if}" class="header-brand">
+                <span class="header-brand-lockup">
+                    {include file="$template/includes/logo.tpl" size="36px" textSize="1.3rem"}
+                    {if $useClientHeader}
+                        <span class="client-area-badge">Client Area</span>
+                    {/if}
+                </span>
             </a>
 
             <nav class="header-nav" id="primary-nav">
                 {if $useClientHeader}
-                    <div class="nav-links nav-links-client">
-                        <a href="{$WEB_ROOT}/clientarea.php" class="nav-link{if $filename eq 'clientarea'} is-active{/if}">Dashboard</a>
-                        <a href="{$WEB_ROOT}/clientarea.php?action=products" class="nav-link{if $templatefile eq 'clientareaproducts' or $templatefile eq 'clientareaproductdetails'} is-active{/if}">Services</a>
-                        <a href="{$WEB_ROOT}/clientarea.php?action=invoices" class="nav-link{if $templatefile eq 'clientareainvoices' or $filename eq 'viewinvoice'} is-active{/if}">Billing</a>
-                        <a href="{$WEB_ROOT}/supporttickets.php" class="nav-link{if $filename eq 'supporttickets' or $filename eq 'submitticket' or $filename eq 'viewticket'} is-active{/if}">Tickets</a>
+                    <div class="nav-links nav-links-client nav-links-client-dropdown">
+                        <details class="client-menu-dropdown">
+                            <summary class="client-menu-trigger">
+                                <span class="client-profile-avatar" aria-hidden="true">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21a8 8 0 0 0-16 0"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </span>
+                                <span class="client-profile-content">
+                                    <span class="client-profile-label">Client Menu</span>
+                                    <span class="client-profile-name">{$clientsdetails.firstname|default:'Client'} {$clientsdetails.lastname|default:''}</span>
+                                </span>
+                                <span class="client-menu-caret" aria-hidden="true">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="m6 9 6 6 6-6"></path>
+                                    </svg>
+                                </span>
+                            </summary>
+                            <div class="client-menu-panel">
+                                <a href="{$WEB_ROOT}/clientarea.php" class="client-menu-item{if $currentClientMenu eq 'dashboard'} is-active{/if}"><span class="client-menu-item-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5L12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg></span><span>Dashboard</span></a>
+                                <a href="{$WEB_ROOT}/clientarea.php?action=products" class="client-menu-item{if $currentClientMenu eq 'services'} is-active{/if}"><span class="client-menu-item-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span><span>Services</span></a>
+                                <a href="{$WEB_ROOT}/clientarea.php?action=invoices" class="client-menu-item{if $currentClientMenu eq 'billing'} is-active{/if}"><span class="client-menu-item-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></span><span>Billing</span></a>
+                                <a href="{$WEB_ROOT}/supporttickets.php" class="client-menu-item{if $currentClientMenu eq 'tickets'} is-active{/if}"><span class="client-menu-item-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span><span>Tickets</span></a>
+                                <a href="{$WEB_ROOT}/clientarea.php?action=details" class="client-menu-item{if $currentClientMenu eq 'account'} is-active{/if}"><span class="client-menu-item-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21a8 8 0 0 0-16 0"></path><circle cx="12" cy="7" r="4"></circle></svg></span><span>Account Details</span></a>
+                                <a href="{$WEB_ROOT}/logout.php" class="client-menu-item client-menu-item-danger"><span class="client-menu-item-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path></svg></span><span>Logout</span></a>
+                            </div>
+                        </details>
                     </div>
 
-                    <div class="nav-actions nav-actions-client">
-                        <a href="{$WEB_ROOT}/clientarea.php?action=details" class="client-profile-chip" title="Account details">
-                            <span class="client-profile-avatar" aria-hidden="true">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21a8 8 0 0 0-16 0"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </span>
-                            <span class="client-profile-content">
-                                <span class="client-profile-label">Logged in as</span>
-                                <span class="client-profile-name">{$clientsdetails.firstname|default:'Client'} {$clientsdetails.lastname|default:''}</span>
-                            </span>
-                        </a>
-                        <a href="{$WEB_ROOT}/logout.php" class="btn-venom-outline nav-link-secondary client-logout-link">Logout</a>
-                    </div>
                 {else}
                     <div class="nav-links">
                         <a href="{$WEB_ROOT}/index.php" class="nav-link">
@@ -98,7 +120,7 @@
                                     <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
                                     <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
                                 </svg>
-                                <span>Dashboard</span>
+                                <span>Client Area</span>
                             </a>
                         {else}
                             <a href="{$WEB_ROOT}/login.php" class="btn-venom-outline nav-link-secondary nav-action-link">
@@ -117,11 +139,13 @@
                 {/if}
             </nav>
 
-            <button class="mobile-menu-toggle" type="button" aria-label="Toggle menu" aria-controls="primary-nav" aria-expanded="false">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            {if not $useClientHeader}
+                <button class="mobile-menu-toggle" type="button" aria-label="Toggle menu" aria-controls="primary-nav" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            {/if}
         </div>
     </header>
 

@@ -11,6 +11,9 @@
     {/foreach}
 {/if}
 
+<div class="clientarea-shell">
+    {include file="$template/includes/clientarea-left-rail.tpl"}
+    <div class="clientarea-main">
 <div class="invoices-page">
     <div class="container">
         <div class="page-header">
@@ -96,6 +99,8 @@
             </div>
             {/if}
         </div>
+    </div>
+</div>
     </div>
 </div>
 

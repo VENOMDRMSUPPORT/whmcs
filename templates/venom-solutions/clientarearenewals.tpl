@@ -8,6 +8,9 @@
     {/foreach}
 {/if}
 
+<div class="clientarea-shell">
+    {include file="$template/includes/clientarea-left-rail.tpl"}
+    <div class="clientarea-main">
 <div class="renewals-page">
     <div class="container">
         <div class="page-header">
@@ -70,6 +73,8 @@
             <p>All your services are up to date.</p>
         </div>
         {/if}
+    </div>
+</div>
     </div>
 </div>
 

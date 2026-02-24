@@ -4,6 +4,9 @@
 {assign var=serviceDueDate value=$nextduedate|default:$nextduedateformatted|default:'-'}
 {assign var=serviceRecurring value=$recurringamount|default:$amount|default:'--'}
 
+<div class="clientarea-shell">
+    {include file="$template/includes/clientarea-left-rail.tpl"}
+    <div class="clientarea-main">
 <div class="product-details-page">
     <div class="container">
         <div class="page-breadcrumb">
@@ -169,6 +172,8 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
     </div>
 </div>
 

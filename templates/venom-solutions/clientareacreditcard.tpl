@@ -1,3 +1,6 @@
+<div class="clientarea-shell">
+    {include file="$template/includes/clientarea-left-rail.tpl"}
+    <div class="clientarea-main">
 <div class="creditcard-page">
     <div class="container">
         <div class="page-header">
@@ -89,6 +92,8 @@
                 <button type="submit" class="btn-glow">Add Card</button>
             </form>
         </div>
+    </div>
+</div>
     </div>
 </div>
 
