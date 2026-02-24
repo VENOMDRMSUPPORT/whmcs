@@ -8,8 +8,23 @@
     {/foreach}
 {/if}
 
-<div class="renewals-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Renewals Center</h3>
+                <p>Stay ahead of expiration dates and keep all services continuously active.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/clientarea.php?action=products" class="client-unified-side-link">My Services</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=invoices" class="client-unified-side-link">View Invoices</a>
+                <a href="{$WEB_ROOT}/supporttickets.php" class="client-unified-side-link">Contact Support</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="renewals-page">
         <div class="page-header">
             <h1>Renewals</h1>
             <p>Manage your service renewals</p>
@@ -70,14 +85,15 @@
             <p>All your services are up to date.</p>
         </div>
         {/if}
+            </div>
+        </main>
     </div>
 </div>
 
 <style>
 .renewals-page {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .page-header {

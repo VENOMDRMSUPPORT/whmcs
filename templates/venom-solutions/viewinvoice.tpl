@@ -8,8 +8,23 @@
 {assign var=invoiceTax value=$tax|default:$taxtotal|default:''}
 {assign var=invoiceTotal value=$total|default:$invoicetotal|default:$balance|default:'--'}
 
-<div class="invoice-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Invoice Details</h3>
+                <p>Review line items, totals, and invoice status before payment or download.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/clientarea.php?action=invoices" class="client-unified-side-link">All Invoices</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=addfunds" class="client-unified-side-link">Add Funds</a>
+                <a href="{$WEB_ROOT}/supporttickets.php" class="client-unified-side-link">Billing Support</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="invoice-page">
         <div class="invoice-header">
             <div class="invoice-brand">
                 {include file="$template/includes/logo.tpl" size="40px" textSize="1.25rem" gap="12px"}
@@ -95,14 +110,15 @@
             </a>
             {/if}
         </div>
+            </div>
+        </main>
     </div>
 </div>
 
 <style>
 .invoice-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .invoice-header {

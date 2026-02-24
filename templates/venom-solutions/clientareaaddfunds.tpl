@@ -1,7 +1,22 @@
 {assign var=currentBalance value=$balance|default:$creditbalance|default:$clientsdetails.credit|default:'0.00'}
 
-<div class="addfunds-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Wallet Funding</h3>
+                <p>Add account credit now and use it instantly for invoices and renewals.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/clientarea.php?action=invoices" class="client-unified-side-link">View Invoices</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=creditcard" class="client-unified-side-link">Payment Methods</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=products" class="client-unified-side-link">My Services</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="addfunds-page">
         <div class="page-header">
             <h1>Add Funds</h1>
             <p>Add credit to your account for future purchases</p>
@@ -84,6 +99,8 @@
                 </form>
             </div>
         </div>
+            </div>
+        </main>
     </div>
 </div>
 
@@ -133,9 +150,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <style>
 .addfunds-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .page-header {

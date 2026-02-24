@@ -1,5 +1,20 @@
-<div class="submit-ticket-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Open Ticket</h3>
+                <p>Share full details so the support team can resolve your request faster.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/supporttickets.php" class="client-unified-side-link">Back to Tickets</a>
+                <a href="{$WEB_ROOT}/knowledgebase.php" class="client-unified-side-link">Check Knowledgebase</a>
+                <a href="{$WEB_ROOT}/clientarea.php" class="client-unified-side-link">Client Dashboard</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="submit-ticket-page">
         <div class="page-header">
             <a href="{$WEB_ROOT}/supporttickets.php" class="back-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -77,14 +92,15 @@
                 </button>
             </form>
         </div>
+            </div>
+        </main>
     </div>
 </div>
 
 <style>
 .submit-ticket-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .back-link {

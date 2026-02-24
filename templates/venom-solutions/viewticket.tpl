@@ -1,5 +1,20 @@
-<div class="viewticket-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Ticket Thread</h3>
+                <p>Follow the full conversation history and reply directly from this panel.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/supporttickets.php" class="client-unified-side-link">All Tickets</a>
+                <a href="{$WEB_ROOT}/supporttickets.php?action=open" class="client-unified-side-link">Open New Ticket</a>
+                <a href="{$WEB_ROOT}/knowledgebase.php" class="client-unified-side-link">Knowledgebase</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="viewticket-page">
         <div class="page-header">
             <a href="{$WEB_ROOT}/supporttickets.php" class="back-link">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -74,14 +89,15 @@
                 </div>
             </form>
         </div>
+            </div>
+        </main>
     </div>
 </div>
 
 <style>
 .viewticket-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .back-link {

@@ -1,5 +1,20 @@
-<div class="products-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Services Overview</h3>
+                <p>Track active services, renewals, and delivery status from one place.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/cart.php" class="client-unified-side-link">Order New Service</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=renewals" class="client-unified-side-link">Review Renewals</a>
+                <a href="{$WEB_ROOT}/supporttickets.php" class="client-unified-side-link">Open Support Ticket</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="products-page">
         <div class="page-header">
             <div>
                 <h1>My Services</h1>
@@ -72,14 +87,15 @@
             <a href="{$WEB_ROOT}/cart.php" class="btn-glow">Browse Plans</a>
         </div>
         {/if}
+            </div>
+        </main>
     </div>
 </div>
 
 <style>
 .products-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .page-header {

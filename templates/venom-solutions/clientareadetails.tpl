@@ -11,8 +11,23 @@
 {assign var=profilePostcode value=$client.postcode|default:$clientpostcode|default:$postcode|default:''}
 {assign var=profileCountryDropdown value=$countries|default:$countrydropdown|default:''}
 
-<div class="profile-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Account Settings</h3>
+                <p>Update profile details and keep your billing information accurate.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/clientarea.php?action=changepw" class="client-unified-side-link">Change Password</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=security" class="client-unified-side-link">Security Settings</a>
+                <a href="{$WEB_ROOT}/clientarea.php" class="client-unified-side-link">Back to Dashboard</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="profile-page">
         <div class="page-header">
             <h1>My Profile</h1>
             <p>Manage your account information</p>
@@ -136,14 +151,15 @@
                 </form>
             </div>
         </div>
+            </div>
+        </main>
     </div>
 </div>
 
 <style>
 .profile-page {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .page-header {

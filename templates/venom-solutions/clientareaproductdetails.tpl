@@ -4,8 +4,23 @@
 {assign var=serviceDueDate value=$nextduedate|default:$nextduedateformatted|default:'-'}
 {assign var=serviceRecurring value=$recurringamount|default:$amount|default:'--'}
 
-<div class="product-details-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Service Control</h3>
+                <p>Manage access credentials, billing cycle, and upgrade options for this service.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/clientarea.php?action=products" class="client-unified-side-link">All Services</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=renew&id={$serviceId}" class="client-unified-side-link">Renew Service</a>
+                <a href="{$WEB_ROOT}/upgrade.php?type=package&id={$serviceId}" class="client-unified-side-link">Upgrade Plan</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="product-details-page">
         <div class="page-breadcrumb">
             <a href="{$WEB_ROOT}/clientarea.php">Dashboard</a>
             <span>/</span>
@@ -169,14 +184,15 @@
                 </div>
             </div>
         </div>
+            </div>
+        </main>
     </div>
 </div>
 
 <style>
 .product-details-page {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .page-breadcrumb {

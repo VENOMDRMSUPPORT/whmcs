@@ -51,7 +51,143 @@
                 </span>
             </a>
 
+            <div class="header-tools">
+                {if $useClientHeader}
+                    <div class="header-tools-row">
+                    <details class="client-notifications-dropdown">
+                        <summary class="client-header-icon client-notifications-trigger" aria-label="Notifications">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            <span class="header-alert-count">{count($clientAlerts)|default:0}</span>
+                        </summary>
+                        <div class="client-notifications-panel">
+                            <div class="client-notifications-head">Notifications</div>
+                            {foreach $clientAlerts as $alert}
+                                <a href="{$alert->getLink()}" class="client-notification-item client-notification-{$alert->getSeverity()}">
+                                    <span class="client-notification-icon" aria-hidden="true">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                        </svg>
+                                    </span>
+                                    <span class="client-notification-text">{$alert->getMessage()}</span>
+                                </a>
+                            {foreachelse}
+                                <div class="client-notification-empty">No notifications</div>
+                            {/foreach}
+                        </div>
+                    </details>
+                    <a href="{$WEB_ROOT}/cart.php?a=view" class="client-header-icon client-header-cart" aria-label="Shopping Cart">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="20" r="1"></circle>
+                            <circle cx="19" cy="20" r="1"></circle>
+                            <path d="M2 3h3l2.68 11.39a2 2 0 0 0 2 1.61h7.72a2 2 0 0 0 2-1.6L21 7H6"></path>
+                        </svg>
+                        <span class="header-cart-count">{$headerCartCount}</span>
+                    </a>
+                    <details class="client-account-dropdown">
+                        <summary class="client-account-trigger">
+                            <span class="client-hello-label">Hello</span>
+                            <span class="client-hello-name">{$clientsdetails.firstname|default:'Demo'}</span>
+                            <span class="client-menu-caret" aria-hidden="true">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m6 9 6 6 6-6"></path>
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="client-account-menu">
+                            <a href="{$WEB_ROOT}/clientarea.php?action=details" class="client-menu-item">
+                                <span class="client-menu-item-icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21a8 8 0 0 0-16 0"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </span>
+                                <span>Account Details</span>
+                            </a>
+                            <a href="{$WEB_ROOT}/index.php?rp=/user/manage" class="client-menu-item">
+                                <span class="client-menu-item-icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="8.5" cy="7" r="4"></circle>
+                                        <path d="M20 8v6"></path>
+                                        <path d="M23 11h-6"></path>
+                                    </svg>
+                                </span>
+                                <span>User Management</span>
+                            </a>
+                            <a href="{$WEB_ROOT}/index.php?rp=/user/contacts" class="client-menu-item">
+                                <span class="client-menu-item-icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                </span>
+                                <span>Contacts</span>
+                            </a>
+                            <a href="{$WEB_ROOT}/clientarea.php?action=emails" class="client-menu-item">
+                                <span class="client-menu-item-icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                                        <path d="M3 7l9 6 9-6"></path>
+                                    </svg>
+                                </span>
+                                <span>Email History</span>
+                            </a>
+                            <div class="client-menu-separator"></div>
+                            <a href="{$WEB_ROOT}/clientarea.php?action=details" class="client-menu-item">
+                                <span class="client-menu-item-icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21a8 8 0 0 0-16 0"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </span>
+                                <span>Your Profile</span>
+                            </a>
+                            <a href="{$WEB_ROOT}/clientarea.php?action=changepw" class="client-menu-item">
+                                <span class="client-menu-item-icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                                        <path d="M7 11V8a5 5 0 0 1 10 0v3"></path>
+                                    </svg>
+                                </span>
+                                <span>Change Password</span>
+                            </a>
+                            <div class="client-menu-separator"></div>
+                            <a href="{$WEB_ROOT}/logout.php" class="client-menu-item client-menu-item-danger">
+                                <span class="client-menu-item-icon" aria-hidden="true">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                        <path d="M10 17l5-5-5-5"></path>
+                                        <path d="M15 12H3"></path>
+                                    </svg>
+                                </span>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </details>
+                    </div>
+                    <span class="client-login-meta">Logged in as: {$clientsdetails.email|default:$email|default:'client@example.com'}</span>
+                {else}
+                    <a href="{$WEB_ROOT}/cart.php?a=view" class="btn-venom-outline header-cart-btn header-tools-cart" aria-label="Shopping Cart">
+                        <span class="header-cart-icon" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="20" r="1"></circle>
+                                <circle cx="19" cy="20" r="1"></circle>
+                                <path d="M2 3h3l2.68 11.39a2 2 0 0 0 2 1.61h7.72a2 2 0 0 0 2-1.6L21 7H6"></path>
+                            </svg>
+                        </span>
+                        <span>Cart</span>
+                        <span class="header-cart-count">{$headerCartCount}</span>
+                    </a>
+                {/if}
+            </div>
+
             <nav class="header-nav" id="primary-nav">
+                <div class="header-nav-panel">
                 {if $useClientHeader}
                     <div class="client-main-nav">
                         <details class="client-main-nav-dropdown">
@@ -114,129 +250,6 @@
                         </a>
                     </div>
 
-                    <div class="client-header-top">
-                        <div class="client-header-tools">
-                            <details class="client-notifications-dropdown">
-                                <summary class="client-header-icon client-notifications-trigger" aria-label="Notifications">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                                    </svg>
-                                    <span class="header-alert-count">{count($clientAlerts)|default:0}</span>
-                                </summary>
-                                <div class="client-notifications-panel">
-                                    <div class="client-notifications-head">Notifications</div>
-                                    {foreach $clientAlerts as $alert}
-                                        <a href="{$alert->getLink()}" class="client-notification-item client-notification-{$alert->getSeverity()}">
-                                            <span class="client-notification-icon" aria-hidden="true">
-                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <circle cx="12" cy="12" r="10"></circle>
-                                                </svg>
-                                            </span>
-                                            <span class="client-notification-text">{$alert->getMessage()}</span>
-                                        </a>
-                                    {foreachelse}
-                                        <div class="client-notification-empty">No notifications</div>
-                                    {/foreach}
-                                </div>
-                            </details>
-
-                            <a href="{$WEB_ROOT}/cart.php?a=view" class="client-header-icon client-header-cart" aria-label="Shopping Cart">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="9" cy="20" r="1"></circle>
-                                    <circle cx="19" cy="20" r="1"></circle>
-                                    <path d="M2 3h3l2.68 11.39a2 2 0 0 0 2 1.61h7.72a2 2 0 0 0 2-1.6L21 7H6"></path>
-                                </svg>
-                                <span class="header-cart-count">{$headerCartCount}</span>
-                            </a>
-
-                            <details class="client-account-dropdown">
-                                <summary class="client-account-trigger">
-                                    <span class="client-hello-label">Hello</span>
-                                    <span class="client-hello-name">{$clientsdetails.firstname|default:'Demo'}</span>
-                                    <span class="client-menu-caret" aria-hidden="true">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="m6 9 6 6 6-6"></path>
-                                        </svg>
-                                    </span>
-                                </summary>
-                                <div class="client-account-menu">
-                                    <a href="{$WEB_ROOT}/clientarea.php?action=details" class="client-menu-item">
-                                        <span class="client-menu-item-icon" aria-hidden="true">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M20 21a8 8 0 0 0-16 0"></path>
-                                                <circle cx="12" cy="7" r="4"></circle>
-                                            </svg>
-                                        </span>
-                                        <span>Account Details</span>
-                                    </a>
-                                    <a href="{$WEB_ROOT}/index.php?rp=/user/manage" class="client-menu-item">
-                                        <span class="client-menu-item-icon" aria-hidden="true">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="8.5" cy="7" r="4"></circle>
-                                                <path d="M20 8v6"></path>
-                                                <path d="M23 11h-6"></path>
-                                            </svg>
-                                        </span>
-                                        <span>User Management</span>
-                                    </a>
-                                    <a href="{$WEB_ROOT}/index.php?rp=/user/contacts" class="client-menu-item">
-                                        <span class="client-menu-item-icon" aria-hidden="true">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="9" cy="7" r="4"></circle>
-                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                            </svg>
-                                        </span>
-                                        <span>Contacts</span>
-                                    </a>
-                                    <a href="{$WEB_ROOT}/clientarea.php?action=emails" class="client-menu-item">
-                                        <span class="client-menu-item-icon" aria-hidden="true">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-                                                <path d="M3 7l9 6 9-6"></path>
-                                            </svg>
-                                        </span>
-                                        <span>Email History</span>
-                                    </a>
-                                    <div class="client-menu-separator"></div>
-                                    <a href="{$WEB_ROOT}/clientarea.php?action=details" class="client-menu-item">
-                                        <span class="client-menu-item-icon" aria-hidden="true">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M20 21a8 8 0 0 0-16 0"></path>
-                                                <circle cx="12" cy="7" r="4"></circle>
-                                            </svg>
-                                        </span>
-                                        <span>Your Profile</span>
-                                    </a>
-                                    <a href="{$WEB_ROOT}/clientarea.php?action=changepw" class="client-menu-item">
-                                        <span class="client-menu-item-icon" aria-hidden="true">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
-                                                <path d="M7 11V8a5 5 0 0 1 10 0v3"></path>
-                                            </svg>
-                                        </span>
-                                        <span>Change Password</span>
-                                    </a>
-                                    <div class="client-menu-separator"></div>
-                                    <a href="{$WEB_ROOT}/logout.php" class="client-menu-item client-menu-item-danger">
-                                        <span class="client-menu-item-icon" aria-hidden="true">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                                                <path d="M10 17l5-5-5-5"></path>
-                                                <path d="M15 12H3"></path>
-                                            </svg>
-                                        </span>
-                                        <span>Logout</span>
-                                    </a>
-                                </div>
-                            </details>
-                        </div>
-                        <span class="client-login-meta">Logged in as: {$clientsdetails.email|default:$email|default:'client@example.com'}</span>
-                    </div>
-
                 {else}
                     <div class="nav-links">
                         <a href="{$WEB_ROOT}/index.php" class="nav-link">
@@ -271,7 +284,7 @@
                     </div>
 
                     <div class="nav-actions">
-                        <a href="{$WEB_ROOT}/cart.php?a=view" class="btn-venom-outline header-cart-btn" aria-label="Shopping Cart">
+                        <a href="{$WEB_ROOT}/cart.php?a=view" class="btn-venom-outline header-cart-btn header-cart-desktop" aria-label="Shopping Cart">
                             <span class="header-cart-icon" aria-hidden="true">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <circle cx="9" cy="20" r="1"></circle>
@@ -307,15 +320,14 @@
                         {/if}
                     </div>
                 {/if}
+                </div>
             </nav>
 
-            {if not $useClientHeader}
-                <button class="mobile-menu-toggle" type="button" aria-label="Toggle menu" aria-controls="primary-nav" aria-expanded="false">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            {/if}
+            <button class="mobile-menu-toggle{if $useClientHeader} client-area-menu-toggle{/if}" type="button" aria-label="Toggle menu" aria-controls="primary-nav" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </header>
 

@@ -664,11 +664,31 @@
     }
 
     .dashboard-stat-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .dashboard-lower-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 900px) {
+    .dashboard-stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .dashboard-stat-card {
+        min-height: 100px;
+        padding: 12px;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+    }
+    
+    .stat-title {
+        font-size: 0.78rem;
     }
 }
 
@@ -686,20 +706,20 @@
     }
 
     .dashboard-stat-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .dashboard-stat-card {
-        min-height: 116px;
-        padding: 14px;
+        min-height: 100px;
+        padding: 12px;
     }
 
     .stat-number {
-        font-size: 2rem;
+        font-size: 1.6rem;
     }
 
     .stat-title {
-        font-size: 0.84rem;
+        font-size: 0.72rem;
     }
 
     .dashboard-service-row {
@@ -709,6 +729,70 @@
 
     .service-manage-btn {
         width: fit-content;
+    }
+}
+
+@media (max-width: 480px) {
+    .client-dashboard-page {
+        padding: 12px 0 20px;
+    }
+    
+    .client-dashboard-shell {
+        padding: 0 6px;
+        gap: 12px;
+    }
+    
+    .dashboard-profile-card,
+    .dashboard-side-card,
+    .dashboard-block,
+    .dashboard-stat-card {
+        padding: 12px;
+    }
+    
+    .dashboard-stat-grid {
+        gap: 8px;
+    }
+    
+    .dashboard-stat-card {
+        min-height: 80px;
+        padding: 10px;
+    }
+    
+    .stat-chip {
+        width: 20px;
+        height: 20px;
+        top: 8px;
+        right: 8px;
+    }
+    
+    .stat-number {
+        font-size: 1.4rem;
+    }
+    
+    .stat-title {
+        font-size: 0.68rem;
+    }
+    
+    .profile-facts {
+        font-size: 0.7rem;
+    }
+    
+    .profile-fact {
+        grid-template-columns: 60px 1fr;
+    }
+    
+    .dashboard-block-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .domain-form-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .domain-action {
+        width: 100%;
     }
 }
 </style>

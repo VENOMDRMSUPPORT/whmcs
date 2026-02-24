@@ -1,5 +1,20 @@
-<div class="tickets-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Support Center</h3>
+                <p>Track ticket progress and keep all support communication in one queue.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/supporttickets.php?action=open" class="client-unified-side-link">Open New Ticket</a>
+                <a href="{$WEB_ROOT}/knowledgebase.php" class="client-unified-side-link">Knowledgebase</a>
+                <a href="{$WEB_ROOT}/announcements.php" class="client-unified-side-link">Announcements</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="tickets-page">
         <div class="page-header">
             <div>
                 <h1>Support Tickets</h1>
@@ -47,14 +62,15 @@
             <a href="{$WEB_ROOT}/supporttickets.php?action=open" class="btn-glow">Open Ticket</a>
         </div>
         {/if}
+            </div>
+        </main>
     </div>
 </div>
 
 <style>
 .tickets-page {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .page-header {

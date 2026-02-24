@@ -11,8 +11,23 @@
     {/foreach}
 {/if}
 
-<div class="invoices-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Billing Overview</h3>
+                <p>Monitor due balances and review all billing documents in one timeline.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/clientarea.php?action=addfunds" class="client-unified-side-link">Add Funds</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=creditcard" class="client-unified-side-link">Payment Methods</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=products" class="client-unified-side-link">My Services</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="invoices-page">
         <div class="page-header">
             <div>
                 <h1>Invoices</h1>
@@ -96,14 +111,15 @@
             </div>
             {/if}
         </div>
+            </div>
+        </main>
     </div>
 </div>
 
 <style>
 .invoices-page {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .page-header {

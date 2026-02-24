@@ -1,5 +1,20 @@
-<div class="creditcard-page">
-    <div class="container">
+<div class="client-unified-page">
+    <div class="container client-unified-shell">
+        <aside class="client-unified-side">
+            <section class="client-unified-side-card glass-card">
+                <h3>Payment Methods</h3>
+                <p>Securely manage saved cards for faster invoice payments and renewals.</p>
+            </section>
+            <section class="client-unified-side-card glass-card">
+                <h3>Quick Actions</h3>
+                <a href="{$WEB_ROOT}/clientarea.php?action=invoices" class="client-unified-side-link">Pay Invoices</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=addfunds" class="client-unified-side-link">Add Funds</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=details" class="client-unified-side-link">Account Details</a>
+            </section>
+        </aside>
+
+        <main class="client-unified-main">
+            <div class="creditcard-page">
         <div class="page-header">
             <h1>Payment Methods</h1>
             <p>Manage your saved payment methods</p>
@@ -89,6 +104,8 @@
                 <button type="submit" class="btn-glow">Add Card</button>
             </form>
         </div>
+            </div>
+        </main>
     </div>
 </div>
 
@@ -128,9 +145,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <style>
 .creditcard-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    display: grid;
+    gap: 24px;
 }
 
 .page-header {
