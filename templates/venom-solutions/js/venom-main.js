@@ -108,32 +108,82 @@
         });
     }
 
-    function initClientMenuDropdown() {
-        var clientMenu = document.querySelector(".client-menu-dropdown");
-        if (!clientMenu) {
+    function initBackToTop() {
+        var triggers = document.querySelectorAll(".js-back-to-top");
+        if (!triggers.length) {
             return;
         }
 
-        var menuTrigger = clientMenu.querySelector("summary");
+        triggers.forEach(function (trigger) {
+            trigger.addEventListener("click", function () {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+        });
+    }
 
-        document.addEventListener("click", function (event) {
-            if (!clientMenu.open) {
-                return;
-            }
+    function initClientMenuDropdown() {
+        var dropdowns = document.querySelectorAll(".client-menu-dropdown, .client-account-dropdown, .client-notifications-dropdown, .client-main-nav-dropdown");
+        if (!dropdowns.length) {
+            return;
+        }
 
-            if (!clientMenu.contains(event.target)) {
+        dropdowns.forEach(function (clientMenu) {
+            var menuTrigger = clientMenu.querySelector("summary");
+
+            document.addEventListener("click", function (event) {
+                if (!clientMenu.open) {
+                    return;
+                }
+
+                if (!clientMenu.contains(event.target)) {
+                    clientMenu.removeAttribute("open");
+                }
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key !== "Escape" || !clientMenu.open) {
+                    return;
+                }
+
                 clientMenu.removeAttribute("open");
+                if (menuTrigger) {
+                    menuTrigger.focus();
+                }
+            });
+        });
+    }
+
+    function initFooterLocaleModal() {
+        var modal = document.getElementById("footer-locale-modal");
+        var openButtons = document.querySelectorAll("[data-modal-open='footer-locale-modal']");
+
+        if (!modal || !openButtons.length) {
+            return;
+        }
+
+        function closeModal() {
+            modal.hidden = true;
+            document.body.classList.remove("locale-modal-open");
+        }
+
+        function openModal() {
+            modal.hidden = false;
+            document.body.classList.add("locale-modal-open");
+        }
+
+        openButtons.forEach(function (button) {
+            button.addEventListener("click", openModal);
+        });
+
+        modal.addEventListener("click", function (event) {
+            if (event.target.closest("[data-modal-close='footer-locale-modal']")) {
+                closeModal();
             }
         });
 
         document.addEventListener("keydown", function (event) {
-            if (event.key !== "Escape" || !clientMenu.open) {
-                return;
-            }
-
-            clientMenu.removeAttribute("open");
-            if (menuTrigger) {
-                menuTrigger.focus();
+            if (event.key === "Escape" && !modal.hidden) {
+                closeModal();
             }
         });
     }
@@ -143,5 +193,7 @@
         initSmoothScroll();
         initCopyButtons();
         initClientMenuDropdown();
+        initBackToTop();
+        initFooterLocaleModal();
     });
 })();

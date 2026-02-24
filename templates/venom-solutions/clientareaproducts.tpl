@@ -1,6 +1,3 @@
-<div class="clientarea-shell">
-    {include file="$template/includes/clientarea-left-rail.tpl"}
-    <div class="clientarea-main">
 <div class="products-page">
     <div class="container">
         <div class="page-header">
@@ -75,8 +72,6 @@
             <a href="{$WEB_ROOT}/cart.php" class="btn-glow">Browse Plans</a>
         </div>
         {/if}
-    </div>
-</div>
     </div>
 </div>
 

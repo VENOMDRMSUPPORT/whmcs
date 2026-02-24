@@ -11,9 +11,6 @@
 {assign var=profilePostcode value=$client.postcode|default:$clientpostcode|default:$postcode|default:''}
 {assign var=profileCountryDropdown value=$countries|default:$countrydropdown|default:''}
 
-<div class="clientarea-shell">
-    {include file="$template/includes/clientarea-left-rail.tpl"}
-    <div class="clientarea-main">
 <div class="profile-page">
     <div class="container">
         <div class="page-header">
@@ -139,8 +136,6 @@
                 </form>
             </div>
         </div>
-    </div>
-</div>
     </div>
 </div>
 

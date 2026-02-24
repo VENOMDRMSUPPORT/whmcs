@@ -122,6 +122,11 @@
             <p>Flexible pricing that scales with your business. Upgrade or downgrade anytime.</p>
         </div>
 
+        <div class="pricing-cycle-toggle" role="tablist" aria-label="Billing cycle">
+            <button type="button" class="pricing-cycle-btn active" data-cycle="monthly" aria-pressed="true">Monthly</button>
+            <button type="button" class="pricing-cycle-btn" data-cycle="yearly" aria-pressed="false">Yearly <span class="cycle-discount-tag">Save 20%</span></button>
+        </div>
+
         <div class="pricing-grid">
             <div class="pricing-card glass-card glass-card-hover">
                 <div class="pricing-header">
@@ -163,8 +168,9 @@
                     <p>For professional providers</p>
                 </div>
                 <div class="pricing-price">
-                    <span class="gradient-text">$100</span>
-                    <span class="pricing-period">/ Month</span>
+                    <span class="gradient-text" id="monthly-access-price" data-monthly="$100" data-yearly="$960">$100</span>
+                    <span class="pricing-period" id="monthly-access-period">/ Month</span>
+                    <span class="pricing-save-badge" id="monthly-access-save" hidden>Save 20%</span>
                 </div>
                 <ul class="pricing-features">
                     <li>
@@ -396,6 +402,49 @@
     align-items: stretch;
 }
 
+.pricing-cycle-toggle {
+    width: fit-content;
+    margin: 0 auto 44px;
+    display: flex;
+    gap: 8px;
+    padding: 6px;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--primary) / 0.35);
+    background: hsl(var(--card) / 0.65);
+}
+
+.pricing-cycle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: hsl(var(--muted-foreground));
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pricing-cycle-btn.active {
+    color: hsl(var(--foreground));
+    background: hsl(var(--primary) / 0.22);
+    box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.55);
+}
+
+.cycle-discount-tag {
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--primary) / 0.42);
+    background: hsl(var(--primary) / 0.14);
+    color: hsl(var(--primary));
+    font-size: 0.68rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
 .pricing-card {
     padding: 40px 36px;
     border-radius: 24px;
@@ -446,6 +495,18 @@
     color: hsl(var(--muted-foreground));
     font-weight: 600;
     font-size: 1rem;
+}
+
+.pricing-save-badge {
+    margin-left: 10px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--primary) / 0.4);
+    background: hsl(var(--primary) / 0.12);
+    color: hsl(var(--primary));
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
 }
 
 .pricing-features {
@@ -504,3 +565,39 @@
     }
 }
 </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var toggle = document.querySelector(".pricing-cycle-toggle");
+    var priceElement = document.getElementById("monthly-access-price");
+    var periodElement = document.getElementById("monthly-access-period");
+    var saveBadge = document.getElementById("monthly-access-save");
+
+    if (!toggle || !priceElement || !periodElement || !saveBadge) {
+        return;
+    }
+
+    var buttons = toggle.querySelectorAll(".pricing-cycle-btn");
+
+    function setCycle(cycle) {
+        var isYearly = cycle === "yearly";
+        priceElement.textContent = isYearly ? priceElement.dataset.yearly : priceElement.dataset.monthly;
+        periodElement.textContent = isYearly ? "/ Year" : "/ Month";
+        saveBadge.hidden = !isYearly;
+
+        buttons.forEach(function (button) {
+            var active = button.dataset.cycle === cycle;
+            button.classList.toggle("active", active);
+            button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+    }
+
+    buttons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            setCycle(button.dataset.cycle);
+        });
+    });
+
+    setCycle("monthly");
+});
+</script>

@@ -1,8 +1,5 @@
 {assign var=currentBalance value=$balance|default:$creditbalance|default:$clientsdetails.credit|default:'0.00'}
 
-<div class="clientarea-shell">
-    {include file="$template/includes/clientarea-left-rail.tpl"}
-    <div class="clientarea-main">
 <div class="addfunds-page">
     <div class="container">
         <div class="page-header">
@@ -87,8 +84,6 @@
                 </form>
             </div>
         </div>
-    </div>
-</div>
     </div>
 </div>
 
