@@ -33,14 +33,16 @@
     <div class="container client-dashboard-shell">
         <aside class="dashboard-side-col">
             <section class="dashboard-profile-card glass-card">
-                <div class="dashboard-avatar" aria-hidden="true">
-                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21a8 8 0 0 0-16 0"></path>
-                        <circle cx="12" cy="8" r="4"></circle>
-                    </svg>
+                <div class="dashboard-profile-header">
+                    <div class="dashboard-avatar" aria-hidden="true">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21a8 8 0 0 0-16 0"></path>
+                            <circle cx="12" cy="8" r="4"></circle>
+                        </svg>
+                    </div>
+                    <h2>{$displayClientName}</h2>
+                    <p class="profile-email">{$clientsdetails.email|default:'client@example.com'}</p>
                 </div>
-                <h2>{$displayClientName}</h2>
-                <p class="profile-email">{$clientsdetails.email|default:'client@example.com'}</p>
 
                 <div class="profile-facts" role="list">
                     <div class="profile-fact" role="listitem">
@@ -76,45 +78,53 @@
         </aside>
 
         <main class="dashboard-main-col">
-            <div class="dashboard-stat-grid">
-                <a href="{$WEB_ROOT}/clientarea.php?action=products" class="dashboard-stat-card glass-card">
-                    <span class="stat-chip" aria-hidden="true">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-                        </svg>
-                    </span>
-                    <span class="stat-number">{$activeServicesCount}</span>
-                    <span class="stat-title">Services</span>
-                </a>
-                <a href="{$WEB_ROOT}/clientarea.php?action=addfunds" class="dashboard-stat-card glass-card">
-                    <span class="stat-chip" aria-hidden="true">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"></path>
-                            <path d="M16 12h6"></path>
-                            <path d="M18 14a2 2 0 1 0 0-4"></path>
-                        </svg>
-                    </span>
-                    <span class="stat-number">{$walletBalance}</span>
-                    <span class="stat-title">Wallet Balance</span>
-                </a>
-                <a href="{$WEB_ROOT}/clientarea.php?action=invoices&status=Unpaid" class="dashboard-stat-card glass-card stat-card-danger">
-                    <span class="stat-chip" aria-hidden="true">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                    </span>
-                    <span class="stat-number">{$unpaidInvoicesCount}</span>
-                    <span class="stat-title">Unpaid Invoices</span>
-                </a>
-                <a href="{$WEB_ROOT}/supporttickets.php" class="dashboard-stat-card glass-card">
-                    <span class="stat-chip" aria-hidden="true">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                    </span>
-                    <span class="stat-number">{$openTicketsCount}</span>
-                    <span class="stat-title">Open Tickets</span>
-                </a>
+            <div class="row g-3 g-md-4 mb-2">
+                <div class="col-6 col-lg-3 d-flex">
+                    <a href="{$WEB_ROOT}/clientarea.php?action=products" class="stat-card stat-card-link w-100">
+                        <div class="stat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                            </svg>
+                        </div>
+                        <div class="stat-card-value">{$activeServicesCount}</div>
+                        <div class="stat-card-label">Services</div>
+                    </a>
+                </div>
+                <div class="col-6 col-lg-3 d-flex">
+                    <a href="{$WEB_ROOT}/clientarea.php?action=addfunds" class="stat-card stat-card-link stat-card-wallet w-100">
+                        <div class="stat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"></path>
+                                <path d="M16 12h6"></path>
+                                <path d="M18 14a2 2 0 1 0 0-4"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-card-value stat-card-amount">{$walletBalance}</div>
+                        <div class="stat-card-label">Wallet Balance</div>
+                    </a>
+                </div>
+                <div class="col-6 col-lg-3 d-flex">
+                    <a href="{$WEB_ROOT}/clientarea.php?action=invoices&status=Unpaid" class="stat-card stat-card-link stat-card-danger w-100">
+                        <div class="stat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-card-value">{$unpaidInvoicesCount}</div>
+                        <div class="stat-card-label">Unpaid Invoices</div>
+                    </a>
+                </div>
+                <div class="col-6 col-lg-3 d-flex">
+                    <a href="{$WEB_ROOT}/supporttickets.php" class="stat-card stat-card-link w-100">
+                        <div class="stat-card-icon-wrap">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-card-value">{$openTicketsCount}</div>
+                        <div class="stat-card-label">Open Tickets</div>
+                    </a>
+                </div>
             </div>
 
             <section class="dashboard-block glass-card">
@@ -237,10 +247,10 @@
                             </span>
                             <span>Wallet</span>
                         </h3>
-                        <a href="{$WEB_ROOT}/clientarea.php?action=addfunds" class="view-all">Add Funds</a>
+                        <a href="{$WEB_ROOT}/clientarea.php?action=addfunds" class="view-all wallet-add-funds">Add Funds</a>
                     </div>
-                    <p>Add credit to your account for faster payments and renewals.</p>
-                    <div class="wallet-balance-row">
+                    <p class="wallet-desc">Add credit to your account for faster payments and renewals.</p>
+                    <div class="wallet-balance-card">
                         <span class="wallet-balance-label">Current Balance</span>
                         <span class="wallet-balance-value">{$walletBalance}</span>
                     </div>
@@ -275,8 +285,7 @@
 
 .dashboard-profile-card,
 .dashboard-side-card,
-.dashboard-block,
-.dashboard-stat-card {
+.dashboard-block {
     padding: 18px;
     border-radius: 14px;
 }
@@ -286,6 +295,13 @@
     border: 1px solid hsl(var(--primary) / 0.42);
     background: linear-gradient(165deg, hsl(var(--card) / 0.96) 0%, hsl(var(--primary) / 0.06) 100%);
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 10px 22px hsl(var(--background) / 0.46);
+}
+
+.dashboard-profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .dashboard-avatar {
@@ -401,80 +417,68 @@
     gap: 18px;
 }
 
-.dashboard-stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
-    margin-bottom: 8px;
-}
-
-.dashboard-stat-card {
+/* Stat cards: professional dashboard design */
+.stat-card-link {
+    display: block;
     position: relative;
-    text-align: center;
-    min-height: 132px;
+    height: 100%;
+    padding: 1.5rem 1.25rem;
+    border-radius: 12px;
+    background: hsl(var(--card) / 0.6);
+    border: 1px solid hsl(var(--border) / 0.6);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.stat-card-link:hover {
+    background: hsl(var(--card) / 0.85);
+    border-color: hsl(var(--primary) / 0.35);
+    box-shadow: 0 4px 12px hsl(var(--background) / 0.6);
+}
+
+.stat-card-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    border: 1px solid hsl(var(--primary) / 0.3);
-    background: linear-gradient(165deg, hsl(var(--card) / 0.92) 0%, hsl(var(--primary) / 0.06) 100%);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 12px 28px hsl(var(--background) / 0.45);
-    overflow: hidden;
-}
-
-.dashboard-stat-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(100% 70% at 50% 0%, hsl(var(--primary) / 0.14) 0%, transparent 72%);
-    pointer-events: none;
-}
-
-.stat-chip {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 26px;
-    height: 26px;
-    border-radius: 8px;
-    display: inline-flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 1rem;
     color: hsl(var(--primary));
-    border: 1px solid hsl(var(--primary) / 0.35);
-    background: hsl(var(--primary) / 0.1);
-    opacity: 0.95;
+    background: hsl(var(--primary) / 0.12);
 }
 
-.stat-number {
-    display: block;
-    font-size: 2.4rem;
-    font-weight: 500;
-    line-height: 1.1;
-    color: hsl(var(--primary));
-    letter-spacing: -0.02em;
-}
-
-.stat-title {
-    margin-top: 4px;
-    font-size: 0.92rem;
+.stat-card-value {
+    font-size: 2rem;
     font-weight: 700;
+    line-height: 1.2;
     color: hsl(var(--foreground));
-    letter-spacing: 0.2px;
+    letter-spacing: -0.03em;
 }
 
-.stat-card-danger .stat-number {
-    color: #fb7185;
+.stat-card-amount {
+    font-variant-numeric: tabular-nums;
+    font-size: 1.75rem;
 }
 
-.stat-card-danger {
-    border-color: rgb(244 63 94 / 0.35);
-    background: linear-gradient(165deg, hsl(var(--card) / 0.92) 0%, rgb(244 63 94 / 0.08) 100%);
+.stat-card-label {
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
 }
 
-.stat-card-danger .stat-chip {
-    color: #fb7185;
-    border-color: rgb(251 113 133 / 0.45);
-    background: rgb(244 63 94 / 0.14);
+.stat-card-danger .stat-card-icon-wrap {
+    color: #f87171;
+    background: rgb(248 113 113 / 0.15);
+}
+
+.stat-card-danger .stat-card-value {
+    color: #f87171;
+}
+
+.stat-card-danger:hover {
+    border-color: rgb(248 113 113 / 0.4);
 }
 
 .dashboard-block-head {
@@ -613,33 +617,45 @@
     font-size: 0.78rem;
 }
 
-.wallet-block p {
-    margin: 0 0 14px;
+.wallet-block p.wallet-desc {
+    margin: 0 0 1.25rem;
     color: hsl(var(--muted-foreground));
-    font-size: 0.85rem;
+    font-size: 0.875rem;
+    line-height: 1.45;
 }
 
-.wallet-balance-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 12px 0 14px;
-    border-top: 1px solid hsl(var(--border) / 0.4);
-    border-bottom: 1px solid hsl(var(--border) / 0.4);
-    margin-bottom: 14px;
+.wallet-add-funds {
+    text-decoration: none;
+}
+
+.wallet-add-funds:hover {
+    text-decoration: underline;
+}
+
+.wallet-balance-card {
+    padding: 1.25rem;
+    border-radius: 10px;
+    background: hsl(var(--primary) / 0.1);
+    border: 1px solid hsl(var(--primary) / 0.2);
+    margin-bottom: 1.25rem;
 }
 
 .wallet-balance-label {
+    display: block;
     color: hsl(var(--muted-foreground));
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
 }
 
 .wallet-balance-value {
-    font-size: 1.6rem;
-    font-weight: 800;
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
-    color: hsl(var(--primary));
+    color: hsl(var(--foreground));
 }
 
 .wallet-actions {
@@ -678,32 +694,8 @@
         grid-template-columns: 1fr 1fr;
     }
 
-    .dashboard-stat-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
     .dashboard-lower-grid {
         grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 900px) {
-    .dashboard-stat-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-    
-    .dashboard-stat-card {
-        min-height: 100px;
-        padding: 12px;
-    }
-    
-    .stat-number {
-        font-size: 1.8rem;
-    }
-    
-    .stat-title {
-        font-size: 0.78rem;
     }
 }
 
@@ -718,23 +710,6 @@
 
     .dashboard-side-col {
         grid-template-columns: 1fr;
-    }
-
-    .dashboard-stat-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .dashboard-stat-card {
-        min-height: 100px;
-        padding: 12px;
-    }
-
-    .stat-number {
-        font-size: 1.6rem;
-    }
-
-    .stat-title {
-        font-size: 0.72rem;
     }
 
     .dashboard-service-row {
@@ -759,33 +734,26 @@
     
     .dashboard-profile-card,
     .dashboard-side-card,
-    .dashboard-block,
-    .dashboard-stat-card {
+    .dashboard-block {
         padding: 12px;
     }
     
-    .dashboard-stat-grid {
-        gap: 8px;
+    .stat-card-link {
+        padding: 1rem 0.875rem;
     }
     
-    .dashboard-stat-card {
-        min-height: 80px;
-        padding: 10px;
+    .stat-card-icon-wrap {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 0.75rem;
     }
     
-    .stat-chip {
-        width: 20px;
-        height: 20px;
-        top: 8px;
-        right: 8px;
+    .stat-card-value {
+        font-size: 1.5rem;
     }
     
-    .stat-number {
-        font-size: 1.4rem;
-    }
-    
-    .stat-title {
-        font-size: 0.68rem;
+    .stat-card-amount {
+        font-size: 1.35rem;
     }
     
     .profile-facts {
