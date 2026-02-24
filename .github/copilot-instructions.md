@@ -24,3 +24,18 @@ workspace, always use English only. If existing content contains Arabic text,
 translate it to English before proceeding.
 
 Violation of this rule means the contribution must be rejected or rewritten.
+
+## DOMAIN SPECIALIZATION
+
+Prioritize professional implementation standards for:
+
+- WHMCS template customization (`templates/`, order forms, client area views)
+- WHMCS hooks and module-safe logic (`includes/hooks/`, module extensions)
+- Frontend theme systems with multi-color palettes and semantic design tokens
+- Responsive UI quality, accessibility (contrast/focus), and upgrade-safe changes
+
+When implementing theme changes:
+
+- Prefer CSS variable tokens over hard-coded colors
+- Keep component styles consistent across all accent palettes
+- Preserve existing project structure and avoid unnecessary framework changes

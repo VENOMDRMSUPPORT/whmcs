@@ -1,3 +1,4 @@
+{if $templatefile != 'homepage'}
                     </div>
 
                     </div>
@@ -146,3 +147,4 @@
 
 </body>
 </html>
+{/if}

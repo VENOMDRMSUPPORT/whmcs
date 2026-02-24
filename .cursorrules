@@ -1,0 +1,16 @@
+# Project Conventions
+
+## Language
+
+- **Project files**: No Arabic text in any project file. All code, comments, strings, and documentation must be in English.
+- **Chat**: Arabic replies in conversation are allowed.
+
+## Commits
+
+- **Commit messages must be in English only.** No Arabic in commit messages.
+
+## Edit Over Add
+
+- **Prefer editing existing files** over adding many new files.
+- Avoid creating unnecessary files or chaotic project structure.
+- When possible, extend or refactor existing code instead of duplicating or adding new modules.
