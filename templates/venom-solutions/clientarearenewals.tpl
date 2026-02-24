@@ -2,8 +2,11 @@
 {assign var=pendingRenewals value=0}
 {if $renewalItems}
     {foreach from=$renewalItems item=renewalCounter}
-        {if $renewalCounter.status|default:''|lower == 'unpaid' || $renewalCounter.status|default:''|lower == 'pending'}
-            {assign var=pendingRenewals value=$pendingRenewals+1}
+        {assign var=itemType value=$renewalCounter.type|default:$renewalCounter.itemtype|default:''}
+        {if $itemType|lower != 'domain'}
+            {if $renewalCounter.status|default:''|lower == 'unpaid' || $renewalCounter.status|default:''|lower == 'pending'}
+                {assign var=pendingRenewals value=$pendingRenewals+1}
+            {/if}
         {/if}
     {/foreach}
 {/if}
@@ -55,10 +58,12 @@
                 </thead>
                 <tbody>
                     {foreach from=$renewalItems item=renewal}
+                        {assign var=itemType value=$renewal.type|default:$renewal.itemtype|default:''}
+                        {if $itemType|lower != 'domain'}
                     <tr>
                         <td>
                             <strong>{$renewal.product|default:$renewal.name|default:$renewal.servicename|default:'Service'}</strong>
-                            <span class="service-id">{$renewal.servicename|default:$renewal.domain|default:'-'}</span>
+                            <span class="service-id">{$renewal.servicename|default:'-'}</span>
                         </td>
                         <td>{$renewal.nextduedate|default:$renewal.dueDate|default:'-'}</td>
                         <td>{$renewal.amount|default:$renewal.recurringamount|default:'--'}</td>
@@ -71,6 +76,7 @@
                             </a>
                         </td>
                     </tr>
+                        {/if}
                     {/foreach}
                 </tbody>
             </table>

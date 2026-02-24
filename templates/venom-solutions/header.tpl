@@ -30,14 +30,13 @@
     {$headeroutput}
     
     <div class="background-effects">
-        <div class="bg-gradient"></div>
-        <div class="grid-bg"></div>
         <div class="stars-layer" aria-hidden="true"></div>
         <div class="stars-layer-2" aria-hidden="true"></div>
+        <div class="stars-layer-3" aria-hidden="true"></div>
     </div>
 
     <header class="venom-header {if $useClientHeader}venom-header-client{/if}">
-        <div class="header-container">
+        <div class="header-container container-fluid">
             <a href="{if $useClientHeader}{$WEB_ROOT}/clientarea.php{else}{$WEB_ROOT}/index.php{/if}" class="header-brand">
                 <span class="header-brand-lockup">
                     {if $useClientHeader}
@@ -172,17 +171,7 @@
                     </div>
                     <span class="client-login-meta">Logged in as: {$clientsdetails.email|default:$email|default:'client@example.com'}</span>
                 {else}
-                    <a href="{$WEB_ROOT}/cart.php?a=view" class="btn-venom-outline header-cart-btn header-tools-cart" aria-label="Shopping Cart">
-                        <span class="header-cart-icon" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="9" cy="20" r="1"></circle>
-                                <circle cx="19" cy="20" r="1"></circle>
-                                <path d="M2 3h3l2.68 11.39a2 2 0 0 0 2 1.61h7.72a2 2 0 0 0 2-1.6L21 7H6"></path>
-                            </svg>
-                        </span>
-                        <span>Cart</span>
-                        <span class="header-cart-count">{$headerCartCount}</span>
-                    </a>
+                    {* Cart button hidden on landing page *}
                 {/if}
             </div>
 
@@ -284,17 +273,6 @@
                     </div>
 
                     <div class="nav-actions">
-                        <a href="{$WEB_ROOT}/cart.php?a=view" class="btn-venom-outline header-cart-btn header-cart-desktop" aria-label="Shopping Cart">
-                            <span class="header-cart-icon" aria-hidden="true">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="9" cy="20" r="1"></circle>
-                                    <circle cx="19" cy="20" r="1"></circle>
-                                    <path d="M2 3h3l2.68 11.39a2 2 0 0 0 2 1.61h7.72a2 2 0 0 0 2-1.6L21 7H6"></path>
-                                </svg>
-                            </span>
-                            <span>Cart</span>
-                            <span class="header-cart-count">{$headerCartCount}</span>
-                        </a>
                         {if $loggedin}
                             <a href="{$WEB_ROOT}/clientarea.php" class="btn-glow nav-cta">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -306,7 +284,7 @@
                                 <span>Client Area</span>
                             </a>
                         {else}
-                            <a href="{$WEB_ROOT}/login.php" class="btn-venom-outline nav-link-secondary nav-action-link">
+                            <a href="{$WEB_ROOT}/login.php" class="btn-venom-outline nav-link-secondary nav-action-link text-nowrap">
                                 <span class="nav-link-icon" aria-hidden="true">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
@@ -316,14 +294,14 @@
                                 </span>
                                 <span class="nav-link-label">Login</span>
                             </a>
-                            <a href="{$WEB_ROOT}/register.php" class="btn-glow nav-cta">Get Started</a>
+                            <a href="{$WEB_ROOT}/register.php" class="btn-glow nav-cta text-nowrap">Get Started</a>
                         {/if}
                     </div>
                 {/if}
                 </div>
             </nav>
 
-            <button class="mobile-menu-toggle{if $useClientHeader} client-area-menu-toggle{/if}" type="button" aria-label="Toggle menu" aria-controls="primary-nav" aria-expanded="false">
+            <button class="mobile-menu-toggle{if $useClientHeader} client-area-menu-toggle{/if} d-flex d-md-none" type="button" aria-label="Toggle menu" aria-controls="primary-nav" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>

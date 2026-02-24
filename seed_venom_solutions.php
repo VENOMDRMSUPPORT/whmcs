@@ -159,6 +159,7 @@ $configTargets = [
     'AllowLanguageChange' => '1',
     'Template' => 'venom-solutions',
     'OrderFormTemplate' => 'venom_cart',
+    'domainLookupProvider' => 'WhmcsWhois',
 ];
 
 foreach ($configTargets as $key => $newValue) {

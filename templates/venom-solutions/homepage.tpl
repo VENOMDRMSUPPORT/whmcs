@@ -122,9 +122,11 @@
             <p>Flexible pricing that scales with your business. Upgrade or downgrade anytime.</p>
         </div>
 
-        <div class="pricing-cycle-toggle" role="tablist" aria-label="Billing cycle">
-            <button type="button" class="pricing-cycle-btn active" data-cycle="monthly" aria-pressed="true">Monthly</button>
-            <button type="button" class="pricing-cycle-btn" data-cycle="yearly" aria-pressed="false">Yearly <span class="cycle-discount-tag">Save 20%</span></button>
+        <div class="pricing-cycle-toggle-wrap">
+            <div class="pricing-cycle-toggle" role="tablist" aria-label="Billing cycle">
+                <button type="button" class="pricing-cycle-btn active" data-cycle="monthly" aria-pressed="true">Monthly</button>
+                <button type="button" class="pricing-cycle-btn" data-cycle="yearly" aria-pressed="false">Yearly <span class="cycle-discount-tag">Save 20%</span></button>
+            </div>
         </div>
 
         <div class="pricing-grid">
@@ -397,15 +399,23 @@
 
 .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
     gap: 28px;
     align-items: stretch;
 }
 
+.pricing-cycle-toggle-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 44px;
+}
+
 .pricing-cycle-toggle {
     width: fit-content;
-    margin: 0 auto 44px;
-    display: flex;
+    max-width: 100%;
+    margin: 0;
+    display: inline-flex;
+    flex-wrap: nowrap;
     gap: 8px;
     padding: 6px;
     border-radius: 999px;
@@ -426,12 +436,19 @@
     background: transparent;
     cursor: pointer;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .pricing-cycle-btn.active {
     color: hsl(var(--foreground));
     background: hsl(var(--primary) / 0.22);
-    box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.55);
+}
+
+.pricing-cycle-btn:focus,
+.pricing-cycle-btn:focus-visible {
+    outline: none;
+    box-shadow: none;
 }
 
 .cycle-discount-tag {
@@ -443,6 +460,8 @@
     font-size: 0.68rem;
     font-weight: 800;
     line-height: 1.2;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .pricing-card {
@@ -451,6 +470,7 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    min-width: 0;
 }
 
 .pricing-card.popular {
@@ -484,6 +504,11 @@
 .pricing-price {
     text-align: center;
     margin-bottom: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px 8px;
 }
 
 .pricing-price .gradient-text {
@@ -498,7 +523,6 @@
 }
 
 .pricing-save-badge {
-    margin-left: 10px;
     padding: 4px 10px;
     border-radius: 999px;
     border: 1px solid hsl(var(--primary) / 0.4);
@@ -507,6 +531,8 @@
     font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.4px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .pricing-features {
@@ -562,6 +588,73 @@
     
     .pricing-card.popular {
         order: -1;
+    }
+    
+    .pricing-cycle-toggle-wrap {
+        margin-bottom: 36px;
+    }
+    
+    .pricing-cycle-toggle {
+        width: fit-content;
+        padding: 6px 8px;
+    }
+    
+    .pricing-cycle-btn {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+    }
+    
+    .pricing-card {
+        padding: 28px 24px;
+    }
+    
+    .pricing-price .gradient-text {
+        font-size: 2.75rem;
+    }
+    
+    .pricing-header h3 {
+        font-size: 1.35rem;
+    }
+    
+    .pricing-features li {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pricing-section {
+        padding: 60px 16px;
+    }
+    
+    .pricing-cycle-toggle-wrap {
+        margin-bottom: 32px;
+    }
+    
+    .pricing-cycle-toggle {
+        padding: 5px 6px;
+        gap: 4px;
+    }
+    
+    .pricing-cycle-btn {
+        padding: 8px 12px;
+        font-size: 0.78rem;
+    }
+    
+    .cycle-discount-tag {
+        padding: 2px 6px;
+        font-size: 0.62rem;
+    }
+    
+    .pricing-card {
+        padding: 24px 20px;
+    }
+    
+    .pricing-price .gradient-text {
+        font-size: 2.4rem;
+    }
+    
+    .pricing-period {
+        font-size: 0.9rem;
     }
 }
 </style>

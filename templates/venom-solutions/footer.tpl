@@ -276,8 +276,7 @@
                             <ul>
                                 <li><a href="{$WEB_ROOT}/index.php">Home</a></li>
                                 <li><a href="{$WEB_ROOT}/index.php#pricing">Pricing</a></li>
-                                <li><a href="{$WEB_ROOT}/domainchecker.php">Domain Checker</a></li>
-                                <li><a href="{$WEB_ROOT}/register.php">Create Account</a></li>
+                                                                <li><a href="{$WEB_ROOT}/register.php">Create Account</a></li>
                                 <li><a href="{$WEB_ROOT}/clientarea.php">Client Area</a></li>
                             </ul>
                         </div>

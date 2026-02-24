@@ -197,13 +197,22 @@ customModes:
         - fileRegex: \.(php|tpl|css|js|json|md)$
           description: WHMCS and web template files
     customInstructions: |
-      Focus on WHMCS best practices:
-      - Prefer child-theme style overrides and minimal core file divergence.
-      - Keep Smarty template logic simple and move heavy logic to PHP hooks/modules.
-      - Validate compatibility with modern/legacy order forms and clientarea routing.
-      - Keep translations in lang files and preserve multilingual support.
-      - Preserve upgrade safety and document any change touching WHMCS core behavior.
-      - For hooks, use clear priority, scoped conditions, and no hidden side effects.
+      Follow strict WHMCS venom-solutions rules:
+      - Scope lock: Any user-facing UI change must be in `templates/venom-solutions/` only. Do not edit `templates/twenty-one/` or `templates/nexus/` for frontend work.
+      - Context separation is mandatory:
+        - Landing & Auth (`index`, `login`, `register`, `pwreset`, `pwresetvalidation`) must use marketing header/footer.
+        - Client Area (logged-in paths) must use dedicated client header/footer.
+        - Never mix client widgets (notifications/cart/user menu) into landing/auth chrome.
+      - Use and preserve header/footer context variables in Smarty:
+        - `$useClientHeader`
+        - `$useClientFooter`
+      - Keep Smarty logic thin; move heavy logic to hooks in `includes/hooks/`.
+      - Use `{$WEB_ROOT}` for links and `{$template}` for includes/paths.
+      - Avoid `{php}` and legacy ASP-style tags; maintain Smarty 4 compatible syntax.
+      - Keep translations in `lang/overrides/` where needed and preserve multilingual support.
+      - Preserve upgrade safety; document any unavoidable behavior touching core flows.
+      - Hooks must use clear priority, scoped conditions, explicit intent, and no hidden side effects.
+      - Always verify key journeys after edits: landing/auth, cart/checkout, client dashboard, invoices, tickets.
     source: project
   - slug: frontend-theme-architect
     name: Frontend Theme Architect

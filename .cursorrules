@@ -14,3 +14,38 @@
 - **Prefer editing existing files** over adding many new files.
 - Avoid creating unnecessary files or chaotic project structure.
 - When possible, extend or refactor existing code instead of duplicating or adding new modules.
+
+---
+
+## STRICT: Template Scope
+
+**All user-requested UI, layout, or frontend changes MUST be implemented in the `venom-solutions` template only.**
+
+- Never modify `twenty-one`, `nexus`, or other built-in templates for user-facing changes.
+- Target path: `templates/venom-solutions/` (and its subfolders: `css/`, `js/`, `includes/`).
+- If a template file does not exist in venom-solutions, copy the base from twenty-one and customize it there—do not edit twenty-one directly.
+
+---
+
+## STRICT: Page Context Separation
+
+The theme uses **different header and footer** depending on page context. Always respect this separation.
+
+### Landing & Auth Context
+- **Pages**: Homepage (`index`), Login (`login`), Register (`register`), Password Reset (`pwreset`, `pwresetvalidation`)
+- **Body class**: `landing`
+- **Header**: `venom-header` (no `venom-header-client`)
+- **Footer**: `venom-footer` (marketing-style footer with links, brand, contact)
+- **Logic**: `$useClientHeader` and `$useClientFooter` are `false`
+
+### Client Area Context
+- **Pages**: All pages shown when user is logged in (dashboard, services, invoices, tickets, account, etc.)
+- **Body class**: `client-area`
+- **Header**: `venom-header venom-header-client` (client nav, notifications, cart)
+- **Footer**: `venom-client-footer` (compact footer with locale picker, back-to-top)
+- **Logic**: `$useClientHeader` and `$useClientFooter` are `true`
+
+### Implementation Rules
+- When adding or modifying header/footer content, check which context applies and edit the correct block in `header.tpl` or `footer.tpl`.
+- Do not mix landing-style elements (hero, marketing links) into client area header/footer.
+- Do not mix client-area elements (notifications, cart, locale picker) into landing header/footer.

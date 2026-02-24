@@ -14,7 +14,7 @@
 {assign var=displayPhone value=$clientsdetails.phonenumberformatted|default:$clientsdetails.phonenumber|default:''}
 {assign var=displayCompany value=$clientsdetails.companyname|default:''}
 {assign var=activeServicesCount value=$clientsstats.productsnumactive|default:0}
-{assign var=activeDomainsCount value=$clientsstats.numactivedomains|default:0}
+{assign var=walletBalance value=$clientsstats.creditbalance|default:$clientsdetails.credit|default:$creditbalance|default:'0.00'}
 {assign var=unpaidInvoicesCount value=$clientsstats.numunpaidinvoices|default:0}
 {assign var=openTicketsCount value=$clientsstats.numactivetickets|default:0}
 {assign var=recentTickets value=$tickets|default:[]}
@@ -70,14 +70,14 @@
             <section class="dashboard-side-card glass-card">
                 <h3>Quick Access</h3>
                 <a href="{$WEB_ROOT}/cart.php" class="dashboard-side-link">Order New Service</a>
-                <a href="{$WEB_ROOT}/domainchecker.php" class="dashboard-side-link">Register Domain</a>
                 <a href="{$WEB_ROOT}/clientarea.php?action=addfunds" class="dashboard-side-link">Add Funds</a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=creditcard" class="dashboard-side-link">Payment Methods</a>
             </section>
         </aside>
 
         <main class="dashboard-main-col">
             <div class="dashboard-stat-grid">
-                <article class="dashboard-stat-card glass-card">
+                <a href="{$WEB_ROOT}/clientarea.php?action=products" class="dashboard-stat-card glass-card">
                     <span class="stat-chip" aria-hidden="true">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
@@ -85,17 +85,19 @@
                     </span>
                     <span class="stat-number">{$activeServicesCount}</span>
                     <span class="stat-title">Services</span>
-                </article>
-                <article class="dashboard-stat-card glass-card">
+                </a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=addfunds" class="dashboard-stat-card glass-card">
                     <span class="stat-chip" aria-hidden="true">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 7.5a1.5 1.5 0 0 0-1.5-1.5h-15A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h15a1.5 1.5 0 0 0 1.5-1.5z"></path><path d="M3 10h18"></path>
+                            <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"></path>
+                            <path d="M16 12h6"></path>
+                            <path d="M18 14a2 2 0 1 0 0-4"></path>
                         </svg>
                     </span>
-                    <span class="stat-number">{$activeDomainsCount}</span>
-                    <span class="stat-title">Domains</span>
-                </article>
-                <article class="dashboard-stat-card glass-card stat-card-danger">
+                    <span class="stat-number">{$walletBalance}</span>
+                    <span class="stat-title">Wallet Balance</span>
+                </a>
+                <a href="{$WEB_ROOT}/clientarea.php?action=invoices&status=Unpaid" class="dashboard-stat-card glass-card stat-card-danger">
                     <span class="stat-chip" aria-hidden="true">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -103,8 +105,8 @@
                     </span>
                     <span class="stat-number">{$unpaidInvoicesCount}</span>
                     <span class="stat-title">Unpaid Invoices</span>
-                </article>
-                <article class="dashboard-stat-card glass-card">
+                </a>
+                <a href="{$WEB_ROOT}/supporttickets.php" class="dashboard-stat-card glass-card">
                     <span class="stat-chip" aria-hidden="true">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -112,7 +114,7 @@
                     </span>
                     <span class="stat-number">{$openTicketsCount}</span>
                     <span class="stat-title">Open Tickets</span>
-                </article>
+                </a>
             </div>
 
             <section class="dashboard-block glass-card">
@@ -223,25 +225,29 @@
                     </section>
                 </div>
 
-                <section class="dashboard-block glass-card domain-block">
-                    <div class="dashboard-block-head domain-block-head">
+                <section class="dashboard-block glass-card wallet-block">
+                    <div class="dashboard-block-head">
                         <h3>
                             <span class="block-title-icon" aria-hidden="true">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 7.5a1.5 1.5 0 0 0-1.5-1.5h-15A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h15a1.5 1.5 0 0 0 1.5-1.5z"></path><path d="M3 10h18"></path>
+                                    <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"></path>
+                                    <path d="M16 12h6"></path>
+                                    <path d="M18 14a2 2 0 1 0 0-4"></path>
                                 </svg>
                             </span>
-                            <span>Register a New Domain</span>
+                            <span>Wallet</span>
                         </h3>
+                        <a href="{$WEB_ROOT}/clientarea.php?action=addfunds" class="view-all">Add Funds</a>
                     </div>
-                    <p>Find and secure your next domain in seconds.</p>
-                    <form method="get" action="{$WEB_ROOT}/domainchecker.php" class="domain-search-form">
-                        <input type="text" name="domain" placeholder="Search your perfect domain name" required>
-                        <div class="domain-form-actions">
-                            <a href="{$WEB_ROOT}/cart.php?a=add&domain=transfer" class="btn-venom-outline domain-action">Transfer</a>
-                            <button type="submit" class="btn-glow domain-action">Register</button>
-                        </div>
-                    </form>
+                    <p>Add credit to your account for faster payments and renewals.</p>
+                    <div class="wallet-balance-row">
+                        <span class="wallet-balance-label">Current Balance</span>
+                        <span class="wallet-balance-value">{$walletBalance}</span>
+                    </div>
+                    <div class="wallet-actions">
+                        <a href="{$WEB_ROOT}/clientarea.php?action=invoices" class="btn-venom-outline wallet-action">View Invoices</a>
+                        <a href="{$WEB_ROOT}/clientarea.php?action=creditcard" class="btn-glow wallet-action">Payment Methods</a>
+                    </div>
                 </section>
             </div>
         </main>
@@ -397,7 +403,7 @@
 
 .dashboard-stat-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 16px;
     margin-bottom: 8px;
 }
@@ -607,33 +613,42 @@
     font-size: 0.78rem;
 }
 
-.domain-block p {
+.wallet-block p {
     margin: 0 0 14px;
     color: hsl(var(--muted-foreground));
     font-size: 0.85rem;
 }
 
-.domain-block-head {
-    margin-bottom: 10px;
+.wallet-balance-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0 14px;
+    border-top: 1px solid hsl(var(--border) / 0.4);
+    border-bottom: 1px solid hsl(var(--border) / 0.4);
+    margin-bottom: 14px;
 }
 
-.domain-search-form input {
-    width: 100%;
-    border: 1px solid hsl(var(--primary) / 0.25);
-    background: hsl(var(--input) / 0.45);
-    color: hsl(var(--foreground));
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 12px;
+.wallet-balance-label {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.8rem;
 }
 
-.domain-form-actions {
+.wallet-balance-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: hsl(var(--primary));
+}
+
+.wallet-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 }
 
-.domain-action {
+.wallet-action {
     justify-content: center;
     min-height: 40px;
 }
@@ -786,12 +801,11 @@
         align-items: flex-start;
         gap: 8px;
     }
-    
-    .domain-form-actions {
+    .wallet-actions {
         grid-template-columns: 1fr;
     }
-    
-    .domain-action {
+
+    .wallet-action {
         width: 100%;
     }
 }

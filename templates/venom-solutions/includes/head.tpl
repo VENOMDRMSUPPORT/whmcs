@@ -1,7 +1,8 @@
 <!-- Styling -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 {\WHMCS\View\Asset::fontCssInclude('open-sans-family.css')}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <link href="{assetPath file='all.min.css'}?v={$versionHash}" rel="stylesheet">
-<link href="{assetPath file='theme.min.css'}?v={$versionHash}" rel="stylesheet">
 <link href="{$WEB_ROOT}/assets/fonts/css/fontawesome.min.css" rel="stylesheet">
 <link href="{$WEB_ROOT}/assets/fonts/css/fontawesome-solid.min.css" rel="stylesheet">
 <link href="{$WEB_ROOT}/assets/fonts/css/fontawesome-regular.min.css" rel="stylesheet">

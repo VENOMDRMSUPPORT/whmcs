@@ -47,6 +47,10 @@
     --header-bp-sm: 479px;
     --header-bp-md: 767px;
     --header-bp-lg: 1023px;
+
+    /* Override Bootstrap to preserve dark theme */
+    --bs-body-bg: hsl(var(--background));
+    --bs-body-color: hsl(var(--foreground));
 }
 
 * {
@@ -55,7 +59,8 @@
     padding: 0;
 }
 
-body {
+body,
+body.theme-dark {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-family: var(--font-sans);
@@ -68,6 +73,7 @@ body {
 }
 
 html {
+    background-color: hsl(var(--background));
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--primary) / 0.35) transparent;
 }
@@ -105,27 +111,13 @@ html {
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: -1;
-}
-
-.bg-gradient {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at top, hsl(var(--primary) / 0.08) 0%, transparent 60%);
-}
-
-.grid-bg {
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(hsl(var(--border) / 0.2) 1px, transparent 1px),
-        linear-gradient(90deg, hsl(var(--border) / 0.2) 1px, transparent 1px);
-    background-size: 60px 60px;
-    opacity: 0.4;
+    z-index: 0;
+    background-color: hsl(210 40% 6%);
 }
 
 .stars-layer,
-.stars-layer-2 {
+.stars-layer-2,
+.stars-layer-3 {
     position: absolute;
     inset: 0;
     pointer-events: none;
@@ -134,84 +126,90 @@ html {
 
 .stars-layer {
     background-image:
-        radial-gradient(circle at 8% 14%, rgb(255 255 255 / 0.75) 0 1px, transparent 2px),
-        radial-gradient(circle at 15% 72%, rgb(255 255 255 / 0.65) 0 1px, transparent 2px),
-        radial-gradient(circle at 21% 38%, rgb(148 235 255 / 0.7) 0 1px, transparent 2px),
-        radial-gradient(circle at 28% 18%, rgb(255 255 255 / 0.7) 0 1px, transparent 2px),
-        radial-gradient(circle at 34% 82%, rgb(255 255 255 / 0.6) 0 1px, transparent 2px),
-        radial-gradient(circle at 40% 46%, rgb(157 241 255 / 0.7) 0 1px, transparent 2px),
-        radial-gradient(circle at 47% 12%, rgb(255 255 255 / 0.7) 0 1px, transparent 2px),
-        radial-gradient(circle at 53% 66%, rgb(255 255 255 / 0.65) 0 1px, transparent 2px),
-        radial-gradient(circle at 61% 30%, rgb(162 243 255 / 0.7) 0 1px, transparent 2px),
-        radial-gradient(circle at 68% 78%, rgb(255 255 255 / 0.65) 0 1px, transparent 2px),
-        radial-gradient(circle at 74% 44%, rgb(255 255 255 / 0.72) 0 1px, transparent 2px),
-        radial-gradient(circle at 81% 21%, rgb(149 236 255 / 0.7) 0 1px, transparent 2px),
-        radial-gradient(circle at 87% 62%, rgb(255 255 255 / 0.68) 0 1px, transparent 2px),
-        radial-gradient(circle at 93% 35%, rgb(255 255 255 / 0.7) 0 1px, transparent 2px);
-    opacity: 0.32;
-    filter: drop-shadow(0 0 4px rgb(156 240 255 / 0.2));
-    animation: venom-stars-twinkle-a 7.2s ease-in-out infinite;
+        radial-gradient(circle at 8% 14%, rgb(255 255 255 / 0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 15% 72%, rgb(200 240 255 / 0.85) 0 1px, transparent 2px),
+        radial-gradient(circle at 21% 38%, rgb(148 235 255 / 0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 28% 18%, rgb(255 255 255 / 0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 34% 82%, rgb(180 245 255 / 0.85) 0 1px, transparent 2px),
+        radial-gradient(circle at 40% 46%, rgb(157 241 255 / 0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 47% 12%, rgb(255 255 255 / 0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 53% 66%, rgb(200 240 255 / 0.85) 0 1px, transparent 2px),
+        radial-gradient(circle at 61% 30%, rgb(162 243 255 / 0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 68% 78%, rgb(255 255 255 / 0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 74% 44%, rgb(190 248 255 / 0.85) 0 1px, transparent 2px),
+        radial-gradient(circle at 81% 21%, rgb(149 236 255 / 0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 87% 62%, rgb(255 255 255 / 0.9) 0 1px, transparent 2px),
+        radial-gradient(circle at 93% 35%, rgb(170 242 255 / 0.85) 0 1px, transparent 2px);
+    filter: drop-shadow(0 0 2px rgb(156 240 255 / 0.5));
+    animation: venom-stars-glow-a 4s ease-in-out infinite;
 }
 
 .stars-layer-2 {
+    filter: drop-shadow(0 0 1px rgb(156 240 255 / 0.3));
     background-image:
-        radial-gradient(circle at 4% 48%, rgb(255 255 255 / 0.55) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 12% 88%, rgb(147 234 255 / 0.5) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 18% 24%, rgb(255 255 255 / 0.5) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 26% 58%, rgb(255 255 255 / 0.52) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 33% 9%, rgb(150 235 255 / 0.52) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 44% 74%, rgb(255 255 255 / 0.5) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 51% 26%, rgb(255 255 255 / 0.5) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 59% 90%, rgb(150 234 255 / 0.55) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 65% 53%, rgb(255 255 255 / 0.48) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 72% 14%, rgb(255 255 255 / 0.5) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 78% 69%, rgb(146 233 255 / 0.52) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 85% 40%, rgb(255 255 255 / 0.48) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 91% 83%, rgb(255 255 255 / 0.5) 0 0.8px, transparent 1.8px),
-        radial-gradient(circle at 97% 19%, rgb(148 232 255 / 0.52) 0 0.8px, transparent 1.8px);
-    opacity: 0.22;
-    animation: venom-stars-twinkle-b 9.5s ease-in-out infinite;
-    animation-delay: -2.3s;
+        radial-gradient(circle at 4% 48%, rgb(255 255 255 / 0.8) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 12% 88%, rgb(147 234 255 / 0.75) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 18% 24%, rgb(255 255 255 / 0.8) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 26% 58%, rgb(180 240 255 / 0.75) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 33% 9%, rgb(150 235 255 / 0.8) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 44% 74%, rgb(255 255 255 / 0.8) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 51% 26%, rgb(160 238 255 / 0.75) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 59% 90%, rgb(150 234 255 / 0.8) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 65% 53%, rgb(255 255 255 / 0.8) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 72% 14%, rgb(200 245 255 / 0.75) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 78% 69%, rgb(146 233 255 / 0.8) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 85% 40%, rgb(255 255 255 / 0.8) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 91% 83%, rgb(170 240 255 / 0.75) 0 0.8px, transparent 1.8px),
+        radial-gradient(circle at 97% 19%, rgb(148 232 255 / 0.8) 0 0.8px, transparent 1.8px);
+    animation: venom-stars-glow-b 5.5s ease-in-out infinite;
+    animation-delay: 1.2s;
 }
 
-@keyframes venom-stars-twinkle-a {
-
-    0%,
-    100% {
-        opacity: 0.16;
-    }
-
-    30% {
-        opacity: 0.34;
-    }
-
-    60% {
-        opacity: 0.24;
-    }
+.stars-layer-3 {
+    background-image:
+        radial-gradient(circle at 6% 62%, rgb(255 255 255 / 0.75) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 19% 35%, rgb(200 245 255 / 0.7) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 31% 78%, rgb(255 255 255 / 0.75) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 42% 15%, rgb(160 238 255 / 0.7) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 55% 52%, rgb(255 255 255 / 0.75) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 67% 88%, rgb(180 242 255 / 0.7) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 79% 28%, rgb(255 255 255 / 0.75) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 89% 65%, rgb(150 235 255 / 0.7) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 3% 92%, rgb(255 255 255 / 0.75) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 23% 7%, rgb(190 248 255 / 0.7) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 76% 41%, rgb(255 255 255 / 0.75) 0 0.6px, transparent 1.5px),
+        radial-gradient(circle at 95% 73%, rgb(170 240 255 / 0.7) 0 0.6px, transparent 1.5px);
+    animation: venom-stars-glow-c 6.8s ease-in-out infinite;
+    animation-delay: 2.8s;
 }
 
-@keyframes venom-stars-twinkle-b {
+@keyframes venom-stars-glow-a {
+    0%, 100% { opacity: 0.12; filter: drop-shadow(0 0 2px rgb(156 240 255 / 0.15)); }
+    25% { opacity: 0.05; filter: drop-shadow(0 0 2px rgb(156 240 255 / 0.08)); }
+    50% { opacity: 0.7; filter: drop-shadow(0 0 5px rgb(156 240 255 / 0.5)); }
+    75% { opacity: 0.2; filter: drop-shadow(0 0 3px rgb(156 240 255 / 0.25)); }
+}
 
-    0%,
-    100% {
-        opacity: 0.1;
-    }
+@keyframes venom-stars-glow-b {
+    0%, 100% { opacity: 0.08; filter: none; }
+    30% { opacity: 0.7; filter: drop-shadow(0 0 4px rgb(156 240 255 / 0.4)); }
+    60% { opacity: 0.12; filter: none; }
+    85% { opacity: 0.55; filter: drop-shadow(0 0 3px rgb(156 240 255 / 0.3)); }
+}
 
-    40% {
-        opacity: 0.26;
-    }
-
-    70% {
-        opacity: 0.18;
-    }
+@keyframes venom-stars-glow-c {
+    0%, 100% { opacity: 0.12; filter: none; }
+    40% { opacity: 0.65; filter: drop-shadow(0 0 3px rgb(156 240 255 / 0.35)); }
+    70% { opacity: 0.06; filter: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
     .stars-layer,
-    .stars-layer-2 {
+    .stars-layer-2,
+    .stars-layer-3 {
         animation: none;
-        opacity: 0.14;
+        opacity: 0.25;
+        filter: none;
     }
 }
 
@@ -226,15 +224,12 @@ html {
 }
 
 .header-container {
-    width: 100%;
-    max-width: none;
-    margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
     padding: 0.875rem clamp(18px, 3.6vw, 56px);
-    gap: 0;
 }
 
 .header-tools {
@@ -326,11 +321,14 @@ html {
     display: flex;
     align-items: center;
     gap: 32px;
+    min-width: 0;
 }
 
 .nav-links {
     display: flex;
-    gap: 28px;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 .nav-link {
@@ -343,6 +341,18 @@ html {
     font-weight: 600;
     opacity: 0.7;
     transition: opacity 0.3s, color 0.3s;
+}
+
+.nav-link:not(:last-child)::after {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: hsl(var(--primary) / 0.7);
+    box-shadow: 0 0 8px hsl(var(--primary) / 0.6);
+    margin-left: 8px;
+    flex-shrink: 0;
 }
 
 .nav-link-icon {
@@ -366,6 +376,16 @@ html {
     gap: 16px;
     padding-left: 24px;
     border-left: 1px solid hsl(var(--border) / 0.4);
+    flex-shrink: 0;
+}
+
+.venom-header:not(.venom-header-client) .nav-actions .nav-action-link,
+.venom-header:not(.venom-header-client) .nav-actions .nav-cta {
+    min-width: 118px;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .nav-actions-client {
@@ -468,7 +488,19 @@ html {
 }
 
 .venom-header-client .header-nav {
-    display: contents;
+    grid-area: nav;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+.venom-header-client .header-nav-panel {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
 }
 
 .venom-header-client .header-brand {
@@ -892,7 +924,6 @@ html {
 }
 
 .client-main-nav {
-    grid-area: nav;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1042,9 +1073,9 @@ html {
     text-overflow: ellipsis;
 }
 
-/* Desktop: min-width 768px */
+/* Desktop: min-width 768px (Bootstrap md) */
 @media (min-width: 768px) {
-    .header-container {
+    .venom-header:not(.venom-header-client) .header-container {
         display: grid;
         grid-template-columns: auto 1fr auto;
         column-gap: 24px;
@@ -1054,20 +1085,20 @@ html {
         display: none;
     }
 
-    .header-nav {
+    .venom-header:not(.venom-header-client) .header-nav {
         display: contents;
     }
 
-    .header-nav-panel {
+    .venom-header:not(.venom-header-client) .header-nav-panel {
         display: contents;
     }
 
-    .nav-links {
+    .venom-header:not(.venom-header-client) .nav-links {
         justify-self: center;
         align-items: center;
     }
 
-    .nav-actions {
+    .venom-header:not(.venom-header-client) .nav-actions {
         justify-self: end;
     }
 
@@ -1093,7 +1124,6 @@ html {
 }
 
 .mobile-menu-toggle {
-    display: none;
     flex-direction: column;
     gap: 5px;
     background: none;
@@ -2104,18 +2134,20 @@ label {
     }
 }
 
-/* Mobile: max-width 767px */
+/* Mobile: max-width 767px (Bootstrap md breakpoint) */
 @media (max-width: 767px) {
     .mobile-menu-toggle {
-        display: flex;
         padding: 6px;
     }
 
     .venom-header:not(.venom-header-client) .header-nav-panel {
         display: flex;
         flex-direction: column;
-        gap: 14px;
-        padding: 18px;
+        align-items: stretch;
+        width: 100%;
+        gap: 4px;
+        padding: 12px 0;
+        box-sizing: border-box;
     }
 
     .client-notifications-panel {
@@ -2193,6 +2225,106 @@ label {
     .venom-header:not(.venom-header-client) .header-nav.active {
         transform: translateY(0);
         opacity: 1;
+    }
+
+    /* Landing page mobile menu: professional dropdown styling */
+    .venom-header:not(.venom-header-client) .header-nav {
+        left: 8px;
+        right: 8px;
+        top: calc(var(--venom-mobile-header-offset) + 8px);
+        width: auto;
+        max-height: calc(100vh - var(--venom-mobile-header-offset) - 24px);
+        overflow-y: auto;
+        border-radius: 16px;
+        border: 1px solid hsl(var(--primary) / 0.25);
+        box-shadow: 0 24px 48px hsl(var(--background) / 0.6), 0 0 0 1px hsl(var(--primary) / 0.08);
+    }
+
+    .venom-header:not(.venom-header-client) .nav-links {
+        width: 100%;
+        min-width: 0;
+        align-self: stretch;
+        gap: 2px;
+    }
+
+    .venom-header:not(.venom-header-client) .nav-link {
+        display: flex;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 16px;
+        border-radius: 10px;
+        border: none;
+        background: transparent;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: hsl(var(--foreground));
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .venom-header:not(.venom-header-client) .nav-link::after {
+        display: none;
+    }
+
+    .venom-header:not(.venom-header-client) .nav-link:hover {
+        background: hsl(var(--primary) / 0.08);
+        color: hsl(var(--primary));
+        border-color: transparent;
+    }
+
+    .venom-header:not(.venom-header-client) .nav-link-icon {
+        color: hsl(var(--muted-foreground));
+        width: 20px;
+        height: 20px;
+    }
+
+    .venom-header:not(.venom-header-client) .nav-link:hover .nav-link-icon,
+    .venom-header:not(.venom-header-client) .nav-link:active .nav-link-icon {
+        color: hsl(var(--primary));
+    }
+
+    .venom-header:not(.venom-header-client) .nav-link:active {
+        background: hsl(var(--primary) / 0.12);
+    }
+
+    .venom-header:not(.venom-header-client) .nav-actions {
+        width: 100%;
+        min-width: 0;
+        align-self: stretch;
+        padding-top: 16px;
+        margin-top: 8px;
+        border-top: 1px solid hsl(var(--border) / 0.4);
+        gap: 10px;
+    }
+
+    .venom-header:not(.venom-header-client) .nav-link-secondary {
+        display: flex;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid hsl(var(--border) / 0.5);
+        background: hsl(var(--card) / 0.6);
+        font-weight: 600;
+        font-size: 0.92rem;
+        justify-content: center;
+    }
+
+    .venom-header:not(.venom-header-client) .nav-link-secondary:hover {
+        background: hsl(var(--primary) / 0.1);
+        border-color: hsl(var(--primary) / 0.35);
+    }
+
+    .venom-header:not(.venom-header-client) .nav-cta {
+        display: flex;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 20px;
+        min-height: 48px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        justify-content: center;
+        box-shadow: 0 4px 14px hsl(var(--primary) / 0.35);
     }
 
     .venom-header-client .header-nav {
@@ -2275,7 +2407,8 @@ label {
         min-height: 44px;
     }
 
-    .venom-logo-text {
+    /* Hide logo text on client area only; keep visible on landing page */
+    .venom-header-client .venom-logo-text {
         display: none;
     }
 
@@ -2283,7 +2416,7 @@ label {
         display: none;
     }
 
-    .header-brand .venom-logo {
+    .venom-header-client .header-brand .venom-logo {
         --logo-gap: 0;
     }
 
@@ -2717,6 +2850,136 @@ label {
     .table-venom td:first-child {
         min-width: 120px;
     }
+}
+
+
+/* =========================================================
+   WHMCS Core (Bootstrap) overrides + Order Form styling
+   ---------------------------------------------------------
+   - Makes any non-customized WHMCS pages match the Venom UI
+   - Hides domain-related UI elements from order forms
+   ========================================================= */
+
+body.theme-dark .panel,
+body.theme-dark .panel-default,
+body.theme-dark .panel-sidebar,
+body.theme-dark .well,
+body.theme-dark .modal-content,
+body.theme-dark .card:not(.glass-card) {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: 0 4px 24px hsl(var(--glass-glow));
+    color: hsl(var(--foreground));
+}
+
+body.theme-dark .panel-heading,
+body.theme-dark .modal-header,
+body.theme-dark .card-header {
+    background: transparent;
+    border-bottom: 1px solid hsl(var(--border) / 0.45);
+    color: hsl(var(--foreground));
+}
+
+body.theme-dark .list-group-item {
+    background: transparent;
+    border: 1px solid hsl(var(--border) / 0.45);
+    color: hsl(var(--foreground));
+}
+
+body.theme-dark .list-group-item:hover {
+    background: hsl(var(--primary) / 0.10);
+    border-color: hsl(var(--primary) / 0.35);
+}
+
+body.theme-dark .list-group-item.active,
+body.theme-dark .list-group-item.active:hover {
+    background: hsl(var(--primary) / 0.14);
+    border-color: hsl(var(--primary) / 0.45);
+    color: hsl(var(--foreground));
+}
+
+body.theme-dark .form-control {
+    background: hsl(var(--input) / 0.55);
+    border: 1px solid hsl(var(--border) / 0.55);
+    color: hsl(var(--foreground));
+}
+
+body.theme-dark .form-control::placeholder {
+    color: hsl(var(--muted-foreground));
+}
+
+body.theme-dark .form-control:focus {
+    border-color: hsl(var(--primary) / 0.55);
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.18);
+    outline: none;
+}
+
+body.theme-dark .table,
+body.theme-dark .table>tbody>tr>td,
+body.theme-dark .table>thead>tr>th {
+    color: hsl(var(--foreground));
+    border-color: hsl(var(--border) / 0.45);
+}
+
+body.theme-dark .table-striped>tbody>tr:nth-of-type(odd) {
+    background: hsl(var(--card) / 0.35);
+}
+
+body.theme-dark .table-hover>tbody>tr:hover {
+    background: hsl(var(--primary) / 0.10);
+}
+
+body.theme-dark .alert {
+    background: hsl(var(--glass-bg));
+    border: 1px solid hsl(var(--glass-border));
+    color: hsl(var(--foreground));
+}
+
+/* Order form - Standard Cart */
+#order-standard_cart,
+#order-standard_cart * {
+    color-scheme: dark;
+}
+
+#order-standard_cart .panel,
+#order-standard_cart .product,
+#order-standard_cart .products .product,
+#order-standard_cart .order-summary,
+#order-standard_cart .sidebar,
+#order-standard_cart .domain-checker,
+#order-standard_cart .cart-summary,
+#order-standard_cart .view-cart-items,
+#order-standard_cart .well {
+    background: hsl(var(--glass-bg)) !important;
+    border: 1px solid hsl(var(--glass-border)) !important;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px hsl(var(--glass-glow));
+}
+
+#order-standard_cart .product .product-name,
+#order-standard_cart .product .product-name a,
+#order-standard_cart h1,
+#order-standard_cart h2,
+#order-standard_cart h3,
+#order-standard_cart h4 {
+    color: hsl(var(--foreground));
+}
+
+#order-standard_cart .product .product-desc,
+#order-standard_cart .product .product-price,
+#order-standard_cart .text-muted,
+#order-standard_cart p,
+#order-standard_cart small {
+    color: hsl(var(--muted-foreground));
+}
+
+/* Hide any domain-related actions/links from the cart sidebar */
+#order-standard_cart .sidebar a[href*="domain"],
+#order-standard_cart .sidebar a[href*="domainchecker"],
+#order-standard_cart .sidebar a[href*="domains"] {
+    display: none !important;
 }
 
 @keyframes fadeIn {
