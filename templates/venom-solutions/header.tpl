@@ -137,24 +137,7 @@
                                 <span>Email History</span>
                             </a>
                             <div class="client-menu-separator"></div>
-                            <a href="{$WEB_ROOT}/clientarea.php?action=details" class="client-menu-item">
-                                <span class="client-menu-item-icon" aria-hidden="true">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M20 21a8 8 0 0 0-16 0"></path>
-                                        <circle cx="12" cy="7" r="4"></circle>
-                                    </svg>
-                                </span>
-                                <span>Your Profile</span>
-                            </a>
-                            <a href="{$WEB_ROOT}/clientarea.php?action=changepw" class="client-menu-item">
-                                <span class="client-menu-item-icon" aria-hidden="true">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="11" width="18" height="10" rx="2"></rect>
-                                        <path d="M7 11V8a5 5 0 0 1 10 0v3"></path>
-                                    </svg>
-                                </span>
-                                <span>Change Password</span>
-                            </a>
+                            {include file="$template/includes/theme-switcher.tpl"}
                             <div class="client-menu-separator"></div>
                             <a href="{$WEB_ROOT}/logout.php" class="client-menu-item client-menu-item-danger">
                                 <span class="client-menu-item-icon" aria-hidden="true">

@@ -246,6 +246,77 @@
         });
     }
 
+    function initThemeSystem() {
+        if (!document.body.classList.contains("client-area")) {
+            return;
+        }
+
+        var themeToggle = document.querySelector(".js-theme-toggle");
+        var accentButtons = document.querySelectorAll("[data-accent]");
+
+        if (themeToggle) {
+            themeToggle.addEventListener("click", function () {
+                var currentTheme = localStorage.getItem("venom-theme") || "dark";
+                var newTheme = currentTheme === "dark" ? "light" : "dark";
+
+                localStorage.setItem("venom-theme", newTheme);
+                document.body.classList.remove("theme-dark", "theme-light");
+                document.body.classList.add("theme-" + newTheme);
+            });
+        }
+
+        accentButtons.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                var accent = btn.getAttribute("data-accent");
+                localStorage.setItem("venom-accent", accent);
+
+                // Remove all possible accent classes
+                document.body.classList.remove("accent-purple", "accent-blue", "accent-orange", "accent-green");
+
+                if (accent !== "cyan") {
+                    document.body.classList.add("accent-" + accent);
+                }
+
+                // Update active state in UI
+                accentButtons.forEach(function (b) { b.classList.remove("is-active"); });
+                btn.classList.add("is-active");
+            });
+        });
+    }
+
+    // Apply theme immediately to prevent flicker
+    (function applyInitialTheme() {
+        if (typeof localStorage === 'undefined') return;
+
+        // We can't check body class yet if this runs too early, 
+        // but we can check if we are in client area by looking at URL or 
+        // just trust that the CSS is scoped anyway.
+        // However, the best is to run this as soon as body exists.
+        var theme = localStorage.getItem("venom-theme") || "dark";
+        var accent = localStorage.getItem("venom-accent") || "cyan";
+
+        document.documentElement.classList.add("theme-" + theme);
+        if (accent !== "cyan") {
+            document.documentElement.classList.add("accent-" + accent);
+        }
+
+        // Also apply to body once it's available
+        document.addEventListener("DOMContentLoaded", function () {
+            if (!document.body.classList.contains("client-area")) return;
+
+            document.body.classList.remove("theme-dark", "theme-light");
+            document.body.classList.add("theme-" + theme);
+
+            if (accent !== "cyan") {
+                document.body.classList.add("accent-" + accent);
+            }
+
+            // Mark active accent in UI
+            var activeBtn = document.querySelector('[data-accent="' + accent + '"]');
+            if (activeBtn) activeBtn.classList.add("is-active");
+        });
+    })();
+
     document.addEventListener("DOMContentLoaded", function () {
         initMobileMenu();
         initClientAreaMobileMenu();
@@ -254,5 +325,6 @@
         initClientMenuDropdown();
         initBackToTop();
         initFooterLocaleModal();
+        initThemeSystem();
     });
 })();

@@ -49,3 +49,36 @@ The theme uses **different header and footer** depending on page context. Always
 - When adding or modifying header/footer content, check which context applies and edit the correct block in `header.tpl` or `footer.tpl`.
 - Do not mix landing-style elements (hero, marketing links) into client area header/footer.
 - Do not mix client-area elements (notifications, cart, locale picker) into landing header/footer.
+---
+
+---
+
+## MANDATORY: UI & Browser Testing (WSL Native)
+
+Testing MUST be done using the local `agent-browser` tool with the `--headed` flag to ensure synchronization with the user's WSLg environment.
+
+### 1. The ONLY Authorized Browser Tool
+- **Command**: `agent-browser --headed open <URL>`
+- **Reason**: Cloud-based browser tools (CDP 9222) are blocked/isolated from WSL. This tool bridges the gap.
+- **NEVER**: Propose, use, or mention tunnels (cloudflared, ngrok) or external browser subagents.
+
+### 2. Operational Protocol
+- **Navigation**: `agent-browser --headed open http://venom-drm.test/<path>`
+- **Interaction**: Use `agent-browser fill`, `agent-browser click`, `agent-browser wait`.
+- **Verification**: Use `agent-browser screenshot` followed by `view_file` to analyze the UI.
+- **Workflow**: All UI audit steps must happen sequentially through terminal commands.
+
+### 3. Client Area Login Automation
+To test the Client Area, use the following logic and credentials:
+- **Login URL**: `http://venom-drm.test/login.php`
+- **User**: `client@venom-drm.test`
+- **Pass**: `client@123`
+- **Login Command Example**:
+  ```bash
+  agent-browser --headed open http://venom-drm.test/login.php && \
+  agent-browser fill "#username" "client@venom-drm.test" && \
+  agent-browser fill "#password" "client@123" && \
+  agent-browser click ".auth-submit" && \
+  agent-browser wait --load networkidle
+  ```
+- **Note**: Always check if the login was successful before proceeding to dashboard tests.

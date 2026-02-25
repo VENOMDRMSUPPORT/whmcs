@@ -53,6 +53,169 @@
     --bs-body-color: hsl(var(--foreground));
 }
 
+/* === Theme System (Client Area Only) === */
+
+/* Light Theme Variables */
+body.client-area.theme-light {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --footer-bg: 210 40% 96%;
+
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    --glass-bg: 0 0% 100% / 0.8;
+    --glass-border: 214.3 31.8% 91.4% / 0.5;
+    --glass-glow: var(--accent-h) var(--accent-s) var(--accent-l) / 0.05;
+
+    --gradient-end: 195 100% 45% / 0.8;
+
+    --bs-body-bg: hsl(var(--background));
+    --bs-body-color: hsl(var(--foreground));
+}
+
+/* Accent Color Variations */
+body.client-area.accent-purple {
+    --accent-h: 270;
+    --accent-s: 85%;
+    --accent-l: 60%;
+}
+
+body.client-area.accent-blue {
+    --accent-h: 220;
+    --accent-s: 90%;
+    --accent-l: 56%;
+}
+
+body.client-area.accent-orange {
+    --accent-h: 25;
+    --accent-s: 95%;
+    --accent-l: 55%;
+}
+
+body.client-area.accent-green {
+    --accent-h: 145;
+    --accent-s: 80%;
+    --accent-l: 45%;
+}
+
+/* Cyan is default (:root) */
+
+/* Specific overrides for light theme readability */
+body.client-area.theme-light .background-effects {
+    background-color: hsl(210 40% 98%);
+}
+
+body.client-area.theme-light .stars-layer,
+body.client-area.theme-light .stars-layer-2,
+body.client-area.theme-light .stars-layer-3 {
+    opacity: 0.15;
+}
+
+body.client-area.theme-light .venom-header {
+    border-bottom-color: hsl(var(--border));
+}
+
+/* Theme Switcher UI */
+.venom-theme-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 12px;
+    border-left: 1px solid hsl(var(--border) / 0.5);
+    margin-left: 8px;
+}
+
+.theme-switcher-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: hsl(var(--muted-foreground));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.theme-switcher-toggle:hover {
+    background: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+}
+
+.theme-dark .sun-icon,
+.theme-light .moon-icon {
+    display: none;
+}
+
+.accent-switcher {
+    display: flex;
+    gap: 8px;
+}
+
+.accent-btn {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.accent-btn:hover {
+    transform: scale(1.2);
+}
+
+.accent-btn.is-active {
+    border-color: hsl(var(--foreground));
+    transform: scale(1.1);
+}
+
+.accent-btn--cyan {
+    background: hsl(180 100% 55%);
+}
+
+.accent-btn--purple {
+    background: hsl(270 85% 60%);
+}
+
+.accent-btn--blue {
+    background: hsl(220 90% 56%);
+}
+
+.accent-btn--orange {
+    background: hsl(25 95% 55%);
+}
+
+.accent-btn--green {
+    background: hsl(145 80% 45%);
+}
+
+@media (max-width: 767px) {
+    .venom-theme-switcher {
+        padding: 10px 0;
+        border-left: none;
+        border-top: 1px solid hsl(var(--border) / 0.5);
+        margin: 8px 0 0 0;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -184,26 +347,74 @@ html {
 }
 
 @keyframes venom-stars-glow-a {
-    0%, 100% { opacity: 0.12; filter: drop-shadow(0 0 2px rgb(156 240 255 / 0.15)); }
-    25% { opacity: 0.05; filter: drop-shadow(0 0 2px rgb(156 240 255 / 0.08)); }
-    50% { opacity: 0.7; filter: drop-shadow(0 0 5px rgb(156 240 255 / 0.5)); }
-    75% { opacity: 0.2; filter: drop-shadow(0 0 3px rgb(156 240 255 / 0.25)); }
+
+    0%,
+    100% {
+        opacity: 0.12;
+        filter: drop-shadow(0 0 2px rgb(156 240 255 / 0.15));
+    }
+
+    25% {
+        opacity: 0.05;
+        filter: drop-shadow(0 0 2px rgb(156 240 255 / 0.08));
+    }
+
+    50% {
+        opacity: 0.7;
+        filter: drop-shadow(0 0 5px rgb(156 240 255 / 0.5));
+    }
+
+    75% {
+        opacity: 0.2;
+        filter: drop-shadow(0 0 3px rgb(156 240 255 / 0.25));
+    }
 }
 
 @keyframes venom-stars-glow-b {
-    0%, 100% { opacity: 0.08; filter: none; }
-    30% { opacity: 0.7; filter: drop-shadow(0 0 4px rgb(156 240 255 / 0.4)); }
-    60% { opacity: 0.12; filter: none; }
-    85% { opacity: 0.55; filter: drop-shadow(0 0 3px rgb(156 240 255 / 0.3)); }
+
+    0%,
+    100% {
+        opacity: 0.08;
+        filter: none;
+    }
+
+    30% {
+        opacity: 0.7;
+        filter: drop-shadow(0 0 4px rgb(156 240 255 / 0.4));
+    }
+
+    60% {
+        opacity: 0.12;
+        filter: none;
+    }
+
+    85% {
+        opacity: 0.55;
+        filter: drop-shadow(0 0 3px rgb(156 240 255 / 0.3));
+    }
 }
 
 @keyframes venom-stars-glow-c {
-    0%, 100% { opacity: 0.12; filter: none; }
-    40% { opacity: 0.65; filter: drop-shadow(0 0 3px rgb(156 240 255 / 0.35)); }
-    70% { opacity: 0.06; filter: none; }
+
+    0%,
+    100% {
+        opacity: 0.12;
+        filter: none;
+    }
+
+    40% {
+        opacity: 0.65;
+        filter: drop-shadow(0 0 3px rgb(156 240 255 / 0.35));
+    }
+
+    70% {
+        opacity: 0.06;
+        filter: none;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     .stars-layer,
     .stars-layer-2,
     .stars-layer-3 {
@@ -2430,14 +2641,14 @@ label {
         padding-top: 0.38rem;
         padding-bottom: 0.36rem;
     }
-    
+
     .client-area-menu-toggle {
         display: flex !important;
         grid-area: toggle;
         justify-self: end;
         align-self: center;
     }
-    
+
     .venom-header-client .header-brand {
         margin-right: 0;
     }
@@ -2685,6 +2896,7 @@ label {
 
 /* Extra small devices (xs: 320-479px) */
 @media (max-width: 479px) {
+
     /* Fix notifications panel overflow on mobile */
     .client-notifications-dropdown[open] .client-notifications-panel {
         position: fixed;
@@ -2699,17 +2911,17 @@ label {
         overflow-y: auto;
         z-index: 200;
     }
-    
+
     /* Improve small text legibility */
     .client-area-badge {
         display: none;
         font-size: 0.7rem;
     }
-    
+
     .client-login-meta {
         font-size: 0.7rem;
     }
-    
+
     .client-footer-picker-title {
         font-size: 0.7rem;
     }
