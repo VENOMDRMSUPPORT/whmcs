@@ -1,480 +1,533 @@
-{assign var=serviceId value=$id|default:$serviceid|default:0}
-{assign var=serviceName value=$product|default:$servicename|default:'Service'}
-{assign var=serviceStatus value=$status|default:'Active'}
-{assign var=serviceDueDate value=$nextduedate|default:$nextduedateformatted|default:'-'}
-{assign var=serviceRecurring value=$recurringamount|default:$amount|default:'--'}
+{if $modulecustombuttonresult}
+    {if $modulecustombuttonresult == "success"}
+        {include file="$template/includes/alert.tpl" type="success" msg="{lang key='moduleactionsuccess'}" textcenter=true idname="alertModuleCustomButtonSuccess"}
+    {else}
+        {include file="$template/includes/alert.tpl" type="error" msg="{lang key='moduleactionfailed'}"|cat:' ':$modulecustombuttonresult textcenter=true idname="alertModuleCustomButtonFailed"}
+    {/if}
+{/if}
 
-<div class="client-unified-page">
-    <div class="container client-unified-shell">
-        <aside class="client-unified-side">
-            <section class="client-unified-side-card glass-card">
-                <h3>Service Control</h3>
-                <p>Manage access credentials, billing cycle, and upgrade options for this service.</p>
-            </section>
-            <section class="client-unified-side-card glass-card">
-                <h3>Quick Actions</h3>
-                <a href="{$WEB_ROOT}/clientarea.php?action=products" class="client-unified-side-link">All Services</a>
-                <a href="{$WEB_ROOT}/clientarea.php?action=renew&id={$serviceId}" class="client-unified-side-link">Renew Service</a>
-                <a href="{$WEB_ROOT}/upgrade.php?type=package&id={$serviceId}" class="client-unified-side-link">Upgrade Plan</a>
-            </section>
-        </aside>
+{if $pendingcancellation}
+    {include file="$template/includes/alert.tpl" type="error" msg="{lang key='cancellationrequestedexplanation'}" textcenter=true idname="alertPendingCancellation"}
+{/if}
 
-        <main class="client-unified-main">
-            <div class="product-details-page">
-        <div class="page-breadcrumb">
-            <a href="{$WEB_ROOT}/clientarea.php">Dashboard</a>
-            <span>/</span>
-            <a href="{$WEB_ROOT}/clientarea.php?action=products">Services</a>
-            <span>/</span>
-            <span>{$serviceName}</span>
+{if $unpaidInvoice}
+    <div class="alert alert-{if $unpaidInvoiceOverdue}danger{else}warning{/if}" id="alert{if $unpaidInvoiceOverdue}Overdue{else}Unpaid{/if}Invoice">
+        <div class="float-right">
+            <a href="viewinvoice.php?id={$unpaidInvoice}" class="btn btn-xs btn-default">
+                {lang key='payInvoice'}
+            </a>
         </div>
+        {$unpaidInvoiceMessage}
+    </div>
+{/if}
 
-        <div class="page-header">
-            <div>
-                <h1>{$serviceName}</h1>
-                <p>License Information & Management</p>
-            </div>
-            <div class="header-status">
-                <span class="status-badge {$serviceStatus|lower}">{$serviceStatus}</span>
-            </div>
-        </div>
+<div class="tab-content margin-bottom">
+    <div class="tab-pane fade show active" role="tabpanel" id="tabOverview">
+        {if $tplOverviewTabOutput}
+            {$tplOverviewTabOutput}
+        {else}
 
-        <div class="details-grid">
-            <div class="main-card glass-card">
-                <div class="card-header">
-                    <h3>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                        </svg>
-                        Control Panel Access
-                    </h3>
+        <div class="card">
+            <div class="card-body">
+
+                <div class="product-details">
+
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="product-status product-status-{$rawstatus|strtolower} mb-3">
+                                <div class="product-icon text-center">
+                                    <span class="fa-stack fa-lg">
+                                        <i class="fas fa-circle fa-stack-2x"></i>
+                                        <i class="fas fa-{if $type eq "hostingaccount" || $type == "reselleraccount"}hdd{elseif $type eq "server"}database{else}archive{/if} fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                    <h3>{$product}</h3>
+                                    <h4>{$groupname}</h4>
+                                </div>
+                                <div class="product-status-text">
+                                    {$status}
+                                </div>
+                            </div>
+
+                            {if $showRenewServiceButton === true || $showcancelbutton === true || $packagesupgrade === true}
+                                <div class="row product-actions-wrapper">
+                                    {if $packagesupgrade}
+                                        <div class="col-12">
+                                            <a href="upgrade.php?type=package&amp;id={$id}" class="btn btn-block btn-success">
+                                                <i class="fas fa-level-up"></i>
+                                                {lang key='upgrade'}
+                                            </a>
+                                        </div>
+                                    {/if}
+                                    {if $showRenewServiceButton === true}
+                                        <div class="col-12">
+                                            <a href="{routePath('service-renewals-service', $id)}" class="btn btn-block btn-primary">
+                                                <i class="fas fa-sync"></i>
+                                                {lang key='renewService.titleSingular'}
+                                            </a>
+                                        </div>
+                                    {/if}
+                                    {if $showcancelbutton}
+                                        <div class="col-12">
+                                            <a href="clientarea.php?action=cancel&amp;id={$id}" class="btn btn-block btn-danger {if $pendingcancellation}disabled{/if}">
+                                                <i class="fas fa-ban"></i>
+                                                {if $pendingcancellation}
+                                                    {lang key='cancellationrequested'}
+                                                {else}
+                                                    {lang key='clientareacancelrequestbutton'}
+                                                {/if}
+                                            </a>
+                                        </div>
+                                    {/if}
+                                </div>
+                            {/if}
+
+                        </div>
+                        <div class="col-md-6 text-center">
+
+                            <h4>{lang key='clientareahostingregdate'}</h4>
+                            {$regdate}
+
+                            {if $firstpaymentamount neq $recurringamount}
+                                <h4>{lang key='firstpaymentamount'}</h4>
+                                {$firstpaymentamount}
+                            {/if}
+
+                            {if $billingcycle != "{lang key='orderpaymenttermonetime'}" && $billingcycle != "{lang key='orderfree'}"}
+                                <h4>{lang key='recurringamount'}</h4>
+                                {$recurringamount}
+                            {/if}
+
+                            {if $quantitySupported && $quantity > 1}
+                                <h4>{lang key='quantity'}</h4>
+                                {$quantity}
+                            {/if}
+
+                            <h4>{lang key='orderbillingcycle'}</h4>
+                            {$billingcycle}
+
+                            <h4>{lang key='clientareahostingnextduedate'}</h4>
+                            {$nextduedate}
+
+                            <h4>{lang key='orderpaymentmethod'}</h4>
+                            {$paymentmethod}
+
+                            {if $suspendreason}
+                                <h4>{lang key='suspendreason'}</h4>
+                                {$suspendreason}
+                            {/if}
+
+                        </div>
+                    </div>
+
                 </div>
+            </div>
+        </div>
 
-                <div class="credentials-grid">
-                    <div class="credential-item">
-                        <label>Access URL</label>
-                        <div class="credential-value">
-                            <code>https://venom-drm.test/</code>
-                            <button class="copy-btn" type="button" data-copy="https://venom-drm.test/" aria-label="Copy access URL">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                                </svg>
+            {foreach $hookOutput as $output}
+                <div>
+                    {$output}
+                </div>
+            {/foreach}
+
+            {if $domain || $moduleclientarea || $configurableoptions || $customfields || $lastupdate}
+
+                <ul class="nav nav-tabs responsive-tabs-sm">
+                    {if $domain}
+                        <li class="nav-item">
+                            <a href="#domain" data-toggle="tab" class="nav-link active"><i class="fas fa-globe fa-fw"></i> {if $type eq "server"}{lang key='sslserverinfo'}{elseif ($type eq "hostingaccount" || $type eq "reselleraccount") && $serverdata}{lang key='hostingInfo'}{else}{lang key='clientareahostingdomain'}{/if}</a>
+                        </li>
+                    {elseif $moduleclientarea}
+                        <li class="nav-item">
+                            <a href="#manage" data-toggle="tab" class="nav-link active"><i class="fas fa-globe fa-fw"></i> {lang key='manage'}</a>
+                        </li>
+                    {/if}
+                    {if $configurableoptions}
+                        <li class="nav-item">
+                            <a href="#configoptions" data-toggle="tab" class="nav-link{if !$domain && !$moduleclientarea} active{/if}"><i class="fas fa-cubes fa-fw"></i> {lang key='orderconfigpackage'}</a>
+                        </li>
+                    {/if}
+                    {if $metricStats}
+                        <li class="nav-item">
+                            <a href="#metrics" data-toggle="tab" class="nav-link{if !$domain && !$moduleclientarea && !$configurableoptions} active{/if}"><i class="fas fa-chart-line fa-fw"></i> {lang key='metrics.title'}</a>
+                        </li>
+                    {/if}
+                    {if $customfields}
+                        <li class="nav-item">
+                            <a href="#additionalinfo" data-toggle="tab" class="nav-link{if !$domain && !$moduleclientarea && !$metricStats && !$configurableoptions} active{/if}"><i class="fas fa-info fa-fw"></i> {lang key='additionalInfo'}</a>
+                        </li>
+                    {/if}
+                    {if $lastupdate}
+                        <li class="nav-item">
+                            <a href="#resourceusage" data-toggle="tab" class="nav-link{if !$domain && !$moduleclientarea && !$configurableoptions && !$customfields} active{/if}"><i class="fas fa-inbox fa-fw"></i> {lang key='resourceUsage'}</a>
+                        </li>
+                    {/if}
+                </ul>
+                <div class="responsive-tabs-sm-connector"><div class="channel"></div><div class="bottom-border"></div></div>
+                <div class="tab-content bg-white product-details-tab-container">
+                    {if $domain}
+                        <div class="tab-pane fade show active text-center" role="tabpanel" id="domain">
+                            {if $type eq "server"}
+                                <div class="row">
+                                    <div class="col-sm-5 text-right">
+                                        <strong>{lang key='serverhostname'}</strong>
+                                    </div>
+                                    <div class="col-sm-7 text-left">
+                                        {$domain}
+                                    </div>
+                                </div>
+                                {if $dedicatedip}
+                                    <div class="row">
+                                        <div class="col-sm-5 text-right">
+                                            <strong>{lang key='primaryIP'}</strong>
+                                        </div>
+                                        <div class="col-sm-7 text-left">
+                                            {$dedicatedip}
+                                        </div>
+                                    </div>
+                                {/if}
+                                {if $assignedips}
+                                    <div class="row">
+                                        <div class="col-sm-5 text-right">
+                                            <strong>{lang key='assignedIPs'}</strong>
+                                        </div>
+                                        <div class="col-sm-7 text-left">
+                                            {$assignedips|nl2br}
+                                        </div>
+                                    </div>
+                                {/if}
+                                {if $ns1 || $ns2}
+                                    <div class="row">
+                                        <div class="col-sm-5 text-right">
+                                            <strong>{lang key='domainnameservers'}</strong>
+                                        </div>
+                                        <div class="col-sm-7 text-left">
+                                            {$ns1}<br />{$ns2}
+                                        </div>
+                                    </div>
+                                {/if}
+                            {else}
+                                {if $domain}
+                                    <div class="row">
+                                        <div class="col-sm-5 text-right">
+                                            <strong>{lang key='orderdomain'}</strong>
+                                        </div>
+                                        <div class="col-sm-7 text-left">
+                                            {$domain}
+                                        </div>
+                                    </div>
+                                {/if}
+                                {if $username}
+                                    <div class="row">
+                                        <div class="col-sm-5 text-right">
+                                            <strong>{lang key='serverusername'}</strong>
+                                        </div>
+                                        <div class="col-sm-7 text-left">
+                                            {$username}
+                                        </div>
+                                    </div>
+                                {/if}
+                                {if $serverdata}
+                                    <div class="row">
+                                        <div class="col-sm-5 text-right">
+                                            <strong>{lang key='servername'}</strong>
+                                        </div>
+                                        <div class="col-sm-7 text-left">
+                                            {$serverdata.hostname}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-5 text-right">
+                                            <strong>{lang key='domainregisternsip'}</strong>
+                                        </div>
+                                        <div class="col-sm-7 text-left">
+                                            {$serverdata.ipaddress}
+                                        </div>
+                                    </div>
+                                    {if $serverdata.nameserver1 || $serverdata.nameserver2 || $serverdata.nameserver3 || $serverdata.nameserver4 || $serverdata.nameserver5}
+                                        <div class="row">
+                                            <div class="col-sm-5 text-right">
+                                                <strong>{lang key='domainnameservers'}</strong>
+                                            </div>
+                                            <div class="col-sm-7 text-left">
+                                                {if $serverdata.nameserver1}{$serverdata.nameserver1} ({$serverdata.nameserver1ip})<br />{/if}
+                                                {if $serverdata.nameserver2}{$serverdata.nameserver2} ({$serverdata.nameserver2ip})<br />{/if}
+                                                {if $serverdata.nameserver3}{$serverdata.nameserver3} ({$serverdata.nameserver3ip})<br />{/if}
+                                                {if $serverdata.nameserver4}{$serverdata.nameserver4} ({$serverdata.nameserver4ip})<br />{/if}
+                                                {if $serverdata.nameserver5}{$serverdata.nameserver5} ({$serverdata.nameserver5ip})<br />{/if}
+                                            </div>
+                                        </div>
+                                    {/if}
+                                {/if}
+                                {if $domain && $sslStatus}
+                                    <div class="row">
+                                        <div class="col-sm-5 text-right">
+                                            <strong>{lang key='sslState.sslStatus'}</strong>
+                                        </div>
+                                        <div class="col-sm-7 text-left{if $sslStatus->isInactive()} ssl-inactive{/if}">
+                                            <img src="{$sslStatus->getImagePath()}" width="12" data-type="service" data-domain="{$domain}" data-showlabel="1" class="{$sslStatus->getClass()}"/>
+                                            <span id="statusDisplayLabel">
+                                                {if !$sslStatus->needsResync()}
+                                                    {$sslStatus->getStatusDisplayLabel()}
+                                                {else}
+                                                    {lang key='loading'}
+                                                {/if}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    {if $sslStatus->isActive() || $sslStatus->needsResync()}
+                                        <div class="row">
+                                            <div class="col-sm-5 text-right">
+                                                <strong>{lang key='sslState.startDate'}</strong>
+                                            </div>
+                                            <div class="col-sm-7 text-left" id="ssl-startdate">
+                                                {if !$sslStatus->needsResync() || $sslStatus->startDate}
+                                                    {$sslStatus->startDate->toClientDateFormat()}
+                                                {else}
+                                                    {lang key='loading'}
+                                                {/if}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-5 text-right">
+                                                <strong>{lang key='sslState.expiryDate'}</strong>
+                                            </div>
+                                            <div class="col-sm-7 text-left" id="ssl-expirydate">
+                                                {if !$sslStatus->needsResync() || $sslStatus->expiryDate}
+                                                    {$sslStatus->expiryDate->toClientDateFormat()}
+                                                {else}
+                                                    {lang key='loading'}
+                                                {/if}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-5 text-right">
+                                                <strong>{lang key='sslState.issuerName'}</strong>
+                                            </div>
+                                            <div class="col-sm-7 text-left" id="ssl-issuer">
+                                                {if !$sslStatus->needsResync() || $sslStatus->issuerName}
+                                                    {$sslStatus->issuerName}
+                                                {else}
+                                                    {lang key='loading'}
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    {/if}
+                                {/if}
+                                <br>
+                                <p>
+                                    <a href="http://{$domain}" class="btn btn-default" target="_blank">{lang key='visitwebsite'}</a>
+                                    {if $domainId}
+                                        <a href="clientarea.php?action=domaindetails&id={$domainId}" class="btn btn-default" target="_blank">{lang key='managedomain'}</a>
+                                    {/if}
+                                </p>
+                            {/if}
+                            {if $moduleclientarea}
+                                <div class="text-center module-client-area">
+                                    {$moduleclientarea}
+                                </div>
+                            {/if}
+                        </div>
+                        {if $sslStatus}
+                            <div class="tab-pane fade text-center" role="tabpanel" id="ssl-info">
+                                {if $sslStatus->isActive()}
+                                    <div class="alert alert-success" role="alert">
+                                        {lang key='sslActive' expiry=$sslStatus->expiryDate->toClientDateFormat()}
+                                    </div>
+                                {else}
+                                    <div class="alert alert-warning ssl-required" role="alert">
+                                        {lang key='sslInactive'}
+                                    </div>
+                                {/if}
+                            </div>
+                        {/if}
+                    {elseif $moduleclientarea}
+                        <div class="tab-pane fade{if !$domain} show active{/if} text-center" role="tabpanel" id="manage">
+                            {if $moduleclientarea}
+                                <div class="text-center module-client-area">
+                                    {$moduleclientarea}
+                                </div>
+                            {/if}
+                        </div>
+                    {/if}
+                    {if $configurableoptions}
+                        <div class="tab-pane fade{if !$domain && !$moduleclientarea} show active{/if} text-center" role="tabpanel" id="configoptions">
+                            {foreach from=$configurableoptions item=configoption}
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <strong>{$configoption.optionname}</strong>
+                                    </div>
+                                    <div class="col-sm-7 text-left">
+                                        {if $configoption.optiontype eq 3}{if $configoption.selectedqty}{lang key='yes'}{else}{lang key='no'}{/if}{elseif $configoption.optiontype eq 4}{$configoption.selectedqty} x {$configoption.selectedoption}{else}{$configoption.selectedoption}{/if}
+                                    </div>
+                                </div>
+                            {/foreach}
+                        </div>
+                    {/if}
+                    {if $metricStats}
+                        <div class="tab-pane fade{if !$domain && !$moduleclientarea && !$configurableoptions} show active{/if}" role="tabpanel" id="metrics">
+                            {include file="$template/clientareaproductusagebilling.tpl"}
+                        </div>
+                    {/if}
+                    {if $customfields}
+                        <div class="tab-pane fade{if !$domain && !$moduleclientarea && !$configurableoptions && !$metricStats} show active{/if} text-center" role="tabpanel" id="additionalinfo">
+                            {foreach from=$customfields item=field}
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <strong>{$field.name}</strong>
+                                    </div>
+                                    <div class="col-sm-7 text-left">
+                                        {$field.value}
+                                    </div>
+                                </div>
+                            {/foreach}
+                        </div>
+                    {/if}
+                    {if $lastupdate}
+                        <div class="tab-pane fade text-center" role="tabpanel" id="resourceusage">
+                            <div class="row">
+                                <div class="col-sm-10 offset-sm-1">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <h4>{lang key='diskSpace'}</h4>
+                                            <input type="text" value="{$diskpercent|substr:0:-1}" class="dial-usage" data-width="100" data-height="100" data-min="0" data-readOnly="true" />
+                                            <p>{$diskusage}MB / {$disklimit}MB</p>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <h4>{lang key='bandwidth'}</h4>
+                                            <input type="text" value="{$bwpercent|substr:0:-1}" class="dial-usage" data-width="100" data-height="100" data-min="0" data-readOnly="true" />
+                                            <p>{$bwusage}MB / {$bwlimit}MB</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-0">{lang key='clientarealastupdated'}: {$lastupdate}</p>
+                            <script src="{$BASE_PATH_JS}/jquery.knob.js"></script>
+                            <script>
+                                jQuery(function() {
+                                    jQuery(".dial-usage").knob({
+                                        'format': function(v) {
+                                            alert(v);
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+
+                    {/if}
+                </div>
+            {/if}
+
+        {/if}
+
+    </div>
+    <div class="tab-pane fade" role="tabpanel" id="tabDownloads">
+
+        <h3>{lang key='downloadstitle'}</h3>
+
+        {include file="$template/includes/alert.tpl" type="info" msg="{lang key="clientAreaProductDownloadsAvailable"}" textcenter=true}
+
+        <div class="row">
+            {foreach from=$downloads item=download}
+                <div class="col-10 offset-1">
+                    <h4>{$download.title}</h4>
+                    <p>
+                        {$download.description}
+                    </p>
+                    <p>
+                        <a href="{$download.link}" class="btn btn-default"><i class="fas fa-download"></i> {lang key='downloadname'}</a>
+                    </p>
+                </div>
+            {/foreach}
+        </div>
+
+    </div>
+    <div class="tab-pane fade" id="tabAddons">
+
+        <h3>{lang key='clientareahostingaddons'}</h3>
+
+        {if $addonsavailable}
+            {include file="$template/includes/alert.tpl" type="info" msg="{lang key="clientAreaProductAddonsAvailable"}" textcenter=true}
+        {/if}
+
+        <div class="row">
+            {foreach from=$addons item=addon}
+                <div class="col-10 offset-1">
+                    <div class="card bg-default card-accent-blue">
+                        <div class="card-header">
+                            {$addon.name}
+                            <div class="float-right label status-{$addon.rawstatus|strtolower}">{$addon.status}</div>
+                        </div>
+                        <div class="row card-body">
+                            <div class="col-md-6">
+                                <p>
+                                    {$addon.pricing}
+                                </p>
+                                <p>
+                                    {lang key='registered'}: {$addon.regdate}
+                                </p>
+                                <p>
+                                    {lang key='clientareahostingnextduedate'}: {$addon.nextduedate}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            {$addon.managementActions}
+                        </div>
+                    </div>
+                </div>
+            {/foreach}
+        </div>
+
+    </div>
+    <div class="tab-pane fade" id="tabChangepw">
+
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">{lang key='serverchangepassword'}</h3>
+
+                {if $modulechangepwresult}
+                    {if $modulechangepwresult == "success"}
+                        {include file="$template/includes/alert.tpl" type="success" msg=$modulechangepasswordmessage textcenter=true}
+                    {elseif $modulechangepwresult == "error"}
+                        {include file="$template/includes/alert.tpl" type="error" msg=$modulechangepasswordmessage|strip_tags textcenter=true}
+                    {/if}
+                {/if}
+
+                <form class="using-password-strength" method="post" action="{$smarty.server.PHP_SELF}?action=productdetails#tabChangepw" role="form">
+                    <input type="hidden" name="id" value="{$id}" />
+                    <input type="hidden" name="modulechangepassword" value="true" />
+
+                    <div id="newPassword1" class="form-group row has-feedback">
+                        <label for="inputNewPassword1" class="col-xl-4 col-form-label">{lang key='newpassword'}</label>
+                        <div class="col-xl-5">
+                            <input type="password" class="form-control" id="inputNewPassword1" name="newpw" autocomplete="off" />
+                            {include file="$template/includes/pwstrength.tpl"}
+                        </div>
+                        <div class="col-xl-3">
+                            <button type="button" class="btn btn-default btn-block generate-password" data-targetfields="inputNewPassword1,inputNewPassword2">
+                                {lang key='generatePassword.btnLabel'}
                             </button>
                         </div>
                     </div>
-
-                    <div class="credential-item">
-                        <label>License Key</label>
-                        <div class="credential-value">
-                            <code>VNM-{$serviceId}-XXXX-XXXX</code>
-                            <button class="copy-btn" type="button" data-copy="VNM-{$serviceId}-XXXX-XXXX" aria-label="Copy license key">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="credential-row">
-                        <div class="credential-item">
-                            <label>Username</label>
-                            <div class="credential-value">
-                                <code>client-{$serviceId}</code>
-                            </div>
-                        </div>
-                        <div class="credential-item">
-                            <label>Password</label>
-                            <div class="credential-value">
-                                <code>••••••••</code>
-                                <button class="copy-btn" type="button" aria-label="Show password">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                        <circle cx="12" cy="12" r="3"/>
-                                    </svg>
-                                </button>
+                    <div id="newPassword2" class="form-group row has-feedback">
+                        <label for="inputNewPassword2" class="col-xl-4 col-form-label">{lang key='confirmnewpassword'}</label>
+                        <div class="col-xl-5">
+                            <input type="password" class="form-control" id="inputNewPassword2" name="confirmpw" autocomplete="off" />
+                            <div id="inputNewPassword2Msg">
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="panel-actions">
-                    <a href="https://venom-drm.test/" target="_blank" class="btn-glow">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                            <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
-                        </svg>
-                        Open Panel
-                    </a>
-                </div>
-            </div>
-
-            <div class="sidebar-card glass-card">
-                <div class="card-header">
-                    <h3>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                        </svg>
-                        Billing & Renewal
-                    </h3>
-                </div>
-
-                <div class="billing-info">
-                    <div class="billing-row">
-                        <span>Next Due Date</span>
-                        <span>{$serviceDueDate}</span>
+                    <div class="form-group row">
+                        <div class="offset-xl-4 col-xl-6">
+                            <input class="btn btn-primary" type="submit" value="{lang key='clientareasavechanges'}" />
+                            <input class="btn" type="reset" value="{lang key='cancel'}" />
+                        </div>
                     </div>
-                    <div class="billing-row">
-                        <span>Recurring Amount</span>
-                        <span class="gradient-text">{$serviceRecurring}</span>
-                    </div>
-                    <div class="billing-row">
-                        <span>Auto-Renew</span>
-                        <span class="status-enabled">Enabled</span>
-                    </div>
-                </div>
 
-                <div class="sidebar-actions">
-                    <a href="{$WEB_ROOT}/clientarea.php?action=renew&id={$serviceId}" class="btn-glow" style="width: 100%; justify-content: center;">
-                        Extend License
-                    </a>
-                    <a href="{$WEB_ROOT}/upgrade.php?type=package&id={$serviceId}" class="btn-venom-outline" style="width: 100%; justify-content: center;">
-                        Upgrade Plan
-                    </a>
-                </div>
+                </form>
             </div>
         </div>
 
-        <div class="info-cards">
-            <div class="info-card glass-card">
-                <div class="info-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polyline points="12 6 12 12 16 14"/>
-                    </svg>
-                </div>
-                <div class="info-content">
-                    <h4>Installation Time</h4>
-                    <p>Usually within 5-10 minutes</p>
-                </div>
-            </div>
-            <div class="info-card glass-card">
-                <div class="info-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                </div>
-                <div class="info-content">
-                    <h4>Secure Connection</h4>
-                    <p>SSL/HTTPS encrypted</p>
-                </div>
-            </div>
-            <div class="info-card glass-card">
-                <div class="info-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                </div>
-                <div class="info-content">
-                    <h4>Need Help?</h4>
-                    <p>Open a support ticket</p>
-                </div>
-            </div>
-        </div>
-            </div>
-        </main>
     </div>
 </div>
-
-<style>
-.product-details-page {
-    display: grid;
-    gap: 24px;
-}
-
-.page-breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 24px;
-    font-size: 0.85rem;
-}
-
-.page-breadcrumb a {
-    color: hsl(var(--muted-foreground));
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.page-breadcrumb a:hover {
-    color: hsl(var(--primary));
-}
-
-.page-breadcrumb span {
-    color: hsl(var(--muted-foreground));
-    opacity: 0.5;
-}
-
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 32px;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.page-header h1 {
-    margin: 0 0 8px 0;
-    font-size: 1.75rem;
-    font-weight: 800;
-}
-
-.page-header p {
-    color: hsl(var(--muted-foreground));
-    margin: 0;
-}
-
-.status-badge {
-    display: inline-block;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.status-badge.active {
-    background: rgba(34, 197, 94, 0.15);
-    color: #4ade80;
-    border: 1px solid rgba(34, 197, 94, 0.3);
-}
-
-.status-badge.suspended,
-.status-badge.pending {
-    background: rgba(251, 191, 36, 0.15);
-    color: #fbbf24;
-    border: 1px solid rgba(251, 191, 36, 0.3);
-}
-
-.status-badge.terminated,
-.status-badge.cancelled,
-.status-badge.expired {
-    background: rgba(239, 68, 68, 0.15);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.details-grid {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 28px;
-    margin-bottom: 32px;
-}
-
-.main-card,
-.sidebar-card {
-    padding: 0;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.card-header {
-    padding: 24px 28px;
-    border-bottom: 1px solid hsl(var(--border) / 0.5);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.card-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.card-header svg {
-    color: hsl(var(--primary));
-}
-
-.credentials-grid {
-    padding: 28px;
-    display: grid;
-    gap: 24px;
-}
-
-.credential-item label {
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: hsl(var(--muted-foreground));
-    margin-bottom: 10px;
-}
-
-.credential-value {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: hsl(var(--input) / 0.4);
-    border: 1px solid hsl(var(--border) / 0.5);
-    border-radius: 10px;
-    padding: 14px 16px;
-}
-
-.credential-value code {
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    color: hsl(var(--foreground));
-    flex-grow: 1;
-}
-
-.copy-btn {
-    background: none;
-    border: none;
-    color: hsl(var(--primary));
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 6px;
-    transition: background 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.copy-btn:hover {
-    background: hsl(var(--primary) / 0.1);
-}
-
-.copy-btn.copied {
-    color: #4ade80;
-    background: rgba(34, 197, 94, 0.15);
-}
-
-.credential-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.panel-actions {
-    padding: 0 28px 28px;
-    display: flex;
-    gap: 14px;
-}
-
-.panel-actions .btn-glow {
-    gap: 10px;
-}
-
-.sidebar-card .card-header {
-    background: hsl(var(--card) / 0.5);
-}
-
-.billing-info {
-    padding: 24px 28px;
-    display: grid;
-    gap: 18px;
-}
-
-.billing-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-}
-
-.billing-row span:first-child {
-    color: hsl(var(--muted-foreground));
-}
-
-.billing-row span:last-child {
-    font-weight: 600;
-}
-
-.status-enabled {
-    color: #4ade80;
-    background: rgba(34, 197, 94, 0.15);
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-}
-
-.sidebar-actions {
-    padding: 0 28px 28px;
-    display: grid;
-    gap: 12px;
-}
-
-.sidebar-actions .btn-venom-outline,
-.sidebar-actions .btn-glow {
-    padding: 14px 20px;
-    font-size: 0.95rem;
-}
-
-.info-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.info-card {
-    padding: 24px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
-}
-
-.info-icon {
-    width: 52px;
-    height: 52px;
-    background: hsl(var(--primary) / 0.1);
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: hsl(var(--primary));
-    flex-shrink: 0;
-}
-
-.info-content h4 {
-    margin: 0 0 4px 0;
-    font-size: 0.95rem;
-    font-weight: 700;
-}
-
-.info-content p {
-    margin: 0;
-    font-size: 0.85rem;
-    color: hsl(var(--muted-foreground));
-}
-
-@media (max-width: 900px) {
-    .details-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 520px) {
-    .credential-row {
-        grid-template-columns: 1fr;
-    }
-    
-    .panel-actions {
-        flex-direction: column;
-    }
-    
-    .panel-actions .btn-glow {
-        justify-content: center;
-    }
-}
-</style>

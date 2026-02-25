@@ -18,6 +18,7 @@
             <select class="form-control custom-select" onchange="selectChangeNavigate(this)">
                 {assign var='hasCurrent' value=false}
                 {foreach $panel->getChildren() as $child}
+                    {if strpos($child->getUri(), 'domain=register') !== false || strpos($child->getUri(), 'domain=transfer') !== false}{continue}{/if}
                     <option menuItemName="{$child->getName()}" value="{$child->getUri()}" class="list-group-item" {if $child->isCurrent()}selected="selected"{/if}>
                         {$child->getLabel()}
 

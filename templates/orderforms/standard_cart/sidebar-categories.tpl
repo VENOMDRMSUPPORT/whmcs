@@ -25,6 +25,7 @@
         {if $panel->hasChildren()}
             <div class="list-group collapsable-card-body{if $panel->getChildrenAttribute('class')} {$panel->getChildrenAttribute('class')}{/if}">
                 {foreach $panel->getChildren() as $child}
+                    {if strpos($child->getUri(), 'domain=register') !== false || strpos($child->getUri(), 'domain=transfer') !== false}{continue}{/if}
                     {if $child->getUri()}
                         <a menuItemName="{$child->getName()}" href="{$child->getUri()}" class="list-group-item list-group-item-action{if $child->isDisabled()} disabled{/if}{if $child->getClass()} {$child->getClass()}{/if}{if $child->isCurrent()} active{/if}"{if $child->getAttribute('dataToggleTab')} data-toggle="tab"{/if}{if $child->getAttribute('target')} target="{$child->getAttribute('target')}"{/if} id="{$child->getId()}">
                             {if $child->hasIcon()}

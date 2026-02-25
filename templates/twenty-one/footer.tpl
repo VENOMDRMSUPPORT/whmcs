@@ -1,4 +1,3 @@
-{if $templatefile != 'homepage'}
                     </div>
 
                     </div>
@@ -106,6 +105,7 @@
                                 {foreach $locales as $locale}
                                     <div class="col-4">
                                         <a href="#" class="item{if $language == $locale.language} active{/if}" data-value="{$locale.language}">
+                                            <span class="iti-flag {if isset($locale.countryCode) && $locale.countryCode === '001'}us{else}{$locale.countryCode|default:'us'|lower}{/if}" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>
                                             {$locale.localisedName}
                                         </a>
                                     </div>
@@ -147,4 +147,3 @@
 
 </body>
 </html>
-{/if}

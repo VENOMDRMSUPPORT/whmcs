@@ -1,4 +1,3 @@
-{if $templatefile != 'homepage'}
 <!doctype html>
 <html lang="en">
 <head>
@@ -172,5 +171,4 @@
                     {/if}
                 </div>
             {/if}
-</header>
-{/if}
+            <div class="{if !$inShoppingCart && ($primarySidebar->hasChildren() || $secondarySidebar->hasChildren())}col-lg-8 col-xl-9{/if} primary-content">

@@ -1,308 +1,197 @@
-{assign var=profileSuccess value=$success|default:$successful|default:$successfulmsg|default:''}
-{assign var=profileFirstName value=$client.firstname|default:$clientfirstname|default:$firstname|default:''}
-{assign var=profileLastName value=$client.lastname|default:$clientlastname|default:$lastname|default:''}
-{assign var=profileCompany value=$client.companyname|default:$clientcompanyname|default:$companyname|default:''}
-{assign var=profileEmail value=$client.email|default:$clientemail|default:$email|default:''}
-{assign var=profilePhone value=$client.phonenumber|default:$clientphonenumber|default:$phonenumber|default:''}
-{assign var=profileAddress1 value=$client.address1|default:$clientaddress1|default:$address1|default:''}
-{assign var=profileAddress2 value=$client.address2|default:$clientaddress2|default:$address2|default:''}
-{assign var=profileCity value=$client.city|default:$clientcity|default:$city|default:''}
-{assign var=profileState value=$client.state|default:$clientstate|default:$state|default:''}
-{assign var=profilePostcode value=$client.postcode|default:$clientpostcode|default:$postcode|default:''}
-{assign var=profileCountryDropdown value=$countries|default:$countrydropdown|default:''}
+{if $successful}
+    {include file="$template/includes/alert.tpl" type="success" msg="{lang key='changessavedsuccessfully'}" textcenter=true}
+{/if}
 
-<div class="client-unified-page">
-    <div class="container client-unified-shell">
-        <aside class="client-unified-side">
-            <section class="client-unified-side-card glass-card">
-                <h3>Account Settings</h3>
-                <p>Update profile details and keep your billing information accurate.</p>
-            </section>
-            <section class="client-unified-side-card glass-card">
-                <h3>Quick Actions</h3>
-                <a href="{$WEB_ROOT}/clientarea.php?action=changepw" class="client-unified-side-link">Change Password</a>
-                <a href="{$WEB_ROOT}/clientarea.php?action=security" class="client-unified-side-link">Security Settings</a>
-                <a href="{$WEB_ROOT}/clientarea.php" class="client-unified-side-link">Back to Dashboard</a>
-            </section>
-        </aside>
+{if $errormessage}
+    {include file="$template/includes/alert.tpl" type="error" errorshtml=$errormessage}
+{/if}
 
-        <main class="client-unified-main">
-            <div class="profile-page">
-        <div class="page-header">
-            <h1>My Profile</h1>
-            <p>Manage your account information</p>
-        </div>
+{if in_array('state', $optionalFields)}
+    <script>
+        var stateNotRequired = true;
+    </script>
+{/if}
 
-        <div class="profile-grid">
-            <div class="profile-nav glass-card">
-                <a href="{$WEB_ROOT}/clientarea.php?action=details" class="nav-item active">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    Profile Details
-                </a>
-                <a href="{$WEB_ROOT}/clientarea.php?action=changepw" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                    Change Password
-                </a>
-                <a href="{$WEB_ROOT}/clientarea.php?action=security" class="nav-item">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                    Security
-                </a>
-            </div>
+<script type="text/javascript" src="{$BASE_PATH_JS}/StatesDropdown.js"></script>
 
-            <div class="profile-content glass-card">
-                {if $profileSuccess}
-                <div class="alert alert-success">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <polyline points="22 4 12 14.01 9 11.01"/>
-                    </svg>
-                    <span>{$profileSuccess}</span>
+<form method="post" action="?action=details" role="form">
+
+    <div class="card">
+        <div class="card-body">
+            <h3 class="card-title">{lang key='clientareanavdetails'}</h3>
+
+            <div class="row d-md-block">
+                <div class="col-md-6 float-md-left">
+
+                    <div class="form-group">
+                        <label for="inputFirstName" class="col-form-label">{lang key='clientareafirstname'}</label>
+                        <input type="text" name="firstname" id="inputFirstName" value="{$clientfirstname}"{if in_array('firstname', $uneditablefields)} disabled="disabled"{/if} class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputLastName" class="col-form-label">{lang key='clientarealastname'}</label>
+                        <input type="text" name="lastname" id="inputLastName" value="{$clientlastname}"{if in_array('lastname', $uneditablefields)} disabled="disabled"{/if} class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputCompanyName" class="col-form-label">{lang key='clientareacompanyname'}</label>
+                        <input type="text" name="companyname" id="inputCompanyName" value="{$clientcompanyname}"{if in_array('companyname', $uneditablefields)} disabled="disabled"{/if} class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail" class="col-form-label">{lang key='clientareaemail'}</label>
+                        <input type="email" name="email" id="inputEmail" value="{$clientemail}"{if in_array('email', $uneditablefields)} disabled="disabled"{/if} class="form-control" />
+                    </div>
+
                 </div>
-                {/if}
+                <div class="col-md-6 col-12 float-md-right">
 
-                {if $errormessage}
-                <div class="alert alert-error">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="15" y1="9" x2="9" y2="15"/>
-                        <line x1="9" y1="9" x2="15" y2="15"/>
-                    </svg>
-                    <span>{$errormessage}</span>
+                    <div class="form-group">
+                        <label for="inputAddress1" class="col-form-label">{lang key='clientareaaddress1'}</label>
+                        <input type="text" name="address1" id="inputAddress1" value="{$clientaddress1}"{if in_array('address1', $uneditablefields)} disabled="disabled"{/if} class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputAddress2" class="col-form-label">{lang key='clientareaaddress2'}</label>
+                        <input type="text" name="address2" id="inputAddress2" value="{$clientaddress2}"{if in_array('address2', $uneditablefields)} disabled="disabled"{/if} class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputCity" class="col-form-label">{lang key='clientareacity'}</label>
+                        <input type="text" name="city" id="inputCity" value="{$clientcity}"{if in_array('city', $uneditablefields)} disabled="disabled"{/if} class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputState" class="col-form-label">{lang key='clientareastate'}</label>
+                        <input type="text" name="state" id="inputState" value="{$clientstate}"{if in_array('state', $uneditablefields)} disabled="disabled"{/if} class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputPostcode" class="col-form-label">{lang key='clientareapostcode'}</label>
+                        <input type="text" name="postcode" id="inputPostcode" value="{$clientpostcode}"{if in_array('postcode', $uneditablefields)} disabled="disabled"{/if} class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-form-label" for="country">{lang key='clientareacountry'}</label>
+                        {$clientcountriesdropdown}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputPhone" class="col-form-label">{lang key='clientareaphonenumber'}</label>
+                        <input type="tel" name="phonenumber" id="inputPhone" value="{$clientphonenumber}"{if in_array('phonenumber',$uneditablefields)} disabled=""{/if} class="form-control" />
+                    </div>
+
                 </div>
-                {/if}
+                <div class="col-md-6 col-12 float-md-left">
 
-                <form method="post" action="{$WEB_ROOT}/clientarea.php?action=details" class="profile-form">
-                    {if $token}
-                        <input type="hidden" name="token" value="{$token}">
+                    <div class="form-group">
+                        <label for="inputPaymentMethod" class="col-form-label">{lang key='paymentmethod'}</label>
+                        <select name="paymentmethod" id="inputPaymentMethod" class="form-control custom-select">
+                            <option value="none">{lang key='paymentmethoddefault'}</option>
+                            {foreach $paymentmethods as $method}
+                            <option value="{$method.sysname}"{if $method.sysname eq $defaultpaymentmethod} selected="selected"{/if}>{$method.name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputBillingContact" class="col-form-label">{lang key='defaultbillingcontact'}</label>
+                        <select name="billingcid" id="inputBillingContact" class="form-control custom-select">
+                            <option value="0">{lang key='usedefaultcontact'}</option>
+                            {foreach $contacts as $contact}
+                            <option value="{$contact.id}"{if $contact.id eq $billingcid} selected="selected"{/if}>{$contact.name}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputLanguage" class="col-form-label">{lang key='clientarealanguage'}</label>
+                        <select name="accountLanguage" id="inputAccountLanguage" class="form-control custom-select"
+                            {if in_array('language', $uneditablefields)} disabled="disabled"{/if}>
+                            <option value="">{lang key='default'}</option>
+                            {foreach $languages as $language}
+                                <option value="{$language}"{if $language eq $clientLanguage} selected="selected"{/if}
+                                    >{$language|ucfirst}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+
+                    {if $showTaxIdField}
+                        <div class="form-group">
+                            <label for="inputTaxId" class="col-form-label">{lang key=$taxIdLabel}</label>
+                            <input type="text" name="tax_id" id="inputTaxId" class="form-control" value="{$clientTaxId}"{if in_array('tax_id', $uneditablefields)} disabled="disabled"{/if} />
+                        </div>
                     {/if}
-                    <div class="form-section">
-                        <h3>Personal Information</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>First Name</label>
-                                <input type="text" name="firstname" value="{$profileFirstName}" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Last Name</label>
-                                <input type="text" name="lastname" value="{$profileLastName}" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Company Name</label>
-                            <input type="text" name="companyname" value="{$profileCompany}">
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Email Address</label>
-                                <input type="email" value="{$profileEmail}" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone Number</label>
-                                <input type="tel" name="phonenumber" value="{$profilePhone}">
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="form-section">
-                        <h3>Billing Address</h3>
-                        <div class="form-group">
-                            <label>Address</label>
-                            <input type="text" name="address1" value="{$profileAddress1}">
-                        </div>
-                        <div class="form-group">
-                            <label>Address Line 2</label>
-                            <input type="text" name="address2" value="{$profileAddress2}">
-                        </div>
-                        <div class="form-row">
+                    {if $customfields}
+                        {foreach $customfields as $customfield}
                             <div class="form-group">
-                                <label>City</label>
-                                <input type="text" name="city" value="{$profileCity}">
+                                <label class="col-form-label" for="customfield{$customfield.id}">{$customfield.name}</label>
+                                <div class="control">
+                                    {$customfield.input} {$customfield.description}
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>State</label>
-                                <input type="text" name="state" value="{$profileState}">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Postcode</label>
-                                <input type="text" name="postcode" value="{$profilePostcode}">
-                            </div>
-                            <div class="form-group">
-                                <label>Country</label>
-                                <select name="country">
-                                    {$profileCountryDropdown}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                        {/foreach}
+                    {/if}
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn-glow">Save Changes</button>
-                    </div>
-                </form>
+                </div>
+
             </div>
         </div>
-            </div>
-        </main>
     </div>
-</div>
 
-<style>
-.profile-page {
-    display: grid;
-    gap: 24px;
-}
+    {if !empty($accountDetailsExtraFields)}
+        <div class="card mt-4">
+            <div class="card-body">
+                <h3 class="card-title">{lang key='orderForm.additionalInformation'}</h3>
 
-.page-header {
-    margin-bottom: 32px;
-}
+                <div class="row">
+                    {foreach $accountDetailsExtraFields as $field}
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-form-label" for="{$field.name}">{$field.label|escape}{if $field.required} <span class="text-danger">*</span>{/if}</label>
+                                <div class="control">
+                                    {$field.input}
+                                </div>
+                            </div>
+                        </div>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+    {/if}
 
-.page-header h1 {
-    margin: 0 0 8px 0;
-    font-size: 1.75rem;
-    font-weight: 800;
-}
+    {if $emailPreferencesEnabled}
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">{lang key='clientareacontactsemails'}</h3>
 
-.page-header p {
-    color: hsl(var(--muted-foreground));
-    margin: 0;
-}
+                <div class="controls form-check">
+                    {foreach $emailPreferences as $emailType => $value}
+                        <label>
+                            <input type="hidden" name="email_preferences[{$emailType}]" value="0">
+                            <input type="checkbox" class="form-check-input" name="email_preferences[{$emailType}]" id="{$emailType}Emails" value="1"{if $value} checked="checked"{/if} />
+                            {lang key="emailPreferences."|cat:$emailType}
+                        </label>{if !($value@last)}<br />{/if}
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+    {/if}
 
-.profile-grid {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 28px;
-}
+    {if $showMarketingEmailOptIn}
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">{lang key='emailMarketing.joinOurMailingList'}</h3>
+                <p>{$marketingEmailOptInMessage}</p>
+                <input type="checkbox" name="marketingoptin" value="1"{if $marketingEmailOptIn} checked{/if} class="no-icheck toggle-switch-success form-check-input" data-size="small" data-on-text="{lang key='yes'}" data-off-text="{lang key='no'}">
+            </div>
+        </div>
+    {/if}
 
-.profile-nav {
-    padding: 16px;
-    border-radius: 16px;
-    height: fit-content;
-}
+    <div class="form-group text-center">
+        <input class="btn btn-primary" type="submit" name="save" value="{lang key='clientareasavechanges'}" />
+        <input class="btn btn-default" type="reset" value="{lang key='cancel'}" />
+    </div>
 
-.nav-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 10px;
-    color: hsl(var(--muted-foreground));
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all 0.2s;
-}
-
-.nav-item:hover {
-    background: hsl(var(--primary) / 0.05);
-    color: hsl(var(--foreground));
-}
-
-.nav-item.active {
-    background: hsl(var(--primary) / 0.1);
-    color: hsl(var(--primary));
-}
-
-.profile-content {
-    padding: 36px;
-    border-radius: 16px;
-}
-
-.form-section {
-    margin-bottom: 36px;
-}
-
-.form-section h3 {
-    margin: 0 0 20px 0;
-    font-size: 1.1rem;
-    font-weight: 700;
-    padding-bottom: 12px;
-    border-bottom: 1px solid hsl(var(--border) / 0.5);
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.form-group input,
-.form-group select {
-    width: 100%;
-}
-
-.form-group input:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-.form-actions {
-    padding-top: 12px;
-}
-
-.form-actions .btn-glow {
-    padding: 14px 32px;
-}
-
-.alert {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 16px;
-    margin-bottom: 24px;
-    border-radius: 10px;
-}
-
-.alert-success {
-    background: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.3);
-    color: #4ade80;
-}
-
-.alert-error {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #f87171;
-}
-
-@media (max-width: 768px) {
-    .profile-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .profile-nav {
-        display: flex;
-        overflow-x: auto;
-        gap: 8px;
-        padding: 12px;
-    }
-    
-    .nav-item {
-        white-space: nowrap;
-    }
-    
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
+</form>
