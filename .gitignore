@@ -86,9 +86,12 @@ desktop.ini
 # --------------------------------------------------------------
 # Development & AI Tools
 # --------------------------------------------------------------
+.agent/
 .claude/
+.cursor/
+.github/
 .kilocode/
-.cursor/mcp.json
+.opencode
 .env
 .env.local
 .env.*.local
